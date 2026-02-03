@@ -133,6 +133,8 @@ The backend will be available at http://localhost:8000
 pip install package-name
 
 # Update requirements.txt
+# Seulement si vous etes dans un venv svp
+# sinon ca met tout les paquets de votre pc...
 pip freeze > requirements.txt
 ```
 
