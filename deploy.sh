@@ -8,18 +8,19 @@ set -e
 echo "🚀 Viveris Carbone Deployment Script"
 echo "======================================"
 
-# Load environment variables
+# Load environment variables safely
 if [ -f .env ]; then
-    export $(cat .env | grep -v '^#' | xargs)
+    set -a
+    source .env
+    set +a
 else
-    echo "❌ Error: .env file not found!"
-    echo "Please copy .env.example to .env and configure it."
-    exit 1
+    echo "⚠️  Warning: .env file not found. Using environment variables or defaults."
 fi
 
 # Check required variables
 if [ -z "$DOCKER_USERNAME" ]; then
-    echo "❌ Error: DOCKER_USERNAME not set in .env"
+    echo "❌ Error: DOCKER_USERNAME not set in environment or .env"
+    echo "Please set DOCKER_USERNAME in .env or export it."
     exit 1
 fi
 
