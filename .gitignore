@@ -291,25 +291,19 @@ docker-compose.override.yml
 .vscode/
 .history/
 
-# PyCharm
+# PyCharm / JetBrains IDEs
 .idea/
-
-# JetBrains IDEs
 *.iml
 *.ipr
 *.iws
-.idea/
 
 # Sublime Text
 *.sublime-project
 *.sublime-workspace
 
-# Vim
+# Vim / Emacs
 *.swp
 *.swo
-*~
-
-# Emacs
 *~
 \#*\#
 .\#*
@@ -351,5 +345,3 @@ $RECYCLE.BIN/
 *.tmp
 *.temp
 *.bak
-*.swp
-*.swo
