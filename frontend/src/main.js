@@ -1,7 +1,9 @@
-import App from './App.svelte'
+// New Svelte 5 way
+import { mount } from 'svelte';
+import App from './App.svelte';
 
-const app = new App({
-  target: document.getElementById('app'),
-})
+const app = mount(App, {
+  target: document.getElementById('app'), // or document.body
+});
 
-export default app
+export default app;
