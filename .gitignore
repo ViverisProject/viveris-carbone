@@ -281,7 +281,6 @@ vite.config.ts.timestamp-*
 
 # Docker volumes
 docker-compose.override.yml
-.dockerignore
 
 # ================================
 # IDE / Editor
