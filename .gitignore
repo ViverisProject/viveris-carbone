@@ -1,16 +1,8 @@
-# ================================
-# Python / Backend (FastAPI)
-# ================================
-
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-# C extensions
 *.so
-
-# Distribution / packaging
 .Python
 build/
 develop-eggs/
@@ -193,7 +185,7 @@ web_modules/
 *.tsbuildinfo
 
 # Optional npm cache directory
-.npm
+.npmbash
 
 # Optional eslint cache
 .eslintcache
