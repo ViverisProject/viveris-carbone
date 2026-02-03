@@ -1,8 +1,8 @@
 <script>
-  import { onMount } from 'svelte';
 
-  let message = 'Loading...';
-  let status = 'Connecting to backend...';
+  // Use $state if you are on Svelte 5
+  let message = $state('Loading...');
+  let status = $state('Connecting to backend...');
   let apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
   async function fetchData() {
@@ -21,7 +21,7 @@
     }
   }
 
-  onMount(() => {
+  $effect(() => {
     fetchData();
   });
 </script>
