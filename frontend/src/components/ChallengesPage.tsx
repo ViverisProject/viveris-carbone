@@ -45,7 +45,7 @@ export function ChallengesPage() {
         </motion.div>
 
         <p className="text-sm md:text-base mb-6" style={{ color: 'var(--eco-text-secondary)' }}>
-          Complete your daily challenges to grow your tree and earn points.
+          Terminez vos défis quotidiens pour développer votre arbre et gagner des points.
         </p>
 
         {/* Grid Layout for Desktop */}
@@ -65,14 +65,14 @@ export function ChallengesPage() {
                     <Flame className="w-8 h-8 md:w-10 md:h-10 text-orange-500" />
                   </div>
                   <div className="text-3xl md:text-4xl mb-1" style={{ color: 'var(--eco-navy)' }}>{streak}</div>
-                  <div className="text-sm md:text-base" style={{ color: '#64748B' }}>Day Streak</div>
+                  <div className="text-sm md:text-base" style={{ color: '#64748B' }}>Série de jours</div>
                 </div>
                 <div className="text-center">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <TreePine className="w-8 h-8 md:w-10 md:h-10" style={{ color: 'var(--eco-green)' }} />
                   </div>
                   <div className="text-3xl md:text-4xl mb-1" style={{ color: 'var(--eco-navy)' }}>{totalPoints}</div>
-                  <div className="text-sm md:text-base" style={{ color: '#64748B' }}>Total Points</div>
+                  <div className="text-sm md:text-base" style={{ color: '#64748B' }}>Points totaux</div>
                 </div>
               </div>
             </motion.div>
@@ -175,7 +175,7 @@ export function ChallengesPage() {
                 </div>
                 <div className="text-right">
                   <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--eco-green)' }}>{treeProgress}%</div>
-                  <p className="text-sm" style={{ color: '#64748B' }}>to next tree</p>
+                  <p className="text-sm" style={{ color: '#64748B' }}>pour le prochain arbre</p>
                 </div>
               </div>
 

@@ -4,12 +4,11 @@ import { motion } from "motion/react";
 
 export function LandingPage() {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--eco-beige)' }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--viv-beige)' }}>
       {/* Header */}
       <header className="container mx-auto px-4 py-6">
         <div className="flex items-center gap-2">
-          <Leaf className="w-8 h-8" style={{ color: 'var(--eco-green)' }} />
-          <span className="text-2xl font-bold" style={{ color: 'var(--eco-navy)' }}>EcoTrack</span>
+          <img src="/src/Pack_charte_graphique/Logos/Logos_Viveris/Avec%20signature/Viveris%20-%20Logo%20-%20Baseline%20-%20RVB%20-%20Noir.png" alt="Viveris" className="h-10 object-contain" />
         </div>
       </header>
 
@@ -26,38 +25,38 @@ export function LandingPage() {
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 2, repeat: Infinity, delay: 0 }}
               >
-                <TreePine className="w-16 h-16" style={{ color: 'var(--eco-green)' }} />
+                <TreePine className="w-16 h-16" style={{ color: 'var(--viv-secondary)' }} />
               </motion.div>
               <motion.div
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}
               >
-                <Leaf className="w-16 h-16" style={{ color: 'var(--eco-mint)' }} />
+                <Leaf className="w-16 h-16" style={{ color: 'var(--viv-red-light)' }} />
               </motion.div>
               <motion.div
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}
               >
-                <Sprout className="w-16 h-16" style={{ color: 'var(--eco-green-dark)' }} />
+                <Sprout className="w-16 h-16" style={{ color: 'var(--viv-red-dark)' }} />
               </motion.div>
             </div>
 
-            <h1 className="text-5xl md:text-6xl mb-6" style={{ color: 'var(--eco-navy)' }}>
+            <h1 className="text-5xl md:text-6xl mb-6" style={{ color: 'var(--viv-navy)' }}>
               Mesurez et réduisez votre empreinte carbone
             </h1>
 
             <p className="text-xl mb-12 max-w-2xl mx-auto" style={{ color: '#64748B' }}>
               Rejoignez le mouvement vers un avenir durable. Calculez votre
               impact environnemental et adoptez des habitudes éco-responsables
-              pour atteindre l'objectif de 2,3 tonnes de CO₂ par an d'ici 2050.
+              pour atteindre l'objectif de 2,3 tonnes de CO2 par an d'ici 2050.
             </p>
 
             <Link
               to="/quiz"
               className="inline-block text-white px-8 py-4 rounded-full text-lg font-semibold transition-all shadow-lg hover:shadow-xl"
-              style={{ backgroundColor: 'var(--eco-green)' }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--eco-green-dark)'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--eco-green)'}
+              style={{ backgroundColor: 'var(--viv-secondary)' }}
+              
+              
             >
               Calculer mon empreinte
             </Link>
@@ -71,10 +70,10 @@ export function LandingPage() {
             className="grid md:grid-cols-3 gap-8 mt-20"
           >
             <div className="bg-white/90 backdrop-blur p-6 rounded-2xl shadow-md">
-              <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'var(--eco-mint)', opacity: 0.3 }}>
-                <Leaf className="w-6 h-6" style={{ color: 'var(--eco-green)' }} />
+              <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'var(--viv-red-light)', opacity: 0.3 }}>
+                <Leaf className="w-6 h-6" style={{ color: 'var(--viv-secondary)' }} />
               </div>
-              <h3 className="font-semibold mb-2" style={{ color: 'var(--eco-navy)' }}>
+              <h3 className="font-semibold mb-2" style={{ color: 'var(--viv-navy)' }}>
                 Analyse personnalisée
               </h3>
               <p className="text-sm" style={{ color: '#64748B' }}>
@@ -83,10 +82,10 @@ export function LandingPage() {
             </div>
 
             <div className="bg-white/90 backdrop-blur p-6 rounded-2xl shadow-md">
-              <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'var(--eco-mint)', opacity: 0.3 }}>
-                <TreePine className="w-6 h-6" style={{ color: 'var(--eco-green)' }} />
+              <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'var(--viv-red-light)', opacity: 0.3 }}>
+                <TreePine className="w-6 h-6" style={{ color: 'var(--viv-secondary)' }} />
               </div>
-              <h3 className="font-semibold mb-2" style={{ color: 'var(--eco-navy)' }}>
+              <h3 className="font-semibold mb-2" style={{ color: 'var(--viv-navy)' }}>
                 Défis et gamification
               </h3>
               <p className="text-sm" style={{ color: '#64748B' }}>
@@ -95,11 +94,11 @@ export function LandingPage() {
             </div>
 
             <div className="bg-white/90 backdrop-blur p-6 rounded-2xl shadow-md">
-              <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'var(--eco-mint)', opacity: 0.3 }}>
-                <Sprout className="w-6 h-6" style={{ color: 'var(--eco-green)' }} />
+              <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'var(--viv-red-light)', opacity: 0.3 }}>
+                <Sprout className="w-6 h-6" style={{ color: 'var(--viv-secondary)' }} />
               </div>
-              <h3 className="font-semibold mb-2" style={{ color: 'var(--eco-navy)' }}>
-                Communauté engagée
+              <h3 className="font-semibold mb-2" style={{ color: 'var(--viv-navy)' }}>
+                Communautéengagée
               </h3>
               <p className="text-sm" style={{ color: '#64748B' }}>
                 Comparez vos progrès et motivez-vous avec d'autres utilisateurs

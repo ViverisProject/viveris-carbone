@@ -1,8 +1,31 @@
-@import 'tailwindcss' source(none);
+@import 'tailwindcss';
 @source './**/*.{js,ts,jsx,tsx}';
 @import 'tw-animate-css';
 @import './styles/globals.css';
 
 @layer base {
   html, body, #root { min-height: 100vh; height: 100%; margin: 0; }
+}
+@font-face {
+  font-family: 'Museo Sans';
+  src: url('./Pack_charte_graphique/Typographie/fonts/fonnts.com-Museo_Sans_300.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Museo Sans';
+  src: url('./Pack_charte_graphique/Typographie/fonts/fonnts.com-Museo_Sans_500.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Museo Sans';
+  src: url('./Pack_charte_graphique/Typographie/fonts/fonnts.com-Museo_Sans_700.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@theme {
+  --font-sans: 'Museo Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Museo Sans', ui-monospace, SFMono-Regular, monospace;
 }

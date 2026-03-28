@@ -21,7 +21,7 @@ export function ProfilePage() {
   };
 
   const handleDeleteAccount = () => {
-    if (confirm("Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.")) {
+    if (confirm("êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.")) {
       localStorage.removeItem("user");
       navigate("/");
     }
@@ -38,13 +38,13 @@ export function ProfilePage() {
 
   const achievements = [
     { name: "First Tree", icon: "🌱", unlocked: true },
-    { name: "7 Day Streak", icon: "🔥", unlocked: true },
+    { name: "7 Série de jours", icon: "🔥", unlocked: true },
     { name: "5 Trees", icon: "🌳", unlocked: false },
-    { name: "30 Day Streak", icon: "⚡", unlocked: false },
+    { name: "30 Série de jours", icon: "⚡", unlocked: false },
   ];
 
   return (
-    <div className="min-h-screen pb-32 md:pb-8 md:pl-64 lg:pl-72" style={{ backgroundColor: 'var(--eco-beige)' }}>
+    <div className="min-h-screen pb-32 md:pb-8 md:pl-64 lg:pl-72" style={{ backgroundColor: 'var(--viv-beige)' }}>
       <div className="container mx-auto px-4 md:px-8 lg:px-12 max-w-7xl">
         {/* Header */}
         <motion.div
@@ -52,11 +52,11 @@ export function ProfilePage() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center justify-between pt-6 pb-4"
         >
-          <h1 className="text-2xl md:text-3xl font-bold" style={{ color: 'var(--eco-navy)' }}>
+          <h1 className="text-2xl md:text-3xl font-bold" style={{ color: 'var(--viv-navy)' }}>
             Profile
           </h1>
           <button className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-md flex items-center justify-center">
-            <Settings className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--eco-navy)' }} />
+            <Settings className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--viv-navy)' }} />
           </button>
         </motion.div>
 
@@ -74,13 +74,13 @@ export function ProfilePage() {
               <div className="flex items-center gap-4 mb-6">
                 <div 
                   className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center text-white text-2xl md:text-3xl font-semibold"
-                  style={{ background: 'linear-gradient(to bottom right, var(--eco-mint), var(--eco-green))' }}
+                  style={{ background: 'linear-gradient(to bottom right, var(--viv-red-light), var(--viv-red))' }}
                 >
                   {user?.firstName?.charAt(0) || "U"}
                   {user?.lastName?.charAt(0) || ""}
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-xl md:text-2xl mb-1" style={{ color: 'var(--eco-navy)' }}>
+                  <h2 className="text-xl md:text-2xl mb-1" style={{ color: 'var(--viv-navy)' }}>
                     {user?.firstName || "User"} {user?.lastName || ""}
                   </h2>
                   <p className="flex items-center gap-2 text-sm md:text-base" style={{ color: '#64748B' }}>
@@ -93,22 +93,22 @@ export function ProfilePage() {
               {/* Quick Stats */}
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center">
-                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--eco-navy)' }}>
+                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>
                     {stats.treesPlanted}
                   </div>
-                  <div className="text-xs md:text-sm" style={{ color: '#64748B' }}>Trees</div>
+                  <div className="text-xs md:text-sm" style={{ color: '#64748B' }}>Arbres</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--eco-navy)' }}>
+                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>
                     {stats.totalPoints}
                   </div>
                   <div className="text-xs md:text-sm" style={{ color: '#64748B' }}>Points</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--eco-navy)' }}>
+                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>
                     {stats.currentStreak}
                   </div>
-                  <div className="text-xs md:text-sm" style={{ color: '#64748B' }}>Day Streak</div>
+                  <div className="text-xs md:text-sm" style={{ color: '#64748B' }}>Série de jours</div>
                 </div>
               </div>
             </motion.div>
@@ -119,7 +119,7 @@ export function ProfilePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <h3 className="text-lg md:text-xl font-semibold mb-4" style={{ color: 'var(--eco-navy)' }}>
+              <h3 className="text-lg md:text-xl font-semibold mb-4" style={{ color: 'var(--viv-navy)' }}>
                 Statistics
               </h3>
               
@@ -127,14 +127,14 @@ export function ProfilePage() {
                 <div className="bg-white rounded-2xl shadow-md p-4">
                   <div 
                     className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mb-3"
-                    style={{ backgroundColor: 'rgba(125, 217, 179, 0.2)' }}
+                    style={{ backgroundColor: 'rgba(42, 49, 212, 0.1)' }}
                   >
-                    <Award className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--eco-green)' }} />
+                    <Award className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--viv-secondary)' }} />
                   </div>
-                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--eco-navy)' }}>
+                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>
                     {stats.challengesCompleted}
                   </div>
-                  <div className="text-sm" style={{ color: '#64748B' }}>Challenges Completed</div>
+                  <div className="text-sm" style={{ color: '#64748B' }}>Défis Completed</div>
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-md p-4">
@@ -144,23 +144,23 @@ export function ProfilePage() {
                   >
                     <Flame className="w-5 h-5 md:w-6 md:h-6 text-orange-500" />
                   </div>
-                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--eco-navy)' }}>
+                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>
                     {stats.bestStreak}
                   </div>
-                  <div className="text-sm" style={{ color: '#64748B' }}>Best Streak</div>
+                  <div className="text-sm" style={{ color: '#64748B' }}>Meilleure série</div>
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-md p-4 col-span-2">
                   <div 
                     className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mb-3"
-                    style={{ backgroundColor: 'rgba(125, 217, 179, 0.2)' }}
+                    style={{ backgroundColor: 'rgba(42, 49, 212, 0.1)' }}
                   >
-                    <TreePine className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--eco-green)' }} />
+                    <TreePine className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--viv-secondary)' }} />
                   </div>
-                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--eco-navy)' }}>
+                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>
                     {stats.co2Reduced}t
                   </div>
-                  <div className="text-sm" style={{ color: '#64748B' }}>CO₂ Reduced This Year</div>
+                  <div className="text-sm" style={{ color: '#64748B' }}>CO2 Reduced This Year</div>
                 </div>
               </div>
             </motion.div>
@@ -171,7 +171,7 @@ export function ProfilePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <h3 className="text-lg md:text-xl font-semibold mb-4" style={{ color: 'var(--eco-navy)' }}>
+              <h3 className="text-lg md:text-xl font-semibold mb-4" style={{ color: 'var(--viv-navy)' }}>
                 Achievements
               </h3>
 
@@ -184,7 +184,7 @@ export function ProfilePage() {
                     }`}
                   >
                     <div className="text-3xl mb-2">{achievement.icon}</div>
-                    <div className="text-xs" style={{ color: 'var(--eco-navy)' }}>
+                    <div className="text-xs" style={{ color: 'var(--viv-navy)' }}>
                       {achievement.name}
                     </div>
                   </div>
@@ -195,35 +195,35 @@ export function ProfilePage() {
 
           {/* Right Column */}
           <div>
-            {/* Account Settings */}
+            {/* Paramètres du compte */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
               className="bg-white rounded-3xl shadow-lg p-6"
             >
-              <h3 className="text-lg md:text-xl font-semibold mb-4" style={{ color: 'var(--eco-navy)' }}>
-                Account Settings
+              <h3 className="text-lg md:text-xl font-semibold mb-4" style={{ color: 'var(--viv-navy)' }}>
+                Paramètres du compte
               </h3>
 
               <div className="space-y-2">
                 <button
-                  onClick={() => alert("Fonctionnalité à venir")}
+                  onClick={() => alert("Fonctionnalitéà venir")}
                   className="w-full flex items-center gap-3 p-4 rounded-2xl hover:shadow-md transition-all text-left"
-                  style={{ backgroundColor: 'rgba(125, 217, 179, 0.1)' }}
+                  style={{ backgroundColor: 'rgba(42, 49, 212, 0.1)' }}
                 >
                   <div 
                     className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center"
-                    style={{ backgroundColor: 'var(--eco-green)' }}
+                    style={{ backgroundColor: 'var(--viv-secondary)' }}
                   >
                     <Lock className="w-5 h-5 md:w-6 md:h-6 text-white" />
                   </div>
                   <div className="flex-1">
-                    <div className="font-medium md:text-lg" style={{ color: 'var(--eco-navy)' }}>
-                      Change Password
+                    <div className="font-medium md:text-lg" style={{ color: 'var(--viv-navy)' }}>
+                      Changer le mot de passe
                     </div>
                     <div className="text-sm" style={{ color: '#64748B' }}>
-                      Update your security
+                      Mettre à jour votre sécurité
                     </div>
                   </div>
                   <ChevronRight className="w-5 h-5" style={{ color: '#94A3B8' }} />
@@ -238,10 +238,10 @@ export function ProfilePage() {
                   </div>
                   <div className="flex-1">
                     <div className="font-medium md:text-lg text-blue-900">
-                      Log Out
+                      Se déconnecter
                     </div>
                     <div className="text-sm text-blue-700">
-                      Sign out of your account
+                      Fermer la session
                     </div>
                   </div>
                   <ChevronRight className="w-5 h-5" style={{ color: '#3B82F6' }} />
@@ -256,10 +256,10 @@ export function ProfilePage() {
                   </div>
                   <div className="flex-1">
                     <div className="font-medium md:text-lg text-red-900">
-                      Delete Account
+                      Supprimer le compte
                     </div>
                     <div className="text-sm text-red-700">
-                      This action is permanent
+                      Cette action est irréversible
                     </div>
                   </div>
                   <ChevronRight className="w-5 h-5" style={{ color: '#EF4444' }} />

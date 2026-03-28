@@ -77,16 +77,16 @@ export function PredictionPage() {
       : flexibility.includes(categoryId);
   };
 
-  const canProceed = step === 1 ? highestConsumption.length === 3 : flexibility.length === 3;
+  const canProceed = step === 1 ? (highestConsumption.length >= 1 && highestConsumption.length <= 3) : (flexibility.length >= 1 && flexibility.length <= 3);
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--eco-beige)' }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--viv-beige)' }}>
       {/* Header */}
       <header className="container mx-auto px-4 py-6">
         <div className="flex items-center gap-2">
-          <Leaf className="w-8 h-8" style={{ color: 'var(--eco-green)' }} />
-          <span className="text-2xl font-bold" style={{ color: 'var(--eco-navy)' }}>
-            EcoTrack
+          <Leaf className="w-8 h-8" style={{ color: 'var(--viv-secondary)' }} />
+          <span className="text-2xl font-bold" style={{ color: 'var(--viv-navy)' }}>
+            Viveris Carbone
           </span>
         </div>
       </header>
@@ -97,15 +97,15 @@ export function PredictionPage() {
           <div className="flex items-center justify-center gap-2 mb-4">
             <div
               className={`w-3 h-3 rounded-full`}
-              style={{ backgroundColor: step === 1 ? 'var(--eco-green)' : 'var(--eco-mint)' }}
+              style={{ backgroundColor: step === 1 ? 'var(--viv-red)' : 'var(--viv-red-light)' }}
             />
             <div
               className={`w-3 h-3 rounded-full`}
-              style={{ backgroundColor: step === 2 ? 'var(--eco-green)' : '#D1D5DB' }}
+              style={{ backgroundColor: step === 2 ? 'var(--viv-red)' : '#D1D5DB' }}
             />
           </div>
-          <p className="text-sm text-center" style={{ color: 'var(--eco-navy)' }}>
-            Étape {step} sur 2
+          <p className="text-sm text-center" style={{ color: 'var(--viv-navy)' }}>
+            étape {step} sur 2
           </p>
         </div>
       </div>
@@ -132,7 +132,7 @@ export function PredictionPage() {
                 transition={{ duration: 0.3 }}
                 className="inline-block px-5 py-2 rounded-full text-sm font-medium mb-6"
                 style={{
-                  backgroundColor: "#7DD9B3",
+                  backgroundColor: "var(--viv-secondary)",
                   color: "#1E293B",
                 }}
               >
@@ -142,12 +142,12 @@ export function PredictionPage() {
               <h2 className="text-3xl md:text-4xl mb-4" style={{ color: "#1E293B" }}>
                 {step === 1
                   ? "Selon vous, dans quels domaines consommez-vous le plus ?"
-                  : "Dans quels domaines avez-vous le plus de flexibilité ?"}
+                  : "Dans quels domaines avez-vous le plus de flexibilité?"}
               </h2>
               <p className="text-lg" style={{ color: "#64748B" }}>
                 {step === 1
-                  ? "Sélectionnez 3 domaines où vous pensez générer le plus de CO2"
-                  : "Sélectionnez 3 domaines où vous pouvez le plus facilement faire des changements"}
+                  ? "Sélectionnez entre 1 et 3 domaines où vous pensez générer le plus de CO2"
+                  : "Sélectionnez entre 1 et 3 domaines où vous pouvez le plus facilement faire des changements"}
               </p>
             </div>
 
@@ -176,8 +176,8 @@ export function PredictionPage() {
                         : "shadow-md hover:shadow-lg"
                     }`}
                     style={{
-                      borderColor: selected ? "#4CAF89" : "#E2E8F0",
-                      backgroundColor: selected ? "#F0FDF4" : "white",
+                      borderColor: selected ? "var(--viv-red)" : "#E2E8F0",
+                      backgroundColor: selected ? "var(--viv-beige)" : "white",
                       borderWidth: selected ? "3px" : "2px",
                     }}
                   >
@@ -185,12 +185,12 @@ export function PredictionPage() {
                       <div
                         className="p-3 rounded-xl"
                         style={{
-                          backgroundColor: selected ? "#7DD9B3" : "#F1F5F9",
+                          backgroundColor: selected ? "var(--viv-red)" : "#F1F5F9",
                         }}
                       >
                         <Icon
                           className="w-6 h-6"
-                          style={{ color: selected ? "white" : "#4CAF89" }}
+                          style={{ color: selected ? "white" : "var(--viv-red)" }}
                         />
                       </div>
                       {showNumber && (
@@ -198,7 +198,7 @@ export function PredictionPage() {
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
                           className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold"
-                          style={{ backgroundColor: "#4CAF89" }}
+                          style={{ backgroundColor: "var(--viv-red)" }}
                         >
                           {selectionIndex + 1}
                         </motion.div>
@@ -232,7 +232,7 @@ export function PredictionPage() {
                 whileTap={canProceed ? { scale: 0.95 } : {}}
                 className="flex items-center gap-3 px-8 py-4 rounded-full text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
                 style={{
-                  backgroundColor: canProceed ? "#4CAF89" : "#CBD5E1",
+                  backgroundColor: canProceed ? "var(--viv-red)" : "#CBD5E1",
                 }}
               >
                 {step === 1 ? "Continuer" : "Voir mes résultats"}

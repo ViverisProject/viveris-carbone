@@ -35,7 +35,7 @@ export function CommunityPage() {
   ];
 
   return (
-    <div className="min-h-screen pb-32 md:pb-8 md:pl-64 lg:pl-72" style={{ backgroundColor: 'var(--eco-beige)' }}>
+    <div className="min-h-screen pb-32 md:pb-8 md:pl-64 lg:pl-72" style={{ backgroundColor: 'var(--viv-beige)' }}>
       <div className="container mx-auto px-4 md:px-8 lg:px-12 max-w-7xl">
         {/* Header */}
         <motion.div
@@ -43,16 +43,16 @@ export function CommunityPage() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center justify-between pt-6 pb-4"
         >
-          <h1 className="text-2xl md:text-3xl font-bold" style={{ color: 'var(--eco-navy)' }}>
-            Join The Community
+          <h1 className="text-2xl md:text-3xl font-bold" style={{ color: 'var(--viv-navy)' }}>
+            Rejoindre la communauté
           </h1>
           <button className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-md flex items-center justify-center">
-            <Bell className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--eco-navy)' }} />
+            <Bell className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--viv-navy)' }} />
           </button>
         </motion.div>
 
-        <p className="text-sm md:text-base mb-6" style={{ color: 'var(--eco-text-secondary)' }}>
-          Connect with others who are committed to reducing their carbon footprint.
+        <p className="text-sm md:text-base mb-6" style={{ color: 'var(--viv-text-secondary)' }}>
+          Connectez-vous avec d'autres personnes engagées dans la réduction de leur empreinte carbone.
         </p>
 
         {/* Grid Layout */}
@@ -75,24 +75,24 @@ export function CommunityPage() {
                   className="w-full pl-12 pr-4 py-3 bg-white rounded-2xl focus:outline-none focus:ring-2"
                   style={{ 
                     border: '1px solid rgba(30, 41, 59, 0.1)',
-                    '--tw-ring-color': 'var(--eco-green)'
+                    '--tw-ring-color': 'var(--viv-red)'
                   } as any}
                 />
               </div>
             </motion.div>
 
-            {/* Your Friends */}
+            {/* Vos amis */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg md:text-xl font-semibold" style={{ color: 'var(--eco-navy)' }}>
-                  Your Friends
+                <h2 className="text-lg md:text-xl font-semibold" style={{ color: 'var(--viv-navy)' }}>
+                  Vos amis
                 </h2>
-                <button className="flex items-center gap-1 text-sm font-medium" style={{ color: 'var(--eco-green)' }}>
-                  Find More Friends
+                <button className="flex items-center gap-1 text-sm font-medium" style={{ color: 'var(--viv-secondary)' }}>
+                  Trouver d'autres amis
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
@@ -103,8 +103,8 @@ export function CommunityPage() {
                     <div 
                       className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center text-white font-semibold text-sm border-2"
                       style={{ 
-                        background: 'linear-gradient(to bottom right, var(--eco-green-light), var(--eco-green))',
-                        borderColor: 'var(--eco-mint)'
+                        background: 'linear-gradient(to bottom right, var(--viv-red-light), var(--viv-red))',
+                        borderColor: 'var(--viv-red-light)'
                       }}
                     >
                       {friend.avatar}
@@ -114,14 +114,14 @@ export function CommunityPage() {
               </div>
             </motion.div>
 
-            {/* Group Activities */}
+            {/* Activités de groupe */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <h2 className="text-lg md:text-xl font-semibold mb-4" style={{ color: 'var(--eco-navy)' }}>
-                Group Activities
+              <h2 className="text-lg md:text-xl font-semibold mb-4" style={{ color: 'var(--viv-navy)' }}>
+                Activités de groupe
               </h2>
               
               <div className="grid grid-cols-1 gap-3">
@@ -129,7 +129,7 @@ export function CommunityPage() {
                   <div key={index} className="bg-white rounded-2xl shadow-md p-4">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1">
-                        <h3 className="font-semibold mb-1" style={{ color: 'var(--eco-navy)' }}>
+                        <h3 className="font-semibold mb-1" style={{ color: 'var(--viv-navy)' }}>
                           {activity.name}
                         </h3>
                         <div className="flex items-center gap-1 text-sm" style={{ color: '#64748B' }}>
@@ -141,10 +141,10 @@ export function CommunityPage() {
                     </div>
                     <button 
                       className="flex items-center gap-2 text-sm font-medium mt-2"
-                      style={{ color: 'var(--eco-green)' }}
+                      style={{ color: 'var(--viv-secondary)' }}
                     >
-                      Learn More
-                      <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(125, 217, 179, 0.2)' }}>
+                      Détails
+                      <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(42, 49, 212, 0.1)' }}>
                         <ChevronRight className="w-4 h-4" />
                       </div>
                     </button>
@@ -163,8 +163,8 @@ export function CommunityPage() {
               className="bg-white rounded-3xl shadow-lg p-6"
             >
               <div className="flex items-center gap-2 mb-6">
-                <Trophy className="w-6 h-6" style={{ color: 'var(--eco-green)' }} />
-                <h2 className="text-lg md:text-xl font-semibold" style={{ color: 'var(--eco-navy)' }}>Leaderboards</h2>
+                <Trophy className="w-6 h-6" style={{ color: 'var(--viv-secondary)' }} />
+                <h2 className="text-lg md:text-xl font-semibold" style={{ color: 'var(--viv-navy)' }}>Classement</h2>
               </div>
 
               {/* Podium - Top 3 */}
@@ -175,7 +175,7 @@ export function CommunityPage() {
                     <div 
                       className="w-16 h-16 md:w-18 md:h-18 rounded-full flex items-center justify-center text-white font-semibold border-4"
                       style={{ 
-                        background: 'linear-gradient(to bottom right, var(--eco-mint), var(--eco-green))',
+                        background: 'linear-gradient(to bottom right, var(--viv-red-light), var(--viv-red))',
                         borderColor: '#C0C0C0'
                       }}
                     >
@@ -185,11 +185,11 @@ export function CommunityPage() {
                       🥈
                     </div>
                   </div>
-                  <div className="text-xs font-medium text-center" style={{ color: 'var(--eco-navy)' }}>
+                  <div className="text-xs font-medium text-center" style={{ color: 'var(--viv-navy)' }}>
                     {topThree[1].name.split(' ')[0]}
                   </div>
                   <div className="text-xs" style={{ color: '#64748B' }}>
-                    {topThree[1].percentage}%
+                    {topThree[1].points} pts
                   </div>
                 </div>
 
@@ -199,7 +199,7 @@ export function CommunityPage() {
                     <div 
                       className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center text-white font-semibold text-lg border-4"
                       style={{ 
-                        background: 'linear-gradient(to bottom right, var(--eco-mint), var(--eco-green))',
+                        background: 'linear-gradient(to bottom right, var(--viv-red-light), var(--viv-red))',
                         borderColor: '#FFD700'
                       }}
                     >
@@ -209,11 +209,11 @@ export function CommunityPage() {
                       🏆
                     </div>
                   </div>
-                  <div className="text-sm font-semibold text-center" style={{ color: 'var(--eco-navy)' }}>
+                  <div className="text-sm font-semibold text-center" style={{ color: 'var(--viv-navy)' }}>
                     {topThree[0].name.split(' ')[0]}
                   </div>
                   <div className="text-xs" style={{ color: '#64748B' }}>
-                    {topThree[0].percentage}%
+                    {topThree[0].points} pts
                   </div>
                 </div>
 
@@ -223,7 +223,7 @@ export function CommunityPage() {
                     <div 
                       className="w-16 h-16 md:w-18 md:h-18 rounded-full flex items-center justify-center text-white font-semibold border-4"
                       style={{ 
-                        background: 'linear-gradient(to bottom right, var(--eco-mint), var(--eco-green))',
+                        background: 'linear-gradient(to bottom right, var(--viv-red-light), var(--viv-red))',
                         borderColor: '#CD7F32'
                       }}
                     >
@@ -233,11 +233,11 @@ export function CommunityPage() {
                       🥉
                     </div>
                   </div>
-                  <div className="text-xs font-medium text-center" style={{ color: 'var(--eco-navy)' }}>
+                  <div className="text-xs font-medium text-center" style={{ color: 'var(--viv-navy)' }}>
                     {topThree[2].name.split(' ')[0]}
                   </div>
                   <div className="text-xs" style={{ color: '#64748B' }}>
-                    {topThree[2].percentage}%
+                    {topThree[2].points} pts
                   </div>
                 </div>
               </div>
@@ -248,25 +248,25 @@ export function CommunityPage() {
                   <div
                     key={user.rank}
                     className="flex items-center gap-3 p-3 rounded-2xl"
-                    style={{ backgroundColor: 'rgba(125, 217, 179, 0.05)' }}
+                    style={{ backgroundColor: 'rgba(42, 49, 212, 0.05)' }}
                   >
                     <div className="w-8 text-center font-semibold" style={{ color: '#64748B' }}>
                       {user.rank}
                     </div>
                     <div 
                       className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm"
-                      style={{ background: 'linear-gradient(to bottom right, var(--eco-green-light), var(--eco-green))' }}
+                      style={{ background: 'linear-gradient(to bottom right, var(--viv-red-light), var(--viv-red))' }}
                     >
                       {user.avatar}
                     </div>
                     <div className="flex-1">
-                      <div className="font-medium" style={{ color: 'var(--eco-navy)' }}>
+                      <div className="font-medium" style={{ color: 'var(--viv-navy)' }}>
                         {user.name}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold" style={{ color: 'var(--eco-green)' }}>
-                        {user.percentage}%
+                      <span className="font-semibold" style={{ color: 'var(--viv-secondary)' }}>
+                        {user.points} pts
                       </span>
                       <ChevronRight className="w-4 h-4" style={{ color: '#94A3B8' }} />
                     </div>

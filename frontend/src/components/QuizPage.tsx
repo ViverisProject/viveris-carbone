@@ -67,7 +67,7 @@ const questions = [
   {
     id: 6,
     category: "Énergie",
-    question: "Utilisez-vous des énergies renouvelables ?",
+    question: "Utilisez-vous des Énergies renouvelables ?",
     options: [
       { label: "Oui, 100% renouvelable", value: 5, co2: 0 },
       { label: "Partiellement", value: 3, co2: 200 },
@@ -78,7 +78,7 @@ const questions = [
   {
     id: 7,
     category: "Consommation",
-    question: "À quelle fréquence achetez-vous des vêtements neufs ?",
+    question: "é quelle fréquence achetez-vous des vêtements neufs ?",
     options: [
       { label: "Rarement (moins de 5 par an)", value: 1, co2: 50 },
       { label: "Occasionnellement (5-10 par an)", value: 2, co2: 150 },
@@ -136,22 +136,20 @@ export function QuizPage() {
   const selectedAnswer = answers[currentQ.id];
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--eco-beige)' }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--viv-beige)' }}>
       {/* Header */}
       <header className="container mx-auto px-4 py-6">
         <div className="flex items-center gap-2">
-          <Leaf className="w-8 h-8" style={{ color: 'var(--eco-green)' }} />
-          <span className="text-2xl font-bold" style={{ color: 'var(--eco-navy)' }}>EcoTrack</span>
+            <img src="/src/Pack_charte_graphique/Logos/Logos_Viveris/Avec%20signature/Viveris%20-%20Logo%20-%20Baseline%20-%20RVB%20-%20Noir.png" alt="Viveris Carbone" className="h-10 object-contain" />
         </div>
       </header>
-
       {/* Progress Bar */}
       <div className="container mx-auto px-4 mb-8">
         <div className="max-w-2xl mx-auto">
-          <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--eco-mint)', opacity: 0.3 }}>
+          <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--viv-red-light)', opacity: 0.3 }}>
             <motion.div
               className="h-full"
-              style={{ backgroundColor: 'var(--eco-green)' }}
+              style={{ backgroundColor: 'var(--viv-secondary)' }}
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.3 }}
@@ -174,11 +172,11 @@ export function QuizPage() {
           className="max-w-2xl mx-auto"
         >
           <div className="bg-white/90 backdrop-blur rounded-2xl shadow-xl p-8">
-            <div className="inline-block px-3 py-1 rounded-full text-sm font-medium mb-4" style={{ backgroundColor: 'var(--eco-mint)', color: 'var(--eco-navy)', opacity: 0.8 }}>
+            <div className="inline-block px-3 py-1 rounded-full text-sm font-medium mb-4" style={{ backgroundColor: 'var(--viv-red-light)', color: 'var(--viv-navy)', opacity: 0.8 }}>
               {currentQ.category}
             </div>
 
-            <h2 className="text-2xl mb-8" style={{ color: 'var(--eco-navy)' }}>
+            <h2 className="text-2xl mb-8" style={{ color: 'var(--viv-navy)' }}>
               {currentQ.question}
             </h2>
 
@@ -193,12 +191,12 @@ export function QuizPage() {
                       : "bg-white hover:shadow-md"
                   }`}
                   style={{
-                    borderColor: selectedAnswer?.label === option.label ? 'var(--eco-green)' : '#E2E8F0',
-                    backgroundColor: selectedAnswer?.label === option.label ? 'var(--eco-mint)' : 'white',
+                    borderColor: selectedAnswer?.label === option.label ? 'var(--viv-red)' : '#E2E8F0',
+                    backgroundColor: selectedAnswer?.label === option.label ? 'var(--viv-red-light)' : 'white',
                     opacity: selectedAnswer?.label === option.label ? 0.3 : 1,
                   }}
                 >
-                  <span style={{ color: 'var(--eco-navy)' }}>{option.label}</span>
+                  <span style={{ color: 'var(--viv-navy)' }}>{option.label}</span>
                 </button>
               ))}
             </div>
@@ -210,9 +208,9 @@ export function QuizPage() {
               onClick={handlePrevious}
               disabled={currentQuestion === 0}
               className="flex items-center gap-2 px-6 py-3 rounded-full bg-white font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              style={{ color: 'var(--eco-green)' }}
-              onMouseEnter={(e) => !e.currentTarget.disabled && (e.currentTarget.style.backgroundColor = 'var(--eco-mint)', e.currentTarget.style.opacity = '0.3')}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+              style={{ color: 'var(--viv-secondary)' }}
+              onMouseEnter={(e) => !e.currentTarget.disabled && (e.currentTarget.style.backgroundColor = 'var(--viv-red-light)', e.currentTarget.style.opacity = '0.3')}
+              
             >
               <ArrowLeft className="w-5 h-5" />
               Précédent
@@ -222,9 +220,9 @@ export function QuizPage() {
               onClick={handleNext}
               disabled={!selectedAnswer}
               className="flex items-center gap-2 px-6 py-3 rounded-full text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              style={{ backgroundColor: selectedAnswer ? 'var(--eco-green)' : '#CBD5E1' }}
-              onMouseEnter={(e) => !e.currentTarget.disabled && (e.currentTarget.style.backgroundColor = 'var(--eco-green-dark)')}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = selectedAnswer ? 'var(--eco-green)' : '#CBD5E1'}
+              style={{ backgroundColor: selectedAnswer ? 'var(--viv-red)' : '#CBD5E1' }}
+              onMouseEnter={(e) => !e.currentTarget.disabled && (e.currentTarget.style.backgroundColor = 'var(--viv-red-dark)')}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = selectedAnswer ? 'var(--viv-red)' : '#CBD5E1'}
             >
               {currentQuestion === questions.length - 1 ? "Voir le résultat" : "Suivant"}
               <ArrowRight className="w-5 h-5" />

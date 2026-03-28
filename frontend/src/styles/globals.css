@@ -3,29 +3,32 @@
 :root {
   --font-size: 16px;
   
-  /* EcoTrack Color Palette */
-  --eco-beige: #FFF9E5;
-  --eco-mint: #5FC9A0;
-  --eco-green: #2D8B5F;
-  --eco-navy: #0F172A;
-  --eco-green-light: #7DD9B3;
-  --eco-green-dark: #1A6B47;
-  --eco-text-secondary: #475569;
-  --eco-text-tertiary: #64748B;
+  /* Viveris Color Palette */
+  --viv-beige: #FFE4DB;
+  --viv-red-light: #ff726a;
+  --viv-red: #FF5046;
+  --viv-navy: #0c0e3e;
+  --viv-secondary: #2A31D4;
+  --viv-blue-light: #7e83e5;
+  --viv-red-lighter: #ff958f;
+  --viv-red-light: #ff726a;
+  --viv-red-dark: #cc4038;
+  --viv-text-secondary: #475569;
+  --viv-text-tertiary: #64748B;
   
-  --background: #FFF9E5;
-  --foreground: #1E293B;
+  --background: #FFE4DB;
+  --foreground: #0c0e3e;
   --card: #ffffff;
-  --card-foreground: #1E293B;
+  --card-foreground: #0c0e3e;
   --popover: #ffffff;
-  --popover-foreground: #1E293B;
-  --primary: #4CAF89;
+  --popover-foreground: #0c0e3e;
+  --primary: #FF5046;
   --primary-foreground: #ffffff;
-  --secondary: #7DD9B3;
+  --secondary: #2A31D4;
   --secondary-foreground: #1E293B;
   --muted: #F5F5DC;
   --muted-foreground: #64748B;
-  --accent: #7DD9B3;
+  --accent: #2A31D4;
   --accent-foreground: #1E293B;
   --destructive: #d4183d;
   --destructive-foreground: #ffffff;
@@ -35,21 +38,21 @@
   --switch-background: #cbced4;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --ring: #4CAF89;
-  --chart-1: #4CAF89;
-  --chart-2: #7DD9B3;
+  --ring: #FF5046;
+  --chart-1: #FF5046;
+  --chart-2: #FF4D4D;
   --chart-3: #A8E6CF;
-  --chart-4: #2D8B5F;
-  --chart-5: #1E293B;
+  --chart-4: #A8000B;
+  --chart-5: #2A31D4;
   --radius: 0.625rem;
   --sidebar: #ffffff;
   --sidebar-foreground: #1E293B;
-  --sidebar-primary: #4CAF89;
+  --sidebar-primary: #FF5046;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #FFF9E5;
+  --sidebar-accent: #FFE4DB;
   --sidebar-accent-foreground: #1E293B;
   --sidebar-border: rgba(78, 175, 137, 0.2);
-  --sidebar-ring: #4CAF89;
+  --sidebar-ring: #E30613;
 }
 
 .dark {
@@ -74,14 +77,14 @@
   --ring: oklch(0.439 0 0);
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-1: oklch(0.5 0.2 20);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary: oklch(0.5 0.2 20);
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);

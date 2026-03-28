@@ -26,7 +26,7 @@ export function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: 'var(--eco-beige)' }}>
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: 'var(--viv-beige)' }}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -34,25 +34,22 @@ export function SignupPage() {
       >
         <div className="bg-white/90 backdrop-blur rounded-2xl shadow-xl p-8">
           {/* Logo */}
-          <div className="flex flex-col items-center mb-8">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center mb-3" style={{ backgroundColor: 'var(--eco-green)' }}>
-              <Leaf className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-2xl" style={{ color: 'var(--eco-navy)' }}>EcoTrack</h1>
+          <div className="flex justify-center mb-8">
+            <img src="/src/Pack_charte_graphique/Logos/Logos_Viveris/Avec%20signature/Viveris%20-%20Logo%20-%20Baseline%20-%20RVB%20-%20Noir.png" alt="Viveris Carbone" className="h-12 object-contain" />
           </div>
 
-          <h2 className="text-2xl text-center mb-6" style={{ color: 'var(--eco-navy)' }}>
+          <h2 className="text-2xl text-center mb-6" style={{ color: 'var(--viv-navy)' }}>
             Créer un compte
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--eco-navy)' }}>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--viv-navy)' }}>
                   Prénom
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--eco-green)' }} />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--viv-secondary)' }} />
                   <input
                     type="text"
                     value={formData.firstName}
@@ -62,7 +59,7 @@ export function SignupPage() {
                     className="w-full pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2"
                     style={{ 
                       border: '1px solid rgba(78, 175, 137, 0.3)',
-                      '--tw-ring-color': 'var(--eco-green)'
+                      '--tw-ring-color': 'var(--viv-red)'
                     } as any}
                     required
                   />
@@ -70,11 +67,11 @@ export function SignupPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--eco-navy)' }}>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--viv-navy)' }}>
                   Nom
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--eco-green)' }} />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--viv-secondary)' }} />
                   <input
                     type="text"
                     value={formData.lastName}
@@ -84,7 +81,7 @@ export function SignupPage() {
                     className="w-full pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2"
                     style={{ 
                       border: '1px solid rgba(78, 175, 137, 0.3)',
-                      '--tw-ring-color': 'var(--eco-green)'
+                      '--tw-ring-color': 'var(--viv-red)'
                     } as any}
                     required
                   />
@@ -93,11 +90,11 @@ export function SignupPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--eco-navy)' }}>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--viv-navy)' }}>
                 Adresse email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--eco-green)' }} />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--viv-secondary)' }} />
                 <input
                   type="email"
                   value={formData.email}
@@ -107,7 +104,7 @@ export function SignupPage() {
                   className="w-full pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2"
                   style={{ 
                     border: '1px solid rgba(78, 175, 137, 0.3)',
-                    '--tw-ring-color': 'var(--eco-green)'
+                    '--tw-ring-color': 'var(--viv-red)'
                   } as any}
                   required
                 />
@@ -115,11 +112,11 @@ export function SignupPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--eco-navy)' }}>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--viv-navy)' }}>
                 Mot de passe
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--eco-green)' }} />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--viv-secondary)' }} />
                 <input
                   type="password"
                   value={formData.password}
@@ -129,7 +126,7 @@ export function SignupPage() {
                   className="w-full pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2"
                   style={{ 
                     border: '1px solid rgba(78, 175, 137, 0.3)',
-                    '--tw-ring-color': 'var(--eco-green)'
+                    '--tw-ring-color': 'var(--viv-red)'
                   } as any}
                   required
                 />
@@ -138,10 +135,10 @@ export function SignupPage() {
 
             <button
               type="submit"
-              className="w-full text-white py-3 rounded-xl font-semibold transition-colors"
-              style={{ backgroundColor: 'var(--eco-green)' }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--eco-green-dark)'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--eco-green)'}
+              className="w-full text-white py-3 rounded-xl font-semibold transition-colors hover:opacity-90"
+              style={{ backgroundColor: 'var(--viv-secondary)' }}
+              
+              
             >
               Créer mon compte
             </button>
@@ -158,13 +155,13 @@ export function SignupPage() {
 
           <button
             onClick={handleGoogleSignup}
-            className="w-full bg-white py-3 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-white py-3 rounded-xl font-semibold transition-colors hover:opacity-90 flex items-center justify-center gap-2"
             style={{ 
               border: '2px solid rgba(78, 175, 137, 0.3)',
-              color: 'var(--eco-navy)'
+              color: 'var(--viv-navy)'
             }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--eco-mint)'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+            
+            
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -189,7 +186,7 @@ export function SignupPage() {
 
           <p className="text-center text-sm mt-6" style={{ color: '#64748B' }}>
             Avez-vous déjà un compte ?{" "}
-            <Link to="/login" className="font-semibold" style={{ color: 'var(--eco-green)' }}>
+            <Link to="/login" className="font-semibold" style={{ color: 'var(--viv-secondary)' }}>
               Me connecter
             </Link>
           </p>
