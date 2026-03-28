@@ -27,7 +27,7 @@ app.add_middleware(
 
 # --- CO2 Counter Structure ---
 
-from .co2_counter import CO2Counter, co2_counter_db
+from co2_counter import CO2Counter, co2_counter_db
 
 class HealthResponse(BaseModel):
     status: str
