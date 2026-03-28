@@ -24,9 +24,31 @@ app.add_middleware(
 )
 
 
+
+# --- CO2 Counter Structure ---
+
+from .co2_counter import CO2Counter, co2_counter_db
+
 class HealthResponse(BaseModel):
     status: str
     message: str
+from fastapi import Body
+
+
+
+
+# Endpoint pour obtenir la valeur du compteur CO2
+@app.get("/api/co2-counter", response_model=CO2Counter)
+async def get_co2_counter():
+    return co2_counter_db["counter"]
+
+# Endpoint pour mettre à jour la valeur du compteur CO2
+@app.post("/api/co2-counter", response_model=CO2Counter)
+async def update_co2_counter(counter: CO2Counter = Body(...)):
+    co2_counter_db["counter"].value = counter.value
+    if counter.description:
+        co2_counter_db["counter"].description = counter.description
+    return co2_counter_db["counter"]
 
 
 class MessageResponse(BaseModel):
