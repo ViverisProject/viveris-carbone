@@ -133,13 +133,13 @@ export function PredictionPage() {
                 className="inline-block px-5 py-2 rounded-full text-sm font-medium mb-6"
                 style={{
                   backgroundColor: "var(--viv-secondary)",
-                  color: "#1E293B",
+                  color: "white",
                 }}
               >
                 {step === 1 ? "Prédiction" : "Flexibilité"}
               </motion.div>
 
-              <h2 className="text-3xl md:text-4xl mb-4" style={{ color: "#1E293B" }}>
+              <h2 className="text-3xl md:text-4xl mb-4" style={{ color: "var(--viv-navy)" }}>
                 {step === 1
                   ? "Selon vous, dans quels domaines consommez-vous le plus ?"
                   : "Dans quels domaines avez-vous le plus de flexibilité?"}
@@ -204,7 +204,7 @@ export function PredictionPage() {
                         </motion.div>
                       )}
                     </div>
-                    <h3 className="text-xl mb-2" style={{ color: "#1E293B" }}>
+                    <h3 className="text-xl mb-2" style={{ color: "var(--viv-navy)" }}>
                       {category.name}
                     </h3>
                     <p className="text-sm" style={{ color: "#64748B" }}>
