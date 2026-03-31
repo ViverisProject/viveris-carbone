@@ -41,11 +41,19 @@ export function ResultPage() {
     Consommation: 0,
   };
 
-  // Mock calculation based on answers
-  categoryTotals.Transport = 1.8;
-  categoryTotals.Alimentation = 1.2;
-  categoryTotals.Énergie = 1.5;
-  categoryTotals.Consommation = 0.7;
+  if (result.answers) {
+    const ans = result.answers;
+    categoryTotals.Transport = Number((((ans[1]?.co2 || 0) + (ans[2]?.co2 || 0)) / 1000).toFixed(2));
+    categoryTotals.Alimentation = Number((((ans[3]?.co2 || 0) + (ans[4]?.co2 || 0)) / 1000).toFixed(2));
+    categoryTotals.Énergie = Number((((ans[5]?.co2 || 0) + (ans[6]?.co2 || 0)) / 1000).toFixed(2));
+    categoryTotals.Consommation = Number((((ans[7]?.co2 || 0) + (ans[8]?.co2 || 0)) / 1000).toFixed(2));
+  } else {
+    // Fallback in case answers are missing
+    categoryTotals.Transport = 1.8;
+    categoryTotals.Alimentation = 1.2;
+    categoryTotals.Énergie = 1.5;
+    categoryTotals.Consommation = 0.7;
+  }
 
   const chartData = [
     { name: "Transport", value: categoryTotals.Transport, color: "#ff5046" },
@@ -126,14 +134,29 @@ export function ResultPage() {
               
               const predictedHighest = predictions?.highestConsumption?.map((id: string) => categoryMap[id]) || [];
 
+              // Calculate percentages to ensure they always sum to exactly 100%
+              const sumOfValues = chartData.reduce((acc, entry) => acc + entry.value, 0);
+              const dataWithPercentages = chartData.map(entry => ({
+                ...entry,
+                percentage: sumOfValues > 0 ? Math.round((entry.value / sumOfValues) * 100) : 0
+              })).sort((a, b) => b.value - a.value);
+
+              // Fix rounding discrepancy (so sum is always exactly 100)
+              if (sumOfValues > 0) {
+                const totalPct = dataWithPercentages.reduce((acc, curr) => acc + curr.percentage, 0);
+                const diff = 100 - totalPct;
+                if (diff !== 0 && dataWithPercentages.length > 0) {
+                  dataWithPercentages[0].percentage += diff; // apply diff to the largest entry
+                }
+              }
+
               return (
                 <div className="mb-8 max-w-lg mx-auto">
                   <h3 className="text-xl font-semibold text-[var(--viv-navy)] mb-4 text-center">
                     Répartition par domaine
                   </h3>
                   <div className="space-y-3">
-                    {chartData
-                      .sort((a, b) => b.value - a.value)
+                    {dataWithPercentages
                       .map((entry, index) => {
                         const actualRank = sortedCategories.indexOf(entry.name) + 1;
                         const nPredictions = predictedHighest.length > 0 ? predictedHighest.length : 3;
@@ -170,7 +193,7 @@ export function ResultPage() {
                               )}
                             </div>
                             <div className="flex items-center gap-4 text-sm">
-                              <span className="font-bold" style={{ color: entry.color }}>{((entry.value / totalCO2) * 100).toFixed(0)}%</span>
+                              <span className="font-bold" style={{ color: entry.color }}>{entry.percentage}%</span>
                               <span className="text-gray-500 w-12 text-right">{entry.value}t</span>
                             </div>
                           </div>
