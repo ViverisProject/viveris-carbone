@@ -37,7 +37,7 @@ export function ChallengesPage() {
           className="flex items-center justify-between pt-6 pb-4"
         >
           <h1 className="text-2xl md:text-3xl font-bold" style={{ color: 'var(--eco-navy)' }}>
-            Challenges
+            Défis
           </h1>
           <button className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-md flex items-center justify-center">
             <Bell className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--eco-navy)' }} />
@@ -205,6 +205,12 @@ export function ChallengesPage() {
                   animate={{ width: `${treeProgress}%` }}
                   transition={{ duration: 1, delay: 0.5 }}
                 />
+              </div>
+
+              <div className="mt-5 flex items-center justify-center gap-2 bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <span className="font-semibold text-lg" style={{ color: 'var(--eco-navy)' }}>1</span>
+                <TreePine className="w-6 h-6 mx-1" style={{ color: 'var(--eco-green)' }} />
+                <span className="font-semibold text-lg" style={{ color: 'var(--eco-navy)' }}>= 1 000 points</span>
               </div>
             </motion.div>
           </div>

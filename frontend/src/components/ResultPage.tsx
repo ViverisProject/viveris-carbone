@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { Leaf, TrendingDown, Car, UtensilsCrossed, Zap, ShoppingBag, CheckCircle, XCircle } from "lucide-react";
+import { Leaf, TrendingDown, CheckCircle2, XCircle } from "lucide-react";
 import { motion } from "motion/react";
 
 
@@ -112,186 +112,74 @@ export function ResultPage() {
             )}
 
             {/* Chart Replacement: Sorted List */}
-            <div className="mb-8 max-w-lg mx-auto">
-              <h3 className="text-xl font-semibold text-[var(--viv-navy)] mb-4 text-center">
-                Répartition par domaine
-              </h3>
-              <div className="space-y-3">
-                {chartData
-                  .sort((a, b) => b.value - a.value)
-                  .map((entry, index) => (
-                    <div key={`list-${index}`} className="flex items-center justify-between p-4 rounded-xl bg-white shadow-sm border border-gray-100">
-                      <div className="flex items-center gap-3">
-                        <div className="w-4 h-4 rounded-full" style={{ backgroundColor: entry.color }}></div>
-                        <span className="font-medium text-[var(--viv-navy)]">{entry.name}</span>
-                      </div>
-                      <div className="flex items-center gap-4 text-sm">
-                        <span className="font-bold" style={{ color: entry.color }}>{((entry.value / totalCO2) * 100).toFixed(0)}%</span>
-                        <span className="text-gray-500 w-12 text-right">{entry.value}t</span>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            </div>
-
-            {/* Prediction Comparison */}
-            {predictions && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="mb-8 bg-gradient-to-br from-white to-[var(--viv-beige)]/30 p-6 rounded-2xl border-2 border-[var(--viv-red-lighter)]"
-              >
-                <h3 className="text-xl font-semibold text-[var(--viv-navy)] mb-4 text-center">
-                  📊 Comparaison avec vos prédictions
-                </h3>
+            {(() => {
+              const sortedCategories = Object.entries(categoryTotals)
+                .sort(([, a], [, b]) => (b as number) - (a as number))
+                .map(([name]) => name);
                 
-                <div className="grid md:grid-cols-2 gap-6">
-                  {/* Highest Consumption */}
-                  <div>
-                    <h4 className="font-medium text-[var(--viv-navy)] mb-3 text-center">
-                      Vos prédictions de consommation la plus élevée
-                    </h4>
-                    <div className="space-y-2">
-                      {predictions.highestConsumption.map((categoryId: string, index: number) => {
-                        const categoryMap: Record<string, string> = {
-                          transport: "Transport",
-                          food: "Alimentation",
-                          energy: "Énergie",
-                          consumption: "Consommation",
-                        };
-                        const categoryName = categoryMap[categoryId];
+              const categoryMap: Record<string, string> = {
+                transport: "Transport",
+                food: "Alimentation",
+                energy: "Énergie",
+                consumption: "Consommation"
+              };
+              
+              const predictedHighest = predictions?.highestConsumption?.map((id: string) => categoryMap[id]) || [];
+
+              return (
+                <div className="mb-8 max-w-lg mx-auto">
+                  <h3 className="text-xl font-semibold text-[var(--viv-navy)] mb-4 text-center">
+                    Répartition par domaine
+                  </h3>
+                  <div className="space-y-3">
+                    {chartData
+                      .sort((a, b) => b.value - a.value)
+                      .map((entry, index) => {
+                        const actualRank = sortedCategories.indexOf(entry.name) + 1;
+                        const nPredictions = predictedHighest.length > 0 ? predictedHighest.length : 3;
+                        let predictionIcon = null;
                         
-                        // Get actual ranking
-                        const sortedCategories = Object.entries(categoryTotals)
-                          .sort(([, a], [, b]) => (b as number) - (a as number))
-                          .map(([name]) => name);
-                        const actualRank = sortedCategories.indexOf(categoryName) + 1;
-                        const isCorrect = actualRank <= 3;
-                        
+                        if (predictions) {
+                          if (predictedHighest.includes(entry.name)) {
+                            // If they predicted it, and it's actually in their top N emissions
+                            if (actualRank <= nPredictions) {
+                              predictionIcon = <CheckCircle2 className="w-5 h-5 text-green-500" title="Prédiction correcte" />;
+                            } else {
+                              predictionIcon = <XCircle className="w-5 h-5 text-[var(--viv-red)]" title="Prédiction surestimée" />;
+                            }
+                          } else {
+                              if (actualRank <= nPredictions) {
+                                // If they DIDN'T predict it, but it IS their top emission
+                                predictionIcon = <XCircle className="w-5 h-5 text-[var(--viv-red)]" title="Oublié dans les prédictions" />;
+                              } else {
+                                // They didn't predict it, and it's correctly NOT a top emission
+                                predictionIcon = <CheckCircle2 className="w-5 h-5 text-green-500" title="Correctement estimé comme mineur" />;
+                              }
+                          }
+                        }
+
                         return (
-                          <div
-                            key={categoryId}
-                            className={`flex items-center justify-between p-3 rounded-lg ${
-                              isCorrect ? "bg-[var(--viv-beige)]/40" : "bg-[var(--viv-red-lighter)]/40"
-                            }`}
-                          >
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium text-gray-700">
-                                {index + 1}. {categoryName}
-                              </span>
+                          <div key={`list-${index}`} className="flex items-center justify-between p-4 rounded-xl bg-white shadow-sm border border-gray-100">
+                            <div className="flex items-center gap-3">
+                              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: entry.color }}></div>
+                              <span className="font-medium text-[var(--viv-navy)]">{entry.name}</span>
+                              {predictionIcon && (
+                                <div className="ml-2" title="Bilan de prédiction">
+                                  {predictionIcon}
+                                </div>
+                              )}
                             </div>
-                            {isCorrect ? (
-                              <CheckCircle className="w-5 h-5 text-[var(--viv-secondary)]" />
-                            ) : (
-                              <XCircle className="w-5 h-5 text-[var(--viv-red)]" />
-                            )}
+                            <div className="flex items-center gap-4 text-sm">
+                              <span className="font-bold" style={{ color: entry.color }}>{((entry.value / totalCO2) * 100).toFixed(0)}%</span>
+                              <span className="text-gray-500 w-12 text-right">{entry.value}t</span>
+                            </div>
                           </div>
                         );
                       })}
-                    </div>
-                  </div>
-
-                  {/* Flexibility */}
-                  <div>
-                    <h4 className="font-medium text-[var(--viv-navy)] mb-3 text-center">
-                      Domaines où vous pouvez changer
-                    </h4>
-                    <div className="space-y-2">
-                      {predictions.flexibility.map((categoryId: string, index: number) => {
-                        const categoryMap: Record<string, string> = {
-                          transport: "Transport",
-                          food: "Alimentation",
-                          energy: "Énergie",
-                          consumption: "Consommation",
-                        };
-                        const categoryName = categoryMap[categoryId];
-                        
-                        return (
-                          <div
-                            key={categoryId}
-                            className="flex items-center justify-between p-3 rounded-lg bg-white border border-[var(--viv-red-lighter)]"
-                          >
-                            <span className="font-medium text-gray-700">
-                              {index + 1}. {categoryName}
-                            </span>
-                            <span className="text-sm text-[var(--viv-secondary)]">
-                              Domaine d'action
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
                   </div>
                 </div>
-
-                <div className="mt-4 p-4 bg-white/50 rounded-lg">
-                  <p className="text-sm text-gray-700 text-center">
-                    💡 <span className="font-medium">Le saviez-vous ?</span> Comparer vos prédictions avec les résultats réels 
-                    vous aide à mieux comprendre votre impact environnemental et à identifier les opportunités d'amélioration.
-                  </p>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Category Breakdown */}
-            <div className="grid md:grid-cols-2 gap-4 mb-8">
-              <div className="bg-gradient-to-br bg-white p-4 rounded-xl">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 bg-[var(--viv-red)] rounded-full flex items-center justify-center">
-                    <Car className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-[var(--viv-navy)]">Transport</div>
-                    <div className="text-2xl font-bold text-[var(--viv-navy)]">
-                      {categoryTotals.Transport}t
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-br bg-white p-4 rounded-xl">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 bg-[#2a31d4] rounded-full flex items-center justify-center">
-                    <UtensilsCrossed className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-[var(--viv-navy)]">Alimentation</div>
-                    <div className="text-2xl font-bold text-[var(--viv-navy)]">
-                      {categoryTotals.Alimentation}t
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-br bg-white p-4 rounded-xl">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 bg-[#7e83e5] rounded-full flex items-center justify-center">
-                    <Zap className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-[var(--viv-navy)]">Énergie</div>
-                    <div className="text-2xl font-bold text-[var(--viv-navy)]">
-                      {categoryTotals.Énergie}t
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-br bg-white p-4 rounded-xl">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 bg-[#ff958f] rounded-full flex items-center justify-center">
-                    <Leaf className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-[var(--viv-navy)]">Consommation</div>
-                    <div className="text-2xl font-bold text-[var(--viv-navy)]">
-                      {categoryTotals.Consommation}t
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+              );
+            })()}
 
             {/* CTA Buttons */}
             {user ? (

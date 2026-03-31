@@ -1,27 +1,17 @@
 import { Link } from "react-router";
-import { Home, Target, Users, User, Plus } from "lucide-react";
-import { useState } from "react";
-import { CreateChallengeModal } from "./CreateChallengeModal";
+import { Home, Target, Users, User } from "lucide-react";
 
 interface NavigationProps {
   currentPage: string;
 }
 
 export function Navigation({ currentPage }: NavigationProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const links = [
     { to: "/dashboard", icon: Home, label: "Accueil", id: "dashboard" },
     { to: "/challenges", icon: Target, label: "Défis", id: "challenges" },
     { to: "/community", icon: Users, label: "Communauté", id: "community" },
     { to: "/profile", icon: User, label: "Profil", id: "profile" },
   ];
-
-  const handleCreateChallenge = (challenge: { title: string; category: string; points: number }) => {
-    console.log("Nouveau défi créé:", challenge);
-    // You can add logic here to save the challenge to localStorage or state management
-    alert(`Défi créé: ${challenge.title} (${challenge.category}, ${challenge.points} points)`);
-  };
 
   return (
     <>
@@ -36,40 +26,8 @@ export function Navigation({ currentPage }: NavigationProps) {
               paddingBottom: 'env(safe-area-inset-bottom)'
             }}
           >
-            {/* FAB Button */}
-            <div className="absolute left-1/2 -translate-x-1/2 -top-8">
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="w-16 h-16 rounded-full shadow-xl flex items-center justify-center transition-transform hover:scale-110 active:scale-95"
-                style={{ backgroundColor: 'var(--viv-red)' }}
-              >
-                <Plus className="w-8 h-8 text-white" />
-              </button>
-            </div>
-
             <div className="flex justify-around items-center h-20 pt-2">
-              {links.slice(0, 2).map((link) => {
-                const Icon = link.icon;
-                const isActive = currentPage === link.id;
-                return (
-                  <Link
-                    key={link.id}
-                    to={link.to}
-                    className="flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]"
-                    style={{
-                      color: isActive ? 'white' : 'rgba(255, 255, 255, 0.5)'
-                    }}
-                  >
-                    <Icon className="w-6 h-6" />
-                    <span className="text-xs font-medium">{link.label}</span>
-                  </Link>
-                );
-              })}
-              
-              {/* Spacer for FAB */}
-              <div className="w-16"></div>
-              
-              {links.slice(2, 4).map((link) => {
+              {links.map((link) => {
                 const Icon = link.icon;
                 const isActive = currentPage === link.id;
                 return (
@@ -105,18 +63,8 @@ export function Navigation({ currentPage }: NavigationProps) {
             </p>
           </div>
 
-          {/* Créer un défi Button */}
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="w-full py-4 rounded-2xl text-white font-semibold transition-all hover:shadow-lg mb-6 flex items-center justify-center gap-2"
-            style={{ backgroundColor: 'var(--viv-red)' }}
-          >
-            <Plus className="w-5 h-5" />
-            Nouveau défi
-          </button>
-
           {/* Navigation Links */}
-          <div className="flex-1 space-y-2">
+          <div className="flex-1 space-y-2 mt-4">
             {links.map((link) => {
               const Icon = link.icon;
               const isActive = currentPage === link.id;
@@ -140,18 +88,11 @@ export function Navigation({ currentPage }: NavigationProps) {
           {/* Footer */}
           <div className="pt-6 border-t" style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }}>
             <p className="text-xs text-center" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
-              © 2026 Viveris - Viveris Carbone
+              © 2026 Projet génie logiciel - Polytech
             </p>
           </div>
         </div>
       </nav>
-
-      {/* Créer un défi Modal */}
-      <CreateChallengeModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleCreateChallenge}
-      />
     </>
   );
 }

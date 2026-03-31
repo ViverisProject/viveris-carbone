@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Trophy, UserPlus, TreePine, Bell, ChevronRight, Users as UsersIcon } from "lucide-react";
+import { Search, Trophy, UserPlus, TreePine, Bell, ChevronRight } from "lucide-react";
 import { motion } from "motion/react";
 import { Navigation } from "./Navigation";
 
@@ -28,12 +28,6 @@ export function CommunityPage() {
   const topThree = leaderboard.slice(0, 3);
   const restOfLeaderboard = leaderboard.slice(3);
 
-  const activities = [
-    { name: "Community Carpool Week", participants: 5, icon: "🚗" },
-    { name: "Neighborhood Clean-Up Day", participants: 28, icon: "♻️" },
-    { name: "Plant Tree Weekend", participants: 32, icon: "🌳" },
-  ];
-
   return (
     <div className="min-h-screen pb-32 md:pb-8 md:pl-64 lg:pl-72" style={{ backgroundColor: 'var(--viv-beige)' }}>
       <div className="container mx-auto px-4 md:px-8 lg:px-12 max-w-7xl">
@@ -56,9 +50,9 @@ export function CommunityPage() {
         </p>
 
         {/* Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mt-8">
           {/* Left Column */}
-          <div className="space-y-6">
+          <div className="space-y-10 lg:col-span-7">
             {/* Search Bar */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -72,9 +66,10 @@ export function CommunityPage() {
                   placeholder="Search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-white rounded-2xl focus:outline-none focus:ring-2"
-                  style={{ 
-                    border: '1px solid rgba(30, 41, 59, 0.1)',
+                  className="w-full pl-12 pr-4 py-4 bg-white rounded-[20px] focus:outline-none focus:ring-2"
+                  style={{
+                    border: '1px solid rgba(30, 41, 59, 0.05)',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.02)',
                     '--tw-ring-color': 'var(--viv-red)'
                   } as any}
                 />
@@ -97,15 +92,12 @@ export function CommunityPage() {
                 </button>
               </div>
               
-              <div className="flex gap-3 overflow-x-auto pb-2">
+              <div className="flex gap-4 md:gap-6 overflow-x-auto pb-4 pt-2">
                 {friends.map((friend) => (
                   <div key={friend.id} className="flex-shrink-0">
-                    <div 
-                      className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center text-white font-semibold text-sm border-2"
-                      style={{ 
-                        background: 'linear-gradient(to bottom right, var(--viv-red-light), var(--viv-red))',
-                        borderColor: 'var(--viv-red-light)'
-                      }}
+                    <div
+                      className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center text-white font-semibold text-lg"
+                      style={{ backgroundColor: 'var(--viv-red)' }}
                     >
                       {friend.avatar}
                     </div>
@@ -114,48 +106,11 @@ export function CommunityPage() {
               </div>
             </motion.div>
 
-            {/* Activités de groupe */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <h2 className="text-lg md:text-xl font-semibold mb-4" style={{ color: 'var(--viv-navy)' }}>
-                Activités de groupe
-              </h2>
-              
-              <div className="grid grid-cols-1 gap-3">
-                {activities.map((activity, index) => (
-                  <div key={index} className="bg-white rounded-2xl shadow-md p-4">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1">
-                        <h3 className="font-semibold mb-1" style={{ color: 'var(--viv-navy)' }}>
-                          {activity.name}
-                        </h3>
-                        <div className="flex items-center gap-1 text-sm" style={{ color: '#64748B' }}>
-                          <UsersIcon className="w-4 h-4" />
-                          <span>{activity.participants}</span>
-                        </div>
-                      </div>
-                      <div className="text-2xl">{activity.icon}</div>
-                    </div>
-                    <button 
-                      className="flex items-center gap-2 text-sm font-medium mt-2"
-                      style={{ color: 'var(--viv-secondary)' }}
-                    >
-                      Détails
-                      <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(42, 49, 212, 0.1)' }}>
-                        <ChevronRight className="w-4 h-4" />
-                      </div>
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
+
           </div>
 
           {/* Right Column - Leaderboard */}
-          <div>
+          <div className="lg:col-span-5">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -168,20 +123,20 @@ export function CommunityPage() {
               </div>
 
               {/* Podium - Top 3 */}
-              <div className="flex items-end justify-center gap-4 mb-8">
+              <div className="flex items-end justify-center gap-6 mb-10">        
                 {/* 2nd Place */}
                 <div className="flex flex-col items-center">
                   <div className="relative mb-2">
                     <div 
-                      className="w-16 h-16 md:w-18 md:h-18 rounded-full flex items-center justify-center text-white font-semibold border-4"
-                      style={{ 
-                        background: 'linear-gradient(to bottom right, var(--viv-red-light), var(--viv-red))',
-                        borderColor: '#C0C0C0'
+                      className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center text-white font-semibold border-[6px]"
+                      style={{
+                        backgroundColor: 'var(--viv-red)',
+                        borderColor: '#e5e7eb'
                       }}
                     >
                       {topThree[1].avatar}
                     </div>
-                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style={{ backgroundColor: '#C0C0C0', color: 'white' }}>
+                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold shadow-sm" style={{ backgroundColor: '#e5e7eb', color: 'var(--viv-navy)' }}>
                       🥈
                     </div>
                   </div>
@@ -197,15 +152,15 @@ export function CommunityPage() {
                 <div className="flex flex-col items-center -mt-4">
                   <div className="relative mb-2">
                     <div 
-                      className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center text-white font-semibold text-lg border-4"
-                      style={{ 
-                        background: 'linear-gradient(to bottom right, var(--viv-red-light), var(--viv-red))',
-                        borderColor: '#FFD700'
+                      className="w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center text-white font-semibold text-lg border-[6px]"
+                      style={{
+                        backgroundColor: 'var(--viv-red)',
+                        borderColor: '#fbbf24'
                       }}
                     >
                       {topThree[0].avatar}
                     </div>
-                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style={{ backgroundColor: '#FFD700', color: 'white' }}>
+                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold shadow-sm" style={{ backgroundColor: '#fbbf24', color: 'white' }}>
                       🏆
                     </div>
                   </div>
@@ -221,15 +176,15 @@ export function CommunityPage() {
                 <div className="flex flex-col items-center">
                   <div className="relative mb-2">
                     <div 
-                      className="w-16 h-16 md:w-18 md:h-18 rounded-full flex items-center justify-center text-white font-semibold border-4"
-                      style={{ 
-                        background: 'linear-gradient(to bottom right, var(--viv-red-light), var(--viv-red))',
-                        borderColor: '#CD7F32'
+                      className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center text-white font-semibold border-[6px]"
+                      style={{
+                        backgroundColor: 'var(--viv-red)',
+                        borderColor: '#d97706'
                       }}
                     >
                       {topThree[2].avatar}
                     </div>
-                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style={{ backgroundColor: '#CD7F32', color: 'white' }}>
+                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold shadow-sm" style={{ backgroundColor: '#d97706', color: 'white' }}>
                       🥉
                     </div>
                   </div>
@@ -243,19 +198,19 @@ export function CommunityPage() {
               </div>
 
               {/* Rest of Leaderboard */}
-              <div className="space-y-2 max-h-96 overflow-y-auto">
+              <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
                 {restOfLeaderboard.map((user) => (
                   <div
                     key={user.rank}
-                    className="flex items-center gap-3 p-3 rounded-2xl"
-                    style={{ backgroundColor: 'rgba(42, 49, 212, 0.05)' }}
+                    className="flex items-center gap-4 p-4 rounded-[20px]"
+                    style={{ backgroundColor: '#f8fafc' }}      
                   >
                     <div className="w-8 text-center font-semibold" style={{ color: '#64748B' }}>
                       {user.rank}
                     </div>
                     <div 
                       className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm"
-                      style={{ background: 'linear-gradient(to bottom right, var(--viv-red-light), var(--viv-red))' }}
+                      style={{ backgroundColor: 'var(--viv-red)' }}
                     >
                       {user.avatar}
                     </div>
