@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
 from dotenv import load_dotenv
+from database.database import test_supabase_connection, get_supabase
 
 # Load .env for backwards compatibility
 load_dotenv()
@@ -33,6 +34,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+async def startup_event():
+    print("🚀 Starting FastAPI...")
+    test_supabase_connection()
 
 
 class HealthResponse(BaseModel):
@@ -66,6 +72,11 @@ async def health_check():
 async def hello_world():
     """Hello world endpoint"""
     return {"message": "Hello from FastAPI backend!"}
+
+
+@app.get("/")
+async def test_api():
+    return {"message": "BestBy API is running 🚀"}
 
 
 if __name__ == "__main__":

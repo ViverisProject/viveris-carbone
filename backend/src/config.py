@@ -27,6 +27,8 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise ValueError("❌ Missing Supabase configuration in environment variables!")
 
 def get_allowed_origins():
     return ALLOWED_ORIGINS
