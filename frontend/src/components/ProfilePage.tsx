@@ -37,10 +37,10 @@ export function ProfilePage() {
   };
 
   const achievements = [
-    { name: "First Tree", icon: "🌱", unlocked: true },
-    { name: "7 Série de jours", icon: "🔥", unlocked: true },
-    { name: "5 Trees", icon: "🌳", unlocked: false },
-    { name: "30 Série de jours", icon: "⚡", unlocked: false },
+    { name: "Premier arbre", icon: "🌱", unlocked: true },
+    { name: "7 Jours consécutifs", icon: "🔥", unlocked: true },
+    { name: "5 Arbres", icon: "🌳", unlocked: false },
+    { name: "30 Jours consécutifs", icon: "⚡", unlocked: false },
   ];
 
   return (
@@ -53,7 +53,7 @@ export function ProfilePage() {
           className="flex items-center justify-between pt-6 pb-4"
         >
           <h1 className="text-2xl md:text-3xl font-bold" style={{ color: 'var(--viv-navy)' }}>
-            Profile
+            Profil
           </h1>
           <button className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-md flex items-center justify-center">
             <Settings className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--viv-navy)' }} />
@@ -81,11 +81,11 @@ export function ProfilePage() {
                 </div>
                 <div className="flex-1">
                   <h2 className="text-xl md:text-2xl mb-1" style={{ color: 'var(--viv-navy)' }}>
-                    {user?.firstName || "User"} {user?.lastName || ""}
+                    {user?.firstName || "Utilisateur"} {user?.lastName || ""}
                   </h2>
                   <p className="flex items-center gap-2 text-sm md:text-base" style={{ color: '#64748B' }}>
                     <Mail className="w-4 h-4" />
-                    {user?.email || "email@example.com"}
+                    {user?.email || "utilisateur@exemple.com"}
                   </p>
                 </div>
               </div>
@@ -120,7 +120,7 @@ export function ProfilePage() {
               transition={{ delay: 0.2 }}
             >
               <h3 className="text-lg md:text-xl font-semibold mb-4" style={{ color: 'var(--viv-navy)' }}>
-                Statistics
+                Statistiques
               </h3>
               
               <div className="grid grid-cols-2 gap-3 mb-6">
@@ -134,7 +134,7 @@ export function ProfilePage() {
                   <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>
                     {stats.challengesCompleted}
                   </div>
-                  <div className="text-sm" style={{ color: '#64748B' }}>Défis Completed</div>
+                  <div className="text-sm" style={{ color: '#64748B' }}>Défis terminés</div>
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-md p-4">
@@ -160,7 +160,7 @@ export function ProfilePage() {
                   <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>
                     {stats.co2Reduced}t
                   </div>
-                  <div className="text-sm" style={{ color: '#64748B' }}>CO2 Reduced This Year</div>
+                  <div className="text-sm" style={{ color: '#64748B' }}>CO2 réduit cette année</div>
                 </div>
               </div>
             </motion.div>
@@ -172,7 +172,7 @@ export function ProfilePage() {
               transition={{ delay: 0.3 }}
             >
               <h3 className="text-lg md:text-xl font-semibold mb-4" style={{ color: 'var(--viv-navy)' }}>
-                Achievements
+                Succès
               </h3>
 
               <div className="grid grid-cols-4 gap-3">

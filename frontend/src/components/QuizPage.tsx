@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { ArrowLeft, ArrowRight, Leaf } from "lucide-react";
 import { motion } from "motion/react";
 
-const questions = [
+export const questions = [
   {
     id: 1,
     category: "Transport",

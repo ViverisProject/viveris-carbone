@@ -1,29 +1,55 @@
-import { useState } from "react";
-import { Flame, CheckCircle2, Circle, TreePine, Bell, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Flame, CheckCircle2, Circle, TreePine, Bell, Sprout, Sun, Cloud, TreeDeciduous } from "lucide-react";
 import { motion } from "motion/react";
 import { Navigation } from "./Navigation";
+import challengesData from "../data/challenges.json";
 
 export function ChallengesPage() {
-  const [challenges, setChallenges] = useState([
-    { id: 1, title: "0g de viande rouge aujourd'hui", completed: true, points: 50, category: "Alimentation" },
-    { id: 2, title: "Utiliser les transports en commun", completed: true, points: 30, category: "Transport" },
-    { id: 3, title: "Éteindre les appareils en veille", completed: false, points: 20, category: "Énergie" },
-    { id: 4, title: "Acheter local et de saison", completed: false, points: 40, category: "Alimentation" },
-    { id: 5, title: "Zéro plastique à usage unique", completed: true, points: 35, category: "Consommation" },
-    { id: 6, title: "Réduire la température de 1°C", completed: false, points: 25, category: "Énergie" },
-  ]);
+  const getRandomChallenges = () => {
+    const getByPoints = (pts: number, count: number) => {
+      return [...challengesData]
+        .filter(c => c.points === pts)
+        .sort(() => 0.5 - Math.random())
+        .slice(0, count)
+        .map(c => ({ ...c, completed: false }));
+    };
+
+    return [
+      ...getByPoints(10, 2),
+      ...getByPoints(20, 1),
+      ...getByPoints(30, 1),
+      ...getByPoints(40, 1),
+      ...getByPoints(50, 1)
+    ];
+  };
+
+  const [challenges, setChallenges] = useState(() => getRandomChallenges());
 
   const streak = 12;
-  const totalPoints = 1240;
-  const treesPlanted = 2;
-  const treeProgress = 65;
+  const [totalPoints, setTotalPoints] = useState(2650);
+
+  const treesPlanted = Math.floor(totalPoints / 1000);
+  const treeProgress = Math.floor((totalPoints % 1000) / 10);
 
   const completedToday = challenges.filter((c) => c.completed).length;
   const totalChallenges = challenges.length;
 
+  useEffect(() => {
+    if (completedToday === totalChallenges && totalChallenges > 0) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [completedToday, totalChallenges]);
+
   const toggleChallenge = (id: number) => {
     setChallenges(
-      challenges.map((c) => (c.id === id ? { ...c, completed: !c.completed } : c))
+      challenges.map((c) => {
+        if (c.id === id) {
+          const newCompleted = !c.completed;
+          setTotalPoints((prev) => prev + (newCompleted ? c.points : -c.points));
+          return { ...c, completed: newCompleted };
+        }
+        return c;
+      })
     );
   };
 
@@ -45,13 +71,64 @@ export function ChallengesPage() {
         </motion.div>
 
         <p className="text-sm md:text-base mb-6" style={{ color: 'var(--eco-text-secondary)' }}>
-          Terminez vos défis quotidiens pour développer votre arbre et gagner des points.
+          Relevez vos défis pour développer votre arbre et gagner des points.
         </p>
 
         {/* Grid Layout for Desktop */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Stats Cards */}
           <div className="lg:col-span-2 space-y-6">
+            {completedToday === totalChallenges && totalChallenges > 0 && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: -20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                className="rounded-3xl p-6 shadow-lg flex flex-col items-center text-center relative overflow-hidden bg-white"
+              >
+                <motion.div 
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                  className="absolute -top-4 -right-4 opacity-5"
+                  style={{ color: 'var(--viv-navy)' }}
+                >
+                  <Flame size={120} />
+                </motion.div>
+                <motion.div 
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                  className="absolute bottom-2 -left-4 opacity-5"
+                  style={{ color: 'var(--eco-green)' }}
+                >
+                  <Sprout size={100} />
+                </motion.div>
+                
+                <div className="p-3 rounded-2xl mb-4 shadow-sm relative z-10 flex items-center justify-center" style={{ backgroundColor: 'var(--viv-beige)' }}>
+                  <TreePine size={32} style={{ color: 'var(--viv-navy)' }} />
+                </div>
+                
+                <h2 className="text-xl md:text-2xl font-bold mb-2 relative z-10" style={{ color: 'var(--viv-navy)', fontFamily: 'var(--font-sans)' }}>
+                  Incroyable ! 🎉
+                </h2>
+                <p className="mb-6 md:text-lg max-w-md relative z-10" style={{ color: 'var(--viv-text-secondary)' }}>
+                  Vous avez accompli tous vos défis. La planète vous remercie !
+                </p>
+                
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    setChallenges(getRandomChallenges());
+                    setTimeout(() => {
+                      document.getElementById('challenges-section')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 50);
+                  }}
+                  className="relative z-10 px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all"
+                  style={{ backgroundColor: 'var(--viv-navy)', color: 'white' }}
+                >
+                  Débloquer de nouveaux défis
+                </motion.button>
+              </motion.div>
+            )}
+
             {/* Streak & Points Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -85,7 +162,7 @@ export function ChallengesPage() {
               className="bg-white rounded-3xl shadow-lg p-5"
             >
               <div className="flex justify-between items-center mb-3">
-                <span className="font-semibold md:text-lg" style={{ color: 'var(--eco-navy)' }}>Today's Progress</span>
+                <span className="font-semibold md:text-lg" style={{ color: 'var(--eco-navy)' }}>Vos progrès</span>
                 <span className="font-semibold md:text-lg" style={{ color: 'var(--eco-green)' }}>
                   {completedToday}/{totalChallenges}
                 </span>
@@ -101,14 +178,15 @@ export function ChallengesPage() {
               </div>
             </motion.div>
 
-            {/* Challenges List */}
+            {/* Challenges List Section */}
             <motion.div
+              id="challenges-section"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
               <h2 className="text-lg md:text-xl font-semibold mb-4" style={{ color: 'var(--eco-navy)' }}>
-                Today's Challenges
+                Défis à relever
               </h2>
 
               <div className="space-y-3">
@@ -167,10 +245,10 @@ export function ChallengesPage() {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h2 className="text-lg md:text-xl font-semibold mb-1" style={{ color: 'var(--eco-navy)' }}>
-                    Your Tree is Growing
+                    Votre arbre grandit
                   </h2>
                   <p className="text-sm md:text-base" style={{ color: '#64748B' }}>
-                    {treesPlanted} tree{treesPlanted > 1 ? "s" : ""} planted
+                    {treesPlanted} arbre{treesPlanted > 1 ? "s" : ""} planté{treesPlanted > 1 ? "s" : ""}
                   </p>
                 </div>
                 <div className="text-right">
@@ -180,31 +258,82 @@ export function ChallengesPage() {
               </div>
 
               {/* Tree Visualization */}
-              <div className="relative h-48 md:h-56 rounded-2xl overflow-hidden mb-4" style={{ background: 'linear-gradient(to bottom, #E0F2FE, #D1FAE5)' }}>
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: treeProgress / 100 }}
-                    transition={{ duration: 1 }}
-                    className="relative"
-                  >
-                    <TreePine
-                      className="w-28 h-28 md:w-32 md:h-32"
-                      style={{ color: 'var(--eco-green)', filter: "drop-shadow(0 4px 6px rgba(0,0,0,0.1))" }}
-                    />
-                  </motion.div>
+              <div 
+                className="relative h-64 md:h-72 rounded-2xl overflow-hidden mb-6 shadow-inner border border-gray-100" 
+                style={{ background: 'linear-gradient(to bottom, #87CEEB, #E0F2FE)' }}
+              >
+                {/* Background Elements */}
+                <motion.div 
+                  animate={{ x: [0, 20, 0] }} 
+                  transition={{ repeat: Infinity, duration: 10, ease: "easeInOut" }}
+                  className="absolute top-20 right-10 text-white opacity-80"
+                >
+                  <Cloud size={48} className="text-white" fill="white" />
+                </motion.div>
+                <motion.div 
+                  animate={{ x: [20, 0, 20] }} 
+                  transition={{ repeat: Infinity, duration: 15, ease: "easeInOut" }}
+                  className="absolute top-6 left-6 text-white opacity-60"
+                >
+                  <Cloud size={40} className="text-white" fill="white" />
+                </motion.div>
+                <motion.div 
+                  animate={{ rotate: 360 }} 
+                  transition={{ repeat: Infinity, duration: 50, ease: "linear" }}
+                  className="absolute top-4 right-4"
+                >
+                  <Sun size={52} className="text-yellow-400" fill="#FBBF24" />
+                </motion.div>
+
+                {/* Ground */}
+                <div className="absolute bottom-0 left-0 right-0 h-10 z-10" style={{ background: 'linear-gradient(to bottom, #84CC16, #15803D)' }}>
+                  <div className="absolute top-0 w-full h-2 bg-green-500 opacity-50 blur-sm"></div>
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 h-6" style={{ backgroundColor: 'rgba(180, 83, 9, 0.3)' }} />
+
+                {/* Tree */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center pb-2">
+                  <div className="relative">
+                    {/* Arbre vide (arrière-plan) */}
+                    <TreePine 
+                      size={220} 
+                      className="text-white opacity-80" 
+                      fill="rgba(255, 255, 255, 0.4)"
+                      strokeWidth={1}
+                      style={{ filter: "drop-shadow(0 10px 15px rgba(0,0,0,0.1))" }}
+                    />
+
+                    {/* Arbre rempli (qui monte comme un verre d'eau) */}
+                    <motion.div
+                      className="absolute top-0 left-0"
+                      initial={{ clipPath: "inset(100% 0 0 0)" }}
+                      animate={{ clipPath: `inset(${100 - treeProgress}% 0 0 0)` }}
+                      transition={{ duration: 1.2, type: "spring", bounce: 0.2 }}
+                    >
+                      <TreePine 
+                        size={220} 
+                        className="text-emerald-700" 
+                        fill="#22C55E"
+                        strokeWidth={1.5}
+                      />
+                    </motion.div>
+                  </div>
+                </div>
               </div>
 
-              <div className="h-3 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(125, 217, 179, 0.2)' }}>
+              <div className="h-4 rounded-full overflow-hidden border border-gray-100 shadow-inner" style={{ backgroundColor: 'rgba(125, 217, 179, 0.2)' }}>
                 <motion.div
-                  className="h-full rounded-full"
+                  className="h-full rounded-full relative overflow-hidden"
                   style={{ backgroundColor: 'var(--eco-green)' }}
                   initial={{ width: 0 }}
-                  animate={{ width: `${treeProgress}%` }}
-                  transition={{ duration: 1, delay: 0.5 }}
-                />
+                  animate={{ width: `${Math.min(100, Math.max(3, treeProgress))}%` }}
+                  transition={{ duration: 1, type: "spring" }}
+                >
+                  <motion.div 
+                    animate={{ x: ['-100%', '200%'] }}
+                    transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+                    className="absolute top-0 bottom-0 w-1/2 bg-white opacity-20 transform -skew-x-12"
+                  />
+                </motion.div>
               </div>
 
               <div className="mt-5 flex items-center justify-center gap-2 bg-white rounded-2xl p-4 shadow-sm border border-gray-100">

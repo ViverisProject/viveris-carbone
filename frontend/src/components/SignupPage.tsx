@@ -21,7 +21,7 @@ export function SignupPage() {
 
   const handleGoogleSignup = () => {
     // Mock Google signup
-    localStorage.setItem("user", JSON.stringify({ firstName: "User", email: "user@example.com" }));
+    localStorage.setItem("user", JSON.stringify({ firstName: "Utilisateur", email: "utilisateur@exemple.com" }));
     navigate("/dashboard");
   };
 

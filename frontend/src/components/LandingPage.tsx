@@ -51,15 +51,26 @@ export function LandingPage() {
               pour atteindre l'objectif de 2,3 tonnes de CO2 par an d'ici 2050.
             </p>
 
-            <Link
-              to="/quiz"
-              className="inline-block text-white px-8 py-4 rounded-full text-lg font-semibold transition-all shadow-lg hover:shadow-xl"
-              style={{ backgroundColor: 'var(--viv-secondary)' }}
-              
-              
-            >
-              Calculer mon empreinte
-            </Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                to="/quiz"
+                className="inline-block text-white px-8 py-4 rounded-full text-lg font-semibold transition-all shadow-lg hover:shadow-xl"
+                style={{ backgroundColor: 'var(--viv-secondary)' }}
+              >
+                Calculer mon empreinte
+              </Link>
+              <Link
+                to="/login"
+                className="inline-block px-8 py-4 rounded-full text-lg font-semibold transition-all border-2"
+                style={{ color: 'var(--viv-navy)', borderColor: 'var(--viv-navy)' }}
+              >
+                Se connecter
+              </Link>
+            </div>
+
+            <p className="text-sm mt-4" style={{ color: '#64748B' }}>
+              Pas encore de compte ? Faites d'abord votre premier calcul, puis créez votre compte pour sauvegarder vos résultats.
+            </p>
           </motion.div>
 
           {/* Features */}

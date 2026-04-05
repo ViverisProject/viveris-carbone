@@ -13,13 +13,13 @@ export function LoginPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Mock login - in real app, this would call an API
-    localStorage.setItem("user", JSON.stringify({ firstName: "User", email: formData.email }));
+    localStorage.setItem("user", JSON.stringify({ firstName: "Utilisateur", email: formData.email }));
     navigate("/dashboard");
   };
 
   const handleGoogleLogin = () => {
     // Mock Google login
-    localStorage.setItem("user", JSON.stringify({ firstName: "User", email: "user@example.com" }));
+    localStorage.setItem("user", JSON.stringify({ firstName: "Utilisateur", email: "utilisateur@exemple.com" }));
     navigate("/dashboard");
   };
 

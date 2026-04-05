@@ -4,13 +4,21 @@ import { toast } from "sonner";
 import { Car, UtensilsCrossed, Zap, Leaf, ChevronRight, X } from "lucide-react";
 import { motion } from "motion/react";
 import { Navigation } from "./Navigation";
+import { questions } from "./QuizPage";
 
 export function DashboardPage() {
   const [user, setUser] = useState<any>(null);
   const [quizResult, setQuizResult] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<any>({ name: "", icon: Leaf, numericValue: 0 });
-  const [consumptionValue, setConsumptionValue] = useState("");
+  const [domainAnswers, setDomainAnswers] = useState<Record<number, any>>({});
+  
+  const categoryMap: Record<string, string> = {
+    "Mobilité": "Transport",
+    "Alimentation": "Alimentation",
+    "Énergie": "Énergie",
+    "Mode de vie": "Consommation"
+  };
   
   const [categoryTotals, setCategoryTotals] = useState({
     "Mobilité": 1.7, 
@@ -56,22 +64,42 @@ export function DashboardPage() {
 
   const handleOpenModal = (item: any) => {
     setSelectedCategory(item);
+    
+    // Pre-fill answers if they exist in quizResult
+    if (quizResult && quizResult.answers) {
+      const domainCategory = categoryMap[item.name];
+      const categoryQuestions = questions.filter(q => q.category === domainCategory);
+      
+      const currentAnswers: Record<number, any> = {};
+      categoryQuestions.forEach(q => {
+        if (quizResult.answers[q.id]) {
+          currentAnswers[q.id] = quizResult.answers[q.id];
+        }
+      });
+      setDomainAnswers(currentAnswers);
+    } else {
+      setDomainAnswers({});
+    }
+    
     setIsModalOpen(true);
-    setConsumptionValue(item.numericValue.toString());
   };
 
   const handleSaveModification = () => {
-    if (consumptionValue === "" || isNaN(Number(consumptionValue)) || Number(consumptionValue) < 0) {
-       toast.error("Veuillez entrer une valeur valide (positive).");
+    const domainCategory = categoryMap[selectedCategory.name];
+    const categoryQuestions = questions.filter(q => q.category === domainCategory);
+    
+    const answeredCount = categoryQuestions.filter(q => domainAnswers[q.id]).length;
+    if (answeredCount < categoryQuestions.length) {
+       toast.error("Veuillez répondre à toutes les questions.");
        return;
     }
     
-    const newVal = Number(consumptionValue);
+    const newVal = categoryQuestions.reduce((sum, q) => sum + (domainAnswers[q.id]?.co2 || 0), 0) / 1000;
     const oldVal = selectedCategory.numericValue;
     const diffNum = newVal - oldVal;
 
-    if(diffNum === 0) {
-       toast.info("Aucune modification effectuée.");
+    if (Math.abs(diffNum) < 0.01) {
+       toast.info("Aucune modification significative effectuée.");
        setIsModalOpen(false);
        return;
     }
@@ -80,6 +108,13 @@ export function DashboardPage() {
       ...prev,
       [selectedCategory.name]: newVal
     }));
+
+    if (quizResult && quizResult.answers) {
+       const newAnswers = { ...quizResult.answers, ...domainAnswers };
+       const updatedQuizResult = { ...quizResult, answers: newAnswers };
+       sessionStorage.setItem("quizResult", JSON.stringify(updatedQuizResult));
+       setQuizResult(updatedQuizResult);
+    }
 
     const today = new Date();
     const dateStr = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth()+1).toString().padStart(2, '0')}/${today.getFullYear()}`;
@@ -90,7 +125,7 @@ export function DashboardPage() {
       ...prev.slice(0, 3)
     ]);
     
-    toast.success(`Modification pour ${selectedCategory.name} enregistrée !`);
+    toast.success(`Consommations pour ${selectedCategory.name} mises à jour !`);
     setIsModalOpen(false);
   };
 
@@ -116,7 +151,7 @@ export function DashboardPage() {
             {user?.firstName?.charAt(0) || "U"}
           </div>
           <span className="font-bold text-lg" style={{ color: 'var(--viv-navy)' }}>
-            {user?.firstName || "Robbin"}
+            {user?.firstName || "Utilisateur"}
           </span>
         </motion.div>
 
@@ -208,46 +243,66 @@ export function DashboardPage() {
       
       {/* Modal / Dialog for Modifying consumption */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm overflow-y-auto">
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-xl relative"
+            className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-xl relative my-auto max-h-[90vh] flex flex-col"
           >
             <button 
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[var(--viv-secondary)]"
+              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[var(--viv-secondary)] z-10"
             >
               <X className="w-5 h-5" />
             </button>
             
-            <h3 className="text-xl font-bold mb-2 pr-8" style={{ color: 'var(--viv-navy)' }}>
-              Modifier : {selectedCategory.name}
+            <h3 className="text-xl font-bold mb-2 pr-8 shrink-0" style={{ color: 'var(--viv-navy)' }}>
+              Recalculer : {selectedCategory.name}
             </h3>
-            <p className="text-sm text-gray-500 mb-6">
-              Mettez à jour votre valeur de consommation actuelle pour cette catégorie.
+            <p className="text-sm text-gray-500 mb-6 shrink-0">
+              Répondez à ces questions pour mettre à jour votre empreinte carbone sur ce domaine.
             </p>
             
-            <div className="mb-6">
-              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--viv-navy)' }}>
-                Nouvelle valeur (t CO2)
-              </label>
-              <input 
-                type="number"
-                step="0.01"
-                min="0"
-                value={consumptionValue}
-                onChange={e => setConsumptionValue(e.target.value)}
-                className="w-full p-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-[var(--viv-secondary)] focus:border-transparent transition-all"
-              />
+            <div className="mb-6 overflow-y-auto pr-2 pb-2 space-y-6">
+              {(() => {
+                const domainCategory = categoryMap[selectedCategory.name];
+                const categoryQuestions = questions.filter(q => q.category === domainCategory);
+                return categoryQuestions.map((q) => (
+                  <div key={q.id} className="space-y-3">
+                    <p className="font-medium text-sm" style={{ color: 'var(--viv-navy)' }}>{q.question}</p>
+                    <div className="space-y-2">
+                        {q.options.map((opt, idx) => {
+                            const isSelected = domainAnswers[q.id]?.label === opt.label;
+                            return (
+                                <button
+                                  key={idx}
+                                  onClick={() => setDomainAnswers(prev => ({ ...prev, [q.id]: opt }))}
+                                  className={`w-full text-left p-3 rounded-xl border transition-all text-sm ${
+                                    isSelected
+                                      ? "shadow-sm bg-[var(--viv-red-light)] opacity-70"
+                                      : "bg-white hover:bg-gray-50 border-gray-200"
+                                  }`}
+                                  style={{
+                                    color: 'var(--viv-navy)',
+                                    borderColor: isSelected ? 'var(--viv-red)' : undefined
+                                  }}
+                                >
+                                    {opt.label}
+                                </button>
+                            );
+                        })}
+                    </div>
+                  </div>
+                ));
+              })()}
             </div>
             
             <button 
               onClick={handleSaveModification}
-              className="w-full py-3 rounded-xl text-white font-medium shadow-md transition-transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-[var(--viv-secondary)] focus:ring-offset-2"
+              className="w-full py-3 rounded-xl text-white font-medium shadow-md transition-transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-[var(--viv-secondary)] focus:ring-offset-2 shrink-0 mt-auto"
               style={{ backgroundColor: 'var(--viv-secondary)' }}
             >
-              Enregistrer
+              Recalculer et Enregistrer
             </button>
           </motion.div>
         </div>
