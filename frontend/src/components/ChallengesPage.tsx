@@ -6,21 +6,76 @@ import challengesData from "../data/challenges.json";
 
 export function ChallengesPage() {
   const getRandomChallenges = () => {
-    const getByPoints = (pts: number, count: number) => {
-      return [...challengesData]
-        .filter(c => c.points === pts)
-        .sort(() => 0.5 - Math.random())
-        .slice(0, count)
-        .map(c => ({ ...c, completed: false }));
+    const idMap: Record<string, string> = {
+      transport: "Transport",
+      food: "Alimentation",
+      energy: "Énergie",
+      consumption: "Consommation",
     };
+    const allCategories = ["Transport", "Alimentation", "Énergie", "Consommation"];
 
-    return [
-      ...getByPoints(10, 2),
-      ...getByPoints(20, 1),
-      ...getByPoints(30, 1),
-      ...getByPoints(40, 1),
-      ...getByPoints(50, 1)
-    ];
+    // Priority 1: categories where user said they have the most action (flexibility)
+    const storedFlexibility = localStorage.getItem("userFlexibility");
+    const flexibilityIds: string[] = storedFlexibility ? JSON.parse(storedFlexibility) : [];
+    const actionCategories = flexibilityIds.map(id => idMap[id]).filter(Boolean);
+
+    // Priority 2 (fallback): categories with highest emissions
+    const storedEmissions = localStorage.getItem("categoryEmissions");
+    const emissions: Record<string, number> | null = storedEmissions ? JSON.parse(storedEmissions) : null;
+
+    let categoryQuotas: Record<string, number> = {};
+    allCategories.forEach(c => { categoryQuotas[c] = 0; });
+
+    if (actionCategories.length > 0) {
+      // Distribute 6 challenges: boosted for action categories, 1 for others
+      // 1 selected → 3/1/1/1, 2 selected → 2/2/1/1, 3 selected → 2/2/2/0
+      const n = actionCategories.length;
+      const boostPerSelected = n === 1 ? 3 : 2;
+      actionCategories.forEach(c => { categoryQuotas[c] = boostPerSelected; });
+      const remaining = 6 - n * boostPerSelected;
+      const others = allCategories.filter(c => !actionCategories.includes(c));
+      others.forEach((c, i) => { categoryQuotas[c] = i < remaining ? 1 : 0; });
+    } else if (emissions) {
+      // Fallback: weight by emissions (highest emitter gets more)
+      const sorted = allCategories
+        .map(c => ({ name: c, value: emissions[c] || 0 }))
+        .sort((a, b) => b.value - a.value);
+      const weights = [3, 2, 1, 0];
+      sorted.forEach((cat, i) => { categoryQuotas[cat.name] = weights[i] ?? 0; });
+      // Ensure total = 6
+      const sum = Object.values(categoryQuotas).reduce((a, b) => a + b, 0);
+      if (sum < 6) {
+        for (let i = sorted.length - 1; i >= 0 && Object.values(categoryQuotas).reduce((a, b) => a + b, 0) < 6; i--) {
+          categoryQuotas[sorted[i].name]++;
+        }
+      }
+    } else {
+      // No data at all: uniform
+      allCategories.forEach(c => { categoryQuotas[c] = 1; });
+    }
+
+    // Pick challenges per category according to quotas
+    const picked: Array<typeof challengesData[number] & { completed: boolean }> = [];
+    for (const [cat, quota] of Object.entries(categoryQuotas)) {
+      if (quota <= 0) continue;
+      const pool = [...challengesData]
+        .filter(c => c.category === cat)
+        .sort(() => 0.5 - Math.random());
+      picked.push(...pool.slice(0, quota).map(c => ({ ...c, completed: false })));
+    }
+
+    // If still under 6 (uniform fallback case), fill with random extras
+    if (picked.length < 6) {
+      const pickedIds = new Set(picked.map(c => c.id));
+      const extras = [...challengesData]
+        .filter(c => !pickedIds.has(c.id))
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 6 - picked.length)
+        .map(c => ({ ...c, completed: false }));
+      picked.push(...extras);
+    }
+
+    return picked.sort(() => 0.5 - Math.random());
   };
 
   const [challenges, setChallenges] = useState(() => getRandomChallenges());

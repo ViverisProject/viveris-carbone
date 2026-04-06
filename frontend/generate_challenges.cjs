@@ -2,14 +2,14 @@ const fs = require('fs');
 
 const categories = {
     "Alimentation": [
-        { title: "0g de viande rouge", points: 30 },
+        { title: "0g de viande rouge", points: 40 },
         { title: "Faire un repas 100% végétarien", points: 20 },
         { title: "Acheter des fruits/légumes de saison", points: 20 },
         { title: "Manger local (produits < 100km)", points: 40 },
         { title: "Cuisiner avec les restes", points: 10 },
-        { title: "Ne pas gaspiller de nourriture", points: 10 },
+        { title: "Ne pas gaspiller de nourriture", points: 20 },
         { title: "Faire son propre pain", points: 50 },
-        { title: "Faire un gâteau maison", points: 30 },
+        { title: "Faire un gâteau maison", points: 20 },
         { title: "Acheter en vrac", points: 30 },
         { title: "Boire de l'eau du robinet", points: 10 },
         { title: "Éviter les produits transformés", points: 40 },
@@ -26,7 +26,12 @@ const categories = {
         { title: "Refuser un emballage alimentaire", points: 20 },
         { title: "Prendre un café sans gobelet jetable", points: 10 },
         { title: "Acheter un produit imparfait/moche", points: 10 },
-        { title: "Faire une soupe anti-gaspi", points: 30 }
+        { title: "Faire une soupe anti-gaspi", points: 30 },
+        { title: "Tester le tofu ou le seitan", points: 20 },
+        { title: "Préparer le menu de la semaine à l'avance", points: 30 },
+        { title: "Congeler des aliments avant qu'ils périssent", points: 20 },
+        { title: "Acheter un produit certifié bio", points: 20 },
+        { title: "Réduire sa consommation de fromage", points: 30 }
     ],
     "Transport": [
         { title: "Utiliser les transports en commun", points: 20 },
@@ -44,19 +49,24 @@ const categories = {
         { title: "Couper le moteur à l'arrêt", points: 10 },
         { title: "Vérifier la pression des pneus (voiture)", points: 20 },
         { title: "Ne pas utiliser la climatisation en voiture", points: 20 },
-        { title: "Laver son vélo", points: 30 },
+        { title: "Entretenir son vélo", points: 20 },
         { title: "Partager son trajet sur une application", points: 50 },
         { title: "Marcher au moins 5000 pas", points: 30 },
-        { title: "Prendre le métro/tram", points: 10 },
+        { title: "Prendre le métro/tram", points: 20 },
         { title: "Aller faire ses courses à pied", points: 30 },
         { title: "Laisser la voiture au garage", points: 40 },
         { title: "Voyager léger", points: 20 },
         { title: "Organiser un trajet à plusieurs", points: 50 },
         { title: "Privilégier les visios", points: 10 },
-        { title: "Eviter les détours inutiles", points: 10 }
+        { title: "Éviter les détours inutiles", points: 10 },
+        { title: "Conduire à 110 km/h max sur autoroute", points: 30 },
+        { title: "Planifier des vacances sans avion", points: 50 },
+        { title: "Utiliser une trottinette pour un court trajet", points: 20 },
+        { title: "Rejoindre un groupe de covoiturage domicile-travail", points: 40 },
+        { title: "Couper la climatisation avant d'arriver à destination", points: 10 }
     ],
     "Énergie": [
-        { title: "Éteindre les appareils en veille", points: 10 },
+        { title: "Éteindre les appareils en veille", points: 20 },
         { title: "Réduire la température de 1°C", points: 40 },
         { title: "Éteindre la box internet la nuit", points: 10 },
         { title: "Prendre une douche de moins de 5 minutes", points: 30 },
@@ -73,14 +83,19 @@ const categories = {
         { title: "Baisser la luminosité de ses écrans", points: 10 },
         { title: "Fermer les volets la nuit pour isoler", points: 20 },
         { title: "Éteindre la lumière en quittant une pièce", points: 10 },
-        { title: "Utiliser le mode éco du lave-vaisselle", points: 10 },
+        { title: "Utiliser le mode éco du lave-vaisselle", points: 20 },
         { title: "Attendre que le lave-vaisselle soit plein", points: 20 },
         { title: "Optimiser le rangement du frigo", points: 40 },
         { title: "Penser à purger les radiateurs", points: 50 },
         { title: "Regarder des vidéos en basse résolution", points: 20 },
         { title: "Se désabonner de 5 newsletters", points: 30 },
         { title: "Fermer les onglets inactifs", points: 10 },
-        { title: "Nettoyer les filtres de ses appareils", points: 40 }
+        { title: "Nettoyer les filtres de ses appareils", points: 40 },
+        { title: "Faire une lessive à pleine charge uniquement", points: 20 },
+        { title: "Débrancher les chargeurs non utilisés", points: 10 },
+        { title: "Limiter l'usage du sèche-cheveux", points: 20 },
+        { title: "Installer un économiseur d'eau sur le robinet", points: 40 },
+        { title: "Faire un bilan de sa consommation énergétique", points: 40 }
     ],
     "Consommation": [
         { title: "Zéro plastique à usage unique", points: 50 },
@@ -95,7 +110,6 @@ const categories = {
         { title: "Acheter un livre d'occasion", points: 30 },
         { title: "Utiliser un savon solide", points: 20 },
         { title: "Utiliser un shampoing solide", points: 20 },
-        { title: "Appliquer la règle des BISOU avant achat", points: 40 },
         { title: "Utiliser des carrés démaquillants lavables", points: 20 },
         { title: "Emballer un cadeau avec du tissu", points: 40 },
         { title: "Éviter la fast-fashion", points: 50 },
@@ -107,7 +121,13 @@ const categories = {
         { title: "Réutiliser un bocal en verre", points: 10 },
         { title: "Construire/Réaliser un objet soi-même", points: 50 },
         { title: "Participer à une brocante", points: 40 },
-        { title: "Nettoyer sa boîte mail (supprimer 50 mails)", points: 30 }
+        { title: "Nettoyer sa boîte mail (supprimer 50 mails)", points: 30 },
+        { title: "Acheter un appareil électronique reconditionné", points: 40 },
+        { title: "Échanger un objet avec un voisin ou un ami", points: 30 },
+        { title: "Comparer l'impact carbone avant un achat", points: 20 },
+        { title: "Choisir la livraison lente ou groupée", points: 20 },
+        { title: "Utiliser un filtre à eau plutôt que des bouteilles", points: 30 },
+        { title: "Trier et donner ses vêtements au lieu de jeter", points: 30 }
     ]
 };
 

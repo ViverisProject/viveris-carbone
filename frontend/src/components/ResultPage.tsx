@@ -55,6 +55,12 @@ export function ResultPage() {
     categoryTotals.Consommation = 0.7;
   }
 
+  // Persist category emissions and flexibility for personalized challenge generation
+  localStorage.setItem("categoryEmissions", JSON.stringify(categoryTotals));
+  if (predictions?.flexibility?.length > 0) {
+    localStorage.setItem("userFlexibility", JSON.stringify(predictions.flexibility));
+  }
+
   const chartData = [
     { name: "Transport", value: categoryTotals.Transport, color: "#ff5046" },
     { name: "Alimentation", value: categoryTotals.Alimentation, color: "#2a31d4" },
@@ -166,17 +172,17 @@ export function ResultPage() {
                           if (predictedHighest.includes(entry.name)) {
                             // If they predicted it, and it's actually in their top N emissions
                             if (actualRank <= nPredictions) {
-                              predictionIcon = <CheckCircle2 className="w-5 h-5 text-green-500" title="Prédiction correcte" />;
+                              predictionIcon = <CheckCircle2 className="w-5 h-5 text-green-500" />;
                             } else {
-                              predictionIcon = <XCircle className="w-5 h-5 text-[var(--viv-red)]" title="Prédiction surestimée" />;
+                              predictionIcon = <XCircle className="w-5 h-5 text-[var(--viv-red)]" />;
                             }
                           } else {
                               if (actualRank <= nPredictions) {
                                 // If they DIDN'T predict it, but it IS their top emission
-                                predictionIcon = <XCircle className="w-5 h-5 text-[var(--viv-red)]" title="Oublié dans les prédictions" />;
+                                predictionIcon = <XCircle className="w-5 h-5 text-[var(--viv-red)]" />;
                               } else {
                                 // They didn't predict it, and it's correctly NOT a top emission
-                                predictionIcon = <CheckCircle2 className="w-5 h-5 text-green-500" title="Correctement estimé comme mineur" />;
+                                predictionIcon = <CheckCircle2 className="w-5 h-5 text-green-500" />;
                               }
                           }
                         }
