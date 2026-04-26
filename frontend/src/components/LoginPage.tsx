@@ -138,7 +138,7 @@ export function LoginPage() {
 
           <p className="text-center text-sm mt-6" style={{ color: '#64748B' }}>
             Vous n'avez pas de compte ?{" "}
-            <Link to="/signup" className="font-semibold" style={{ color: 'var(--viv-secondary)' }}>
+            <Link to="/quiz" className="font-semibold" style={{ color: 'var(--viv-secondary)' }}>
               Créer un compte
             </Link>
           </p>

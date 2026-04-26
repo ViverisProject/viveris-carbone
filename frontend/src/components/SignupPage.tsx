@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { Leaf, Mail, Lock, User } from "lucide-react";
 import { motion } from "motion/react";
@@ -11,6 +11,12 @@ export function SignupPage() {
     password: "",
   });
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!sessionStorage.getItem("quizResult")) {
+      navigate("/quiz", { replace: true });
+    }
+  }, [navigate]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
