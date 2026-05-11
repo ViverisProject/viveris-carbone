@@ -34,6 +34,8 @@ if not JWT_SECRET:
 
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 60))
 
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise ValueError("❌ Missing Supabase configuration in environment variables!")
 
 def get_allowed_origins():
     return ALLOWED_ORIGINS

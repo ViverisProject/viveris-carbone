@@ -4,6 +4,7 @@ from pydantic import BaseModel
 import sys
 import os
 from dotenv import load_dotenv
+from database.database import test_supabase_connection, get_supabase
 
 # Add Services directory to sys.path to allow imports from Authentication and UserManagement
 services_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "Services"))
@@ -48,6 +49,12 @@ app.include_router(auth_router)
 app.include_router(user_router, tags=["users"])
 
 
+@app.on_event("startup")
+async def startup_event():
+    print("🚀 Starting FastAPI...")
+    test_supabase_connection()
+
+
 class HealthResponse(BaseModel):
     status: str
     message: str
@@ -79,6 +86,11 @@ async def health_check():
 async def hello_world():
     """Hello world endpoint"""
     return {"message": "Hello from FastAPI backend!"}
+
+
+@app.get("/")
+async def test_api():
+    return {"message": "BestBy API is running 🚀"}
 
 
 if __name__ == "__main__":
