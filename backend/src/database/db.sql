@@ -57,6 +57,8 @@ CREATE TABLE onboarding_results (
     transport_co2 FLOAT,
     food_co2 FLOAT,
     energy_co2 FLOAT,
+    consumption_co2 FLOAT,
+    flexibility_domains TEXT[],
     created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -120,6 +122,7 @@ CREATE TABLE user_stats (
     user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
     total_points INT DEFAULT 0,
     streak INT DEFAULT 0,
+    best_streak INT DEFAULT 0,
     trees_planted INT DEFAULT 0
 );
 
