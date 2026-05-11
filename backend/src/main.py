@@ -46,11 +46,15 @@ from Authentication.Routes.authRoutes import router as auth_router
 from UserManagement.Routes.userRoutes import router as user_router
 from Emissions.Routes.emissionsRoutes import router as emissions_router
 from Gamification.Routes.gamificationRoutes import router as gamification_router
+from Community.Routes.communityRoutes import router as community_router
+from Community.Routes.friendsRoutes import router as friends_router
 
 app.include_router(auth_router)
 app.include_router(user_router, tags=["users"])
 app.include_router(emissions_router)
 app.include_router(gamification_router)
+app.include_router(community_router)
+app.include_router(friends_router)
 
 
 
