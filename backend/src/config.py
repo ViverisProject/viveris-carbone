@@ -27,6 +27,13 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 
+# JWT configuration (required for auth feature)
+JWT_SECRET = os.getenv("JWT_SECRET")
+if not JWT_SECRET:
+    raise RuntimeError("JWT_SECRET is not set in environment; set JWT_SECRET in your .env file")
+
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 60))
+
 if not SUPABASE_URL or not SUPABASE_KEY:
     raise ValueError("❌ Missing Supabase configuration in environment variables!")
 
