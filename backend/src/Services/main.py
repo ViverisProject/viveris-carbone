@@ -1,17 +1,22 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import sys
 import os
 from dotenv import load_dotenv
 
-# Add Services directory to sys.path to allow imports from Authentication and UserManagement
-services_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "Services"))
-if services_path not in sys.path:
-    sys.path.insert(0, services_path)
-
 # Load .env for backwards compatibility
 load_dotenv()
+
+# Ensure `src` (parent of Services) and the `Services` directory are on sys.path
+# so imports like `config` and package imports like `Authentication.*` resolve
+# regardless of how the process is started.
+import sys
+SRC_DIR = os.path.dirname(os.path.dirname(__file__))
+if SRC_DIR not in sys.path:
+    sys.path.insert(0, SRC_DIR)
+SERVICES_DIR = os.path.dirname(__file__)
+if SERVICES_DIR not in sys.path:
+    sys.path.insert(0, SERVICES_DIR)
 
 # Attempt to import centralized config if available; fall back to environment variables
 try:
@@ -40,12 +45,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Register routers
+# Register authentication routes
 from Authentication.Routes.authRoutes import router as auth_router
-from UserManagement.Routes.userRoutes import router as user_router
-
 app.include_router(auth_router)
-app.include_router(user_router, tags=["users"])
 
 
 class HealthResponse(BaseModel):
