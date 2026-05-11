@@ -49,6 +49,7 @@ app.include_router(auth_router)
 app.include_router(user_router, tags=["users"])
 
 
+
 @app.on_event("startup")
 async def startup_event():
     print("🚀 Starting FastAPI...")

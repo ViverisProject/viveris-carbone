@@ -45,7 +45,8 @@ def _create_access_token(subject: str, expires_minutes: int | None = None) -> st
     if expires_minutes is None:
         expires_minutes = ACCESS_TOKEN_EXPIRE_MINUTES
     expire = datetime.utcnow() + timedelta(minutes=expires_minutes)
-    payload = {"sub": str(subject), "exp": int(expire.timestamp())}
+    # Pass the datetime object directly. jose will properly convert it to UTC timestamp.
+    payload = {"sub": str(subject), "exp": expire}
     token = jwt.encode(payload, JWT_SECRET, algorithm=ALGORITHM)
     return token
 
