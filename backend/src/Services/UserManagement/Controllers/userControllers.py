@@ -7,8 +7,12 @@ from UserManagement.Schemas.userSchemas import (
     UserProfileDashboardResponse,
     UserObject,
     QuizResult,
-    Achievement
+    Achievement,
+    PasswordChangeRequest,
+    AdvancedUserStatsResponse,
+    GenericActionResponse
 )
+from Authentication.Controllers.authControllers import _verify_password, _hash_password
 from UserManagement.Repositories.Interfaces.userInterface import UserRepositoryInterface
 
 
@@ -82,3 +86,52 @@ def get_user_dashboard(user_id: str, repo: UserRepositoryInterface) -> UserProfi
         streak=streak,
         bestStreak=best_streak
     )
+
+def change_password_controller(user_id: str, payload: PasswordChangeRequest, repo: UserRepositoryInterface) -> GenericActionResponse:
+    user = repo.get_user_by_id(user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    if not _verify_password(payload.currentPassword, user.get("password", "")):
+        raise HTTPException(status_code=400, detail="Invalid current password")
+        
+    hashed = _hash_password(payload.newPassword)
+    success = repo.update_user_password(user_id, hashed)
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to update password")
+        
+    return GenericActionResponse(success=True, message="Password updated successfully")
+
+def delete_user_controller(user_id: str, hard: bool, repo: UserRepositoryInterface) -> GenericActionResponse:
+    if hard:
+        success = repo.hard_delete_user(user_id)
+    else:
+        success = repo.soft_delete_user(user_id)
+        
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to delete user")
+        
+    return GenericActionResponse(success=True, message="User deleted successfully")
+
+def get_advanced_stats_controller(user_id: str, repo: UserRepositoryInterface) -> AdvancedUserStatsResponse:
+    stats = repo.get_advanced_stats(user_id)
+    return AdvancedUserStatsResponse(
+        co2ThisYear=stats.get("co2ThisYear", 0.0),
+        co2LastYear=stats.get("co2LastYear", 0.0),
+        co2ReducedThisYear=stats.get("co2ReducedThisYear", 0.0),
+        challengesCompleted=stats.get("challengesCompleted", 0),
+        bestStreak=stats.get("bestStreak", 0),
+        currentStreak=stats.get("currentStreak", 0),
+        badges=stats.get("badges", [])
+    )
+
+def recalculate_stats_controller(user_id: str, repo: UserRepositoryInterface) -> GenericActionResponse:
+    # In a real app, this would recalculate and update `user_stats` table.
+    # For now, we simulate success since the stats are dynamically fetched anyway in get_advanced_stats.
+    return GenericActionResponse(success=True, message="Stats recalculated successfully")
+
+def unlock_achievement_controller(user_id: str, achievement_id: str, repo: UserRepositoryInterface) -> GenericActionResponse:
+    success = repo.unlock_achievement(user_id, achievement_id)
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to unlock achievement")
+    return GenericActionResponse(success=True, message="Achievement unlocked successfully")

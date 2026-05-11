@@ -2,6 +2,23 @@ from typing import Optional, Dict, List
 from pydantic import BaseModel
 
 
+class PasswordChangeRequest(BaseModel):
+    currentPassword: str
+    newPassword: str
+
+class AdvancedUserStatsResponse(BaseModel):
+    co2ThisYear: float
+    co2LastYear: Optional[float] = 0.0
+    co2ReducedThisYear: float
+    challengesCompleted: int
+    bestStreak: int
+    currentStreak: int
+    badges: List[str]
+
+class GenericActionResponse(BaseModel):
+    success: bool
+    message: str
+
 class UserObject(BaseModel):
     id: str
     firstName: Optional[str]
