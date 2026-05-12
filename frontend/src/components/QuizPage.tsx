@@ -1,111 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { ArrowLeft, ArrowRight, Leaf } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
+import { toast } from "sonner";
+import { quizApi, type QuizQuestion } from "../api";
 
-export const questions = [
-  {
-    id: 1,
-    category: "Transport",
-    question: "Combien de kilomètres parcourez-vous en voiture par semaine ?",
-    options: [
-      { label: "0-20 km", value: 10, co2: 20 },
-      { label: "20-50 km", value: 35, co2: 70 },
-      { label: "50-100 km", value: 75, co2: 150 },
-      { label: "Plus de 100 km", value: 150, co2: 300 },
-      { label: "Je n'utilise pas de voiture", value: 0, co2: 0 },
-    ],
-  },
-  {
-    id: 2,
-    category: "Transport",
-    question: "Combien de vols en avion prenez-vous par an ?",
-    options: [
-      { label: "Aucun", value: 0, co2: 0 },
-      { label: "1-2 vols courts courriers", value: 1, co2: 400 },
-      { label: "3-5 vols courts courriers", value: 3, co2: 800 },
-      { label: "1-2 vols longs courriers", value: 2, co2: 2000 },
-      { label: "Plus de 5 vols par an", value: 6, co2: 3000 },
-    ],
-  },
-  {
-    id: 3,
-    category: "Alimentation",
-    question: "Combien de fois par semaine consommez-vous de la viande rouge ?",
-    options: [
-      { label: "Jamais", value: 0, co2: 0 },
-      { label: "1-2 fois", value: 1, co2: 100 },
-      { label: "3-4 fois", value: 3, co2: 200 },
-      { label: "5-7 fois", value: 5, co2: 350 },
-      { label: "Plus de 7 fois", value: 8, co2: 500 },
-    ],
-  },
-  {
-    id: 4,
-    category: "Alimentation",
-    question: "Achetez-vous principalement des produits locaux et de saison ?",
-    options: [
-      { label: "Toujours", value: 5, co2: 50 },
-      { label: "Souvent", value: 3, co2: 150 },
-      { label: "Parfois", value: 2, co2: 250 },
-      { label: "Rarement", value: 1, co2: 350 },
-      { label: "Jamais", value: 0, co2: 450 },
-    ],
-  },
-  {
-    id: 5,
-    category: "Énergie",
-    question: "Quelle est la taille de votre logement ?",
-    options: [
-      { label: "Studio (moins de 30m²)", value: 25, co2: 400 },
-      { label: "T2 (30-50m²)", value: 40, co2: 600 },
-      { label: "T3 (50-80m²)", value: 65, co2: 900 },
-      { label: "T4/T5 (80-120m²)", value: 100, co2: 1200 },
-      { label: "Maison (plus de 120m²)", value: 150, co2: 1800 },
-    ],
-  },
-  {
-    id: 6,
-    category: "Énergie",
-    question: "Utilisez-vous des Énergies renouvelables ?",
-    options: [
-      { label: "Oui, 100% renouvelable", value: 5, co2: 0 },
-      { label: "Partiellement", value: 3, co2: 200 },
-      { label: "Non", value: 0, co2: 400 },
-      { label: "Je ne sais pas", value: 1, co2: 300 },
-    ],
-  },
-  {
-    id: 7,
-    category: "Consommation",
-    question: "é quelle fréquence achetez-vous des vêtements neufs ?",
-    options: [
-      { label: "Rarement (moins de 5 par an)", value: 1, co2: 50 },
-      { label: "Occasionnellement (5-10 par an)", value: 2, co2: 150 },
-      { label: "Régulièrement (10-20 par an)", value: 3, co2: 300 },
-      { label: "Souvent (plus de 20 par an)", value: 4, co2: 500 },
-    ],
-  },
-  {
-    id: 8,
-    category: "Consommation",
-    question: "Combien d'appareils électroniques achetez-vous par an ?",
-    options: [
-      { label: "Aucun", value: 0, co2: 0 },
-      { label: "1 appareil", value: 1, co2: 100 },
-      { label: "2-3 appareils", value: 2, co2: 250 },
-      { label: "Plus de 3 appareils", value: 4, co2: 500 },
-    ],
-  },
-];
+// Export a stable reference so DashboardPage can still call quizApi independently
+export type { QuizQuestion };
 
 export function QuizPage() {
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, any>>({});
+  const [answers, setAnswers] = useState<Record<string, any>>({});
   const navigate = useNavigate();
 
+  useEffect(() => {
+    quizApi
+      .getQuestions()
+      .then((data) => {
+        setQuestions(data);
+        // Cache for offline / cross-page use
+        sessionStorage.setItem("quizQuestions", JSON.stringify(data));
+      })
+      .catch((err: any) => {
+        // Fallback: try cached version from sessionStorage
+        const cached = sessionStorage.getItem("quizQuestions");
+        if (cached) {
+          setQuestions(JSON.parse(cached));
+          toast.warning("Chargement hors-ligne des questions.");
+        } else {
+          toast.error(err.message ?? "Impossible de charger les questions.");
+        }
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
+
   const handleAnswer = (option: any) => {
-    setAnswers({ ...answers, [questions[currentQuestion].id]: option });
+    const q = questions[currentQuestion];
+    setAnswers({ ...answers, [q.id]: option });
   };
 
   const handleNext = () => {
@@ -118,8 +51,6 @@ export function QuizPage() {
         0
       );
       const totalInTons = (totalCO2 / 1000).toFixed(1);
-      
-      // Store result in sessionStorage
       sessionStorage.setItem("quizResult", JSON.stringify({ totalInTons, answers }));
       navigate("/prediction");
     }
@@ -131,6 +62,27 @@ export function QuizPage() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--viv-beige)' }}>
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+          className="w-10 h-10 border-4 rounded-full border-t-transparent"
+          style={{ borderColor: 'var(--viv-secondary)', borderTopColor: 'transparent' }}
+        />
+      </div>
+    );
+  }
+
+  if (questions.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--viv-beige)' }}>
+        <p className="text-lg" style={{ color: 'var(--viv-navy)' }}>Aucune question disponible.</p>
+      </div>
+    );
+  }
+
   const progress = ((currentQuestion + 1) / questions.length) * 100;
   const currentQ = questions[currentQuestion];
   const selectedAnswer = answers[currentQ.id];
@@ -140,9 +92,10 @@ export function QuizPage() {
       {/* Header */}
       <header className="container mx-auto px-4 py-6">
         <div className="flex items-center gap-2">
-            <img src="/src/Pack_charte_graphique/Logos/Logos_Viveris/Avec%20signature/Viveris%20-%20Logo%20-%20Baseline%20-%20RVB%20-%20Noir.png" alt="Viveris Carbone" className="h-20 md:h-24 object-contain" />
+          <img src="/src/Pack_charte_graphique/Logos/Logos_Viveris/Avec%20signature/Viveris%20-%20Logo%20-%20Baseline%20-%20RVB%20-%20Noir.png" alt="Viveris Carbone" className="h-20 md:h-24 object-contain" />
         </div>
       </header>
+
       {/* Progress Bar */}
       <div className="container mx-auto px-4 mb-8">
         <div className="max-w-2xl mx-auto">
@@ -209,8 +162,6 @@ export function QuizPage() {
               disabled={currentQuestion === 0}
               className="flex items-center gap-2 px-6 py-3 rounded-full bg-white font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               style={{ color: 'var(--viv-secondary)' }}
-              onMouseEnter={(e) => !e.currentTarget.disabled && (e.currentTarget.style.backgroundColor = 'var(--viv-red-light)', e.currentTarget.style.opacity = '0.3')}
-              
             >
               <ArrowLeft className="w-5 h-5" />
               Précédent
@@ -221,8 +172,6 @@ export function QuizPage() {
               disabled={!selectedAnswer}
               className="flex items-center gap-2 px-6 py-3 rounded-full text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               style={{ backgroundColor: selectedAnswer ? 'var(--viv-red)' : '#CBD5E1' }}
-              onMouseEnter={(e) => !e.currentTarget.disabled && (e.currentTarget.style.backgroundColor = 'var(--viv-red-dark)')}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = selectedAnswer ? 'var(--viv-red)' : '#CBD5E1'}
             >
               {currentQuestion === questions.length - 1 ? "Voir le résultat" : "Suivant"}
               <ArrowRight className="w-5 h-5" />
