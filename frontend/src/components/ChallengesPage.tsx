@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import { toast } from "sonner";
 import { Navigation } from "./Navigation";
 import { CreateChallengeModal } from "./CreateChallengeModal";
-import { challengesApi, type ChallengeResponse } from "../api";
+import { challengesApi, type ChallengeResponse, userApi, getToken } from "../api";
 
 export function ChallengesPage() {
   const [challenges, setChallenges] = useState<(ChallengeResponse & { completed: boolean })[]>([]);
@@ -24,7 +24,24 @@ export function ChallengesPage() {
       .finally(() => setIsLoading(false));
   };
 
-  useEffect(() => { loadChallenges(); }, []);
+  useEffect(() => {
+    loadChallenges();
+
+    // If user is authenticated, fetch authoritative stats for display
+    (async () => {
+      try {
+        if (getToken()) {
+          const profile = await userApi.getMe();
+          setTotalPoints(profile.points ?? 0);
+          setTreesPlanted(profile.treesPlanted ?? 0);
+          setTreeProgress(Math.floor(((profile.points ?? 0) % 1000) / 10));
+          setStreak(profile.streak ?? 0);
+        }
+      } catch (err) {
+        // ignore failures; keep optimistic/zero state
+      }
+    })();
+  }, []);
 
   const toggleChallenge = async (id: string) => {
     const challenge = challenges.find((c) => c.id === id);
