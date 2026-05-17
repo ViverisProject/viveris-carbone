@@ -81,10 +81,15 @@ def save_emissions_controller(user_id: str, payload: EmissionsSaveRequest, repo:
     }
     
     for q_id, answer in payload.quizResult.answers.items():
+        # Answers in DB/on frontend use CO2 values in kilograms. Convert to tonnes.
         category = q_to_category.get(q_id, "Consommation") # Fallback to Consommation
         if category not in category_emissions:
             category_emissions[category] = 0.0
-        category_emissions[category] += answer.co2
+        try:
+            co2_value = float(answer.co2) / 1000.0
+        except Exception:
+            co2_value = 0.0
+        category_emissions[category] += co2_value
         
     total_co2 = sum(category_emissions.values())
     
@@ -128,7 +133,12 @@ def update_category_emissions_controller(user_id: str, payload: CategoryUpdateRe
     }
     
     # 2. Recalculate JUST the updated category
-    new_category_total = sum(ans.co2 for ans in payload.answers.values())
+    # Answers use kg units; convert to tonnes for storage and responses
+    new_category_total = 0.0
+    try:
+        new_category_total = sum(float(ans.co2) / 1000.0 for ans in payload.answers.values())
+    except Exception:
+        new_category_total = 0.0
     target_category = _get_category_name(payload.category)
     
     # Apply to map

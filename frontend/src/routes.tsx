@@ -10,6 +10,7 @@ import { ProfilePage } from "./components/ProfilePage";
 import { ChallengesPage } from "./components/ChallengesPage";
 import { CommunityPage } from "./components/CommunityPage";
 import { NotFound } from "./components/NotFound";
+import { PrivateRoute } from "./auth";
 
 export const router = createBrowserRouter([
   {
@@ -38,19 +39,19 @@ export const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    Component: DashboardPage,
+    element: <PrivateRoute Component={DashboardPage} />,
   },
   {
     path: "/profile",
-    Component: ProfilePage,
+    element: <PrivateRoute Component={ProfilePage} />,
   },
   {
     path: "/challenges",
-    Component: ChallengesPage,
+    element: <PrivateRoute Component={ChallengesPage} />,
   },
   {
     path: "/community",
-    Component: CommunityPage,
+    element: <PrivateRoute Component={CommunityPage} />,
   },
   {
     path: "*",
