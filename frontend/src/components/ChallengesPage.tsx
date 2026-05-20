@@ -4,61 +4,72 @@ import { motion } from "motion/react";
 import { toast } from "sonner";
 import { Navigation } from "./Navigation";
 import { CreateChallengeModal } from "./CreateChallengeModal";
-import { challengesApi, type ChallengeResponse, userApi, getToken } from "../api";
+import { challengesApi, type ChallengeResponse } from "../api";
+import { useAuth } from "../auth";
+import { useChallenges, useChallengeToggle } from "../hooks";
 
 export function ChallengesPage() {
-  const [challenges, setChallenges] = useState<(ChallengeResponse & { completed: boolean })[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { userProfile: profile } = useAuth();
+  const { data: challenges = [], isLoading, isError, refetch: loadChallenges } = useChallenges();
+  const toggleMutation = useChallengeToggle();
   const [totalPoints, setTotalPoints] = useState(0);
   const [treesPlanted, setTreesPlanted] = useState(0);
   const [treeProgress, setTreeProgress] = useState(0);
   const [streak, setStreak] = useState(0);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-
-  const loadChallenges = () => {
-    setIsLoading(true);
-    challengesApi
-      .getRecommendations()
-      .then((data) => setChallenges(data))
-      .catch((err: any) => toast.error(err.message ?? "Impossible de charger les défis."))
-      .finally(() => setIsLoading(false));
-  };
+  
+  useEffect(() => {
+    if (isError) {
+      toast.error("Impossible de charger les défis.");
+    }
+  }, [isError]);
 
   useEffect(() => {
-    loadChallenges();
+    if (profile) {
+      setTotalPoints(profile.points ?? 0);
+      setTreesPlanted(profile.treesPlanted ?? 0);
+      setTreeProgress(Math.floor(((profile.points ?? 0) % 1000) / 10));
+      setStreak(profile.streak ?? 0);
+    }
+  }, [profile]);
 
-    // If user is authenticated, fetch authoritative stats for display
-    (async () => {
-      try {
-        if (getToken()) {
-          const profile = await userApi.getMe();
-          setTotalPoints(profile.points ?? 0);
-          setTreesPlanted(profile.treesPlanted ?? 0);
-          setTreeProgress(Math.floor(((profile.points ?? 0) % 1000) / 10));
-          setStreak(profile.streak ?? 0);
-        }
-      } catch (err) {
-        // ignore failures; keep optimistic/zero state
-      }
-    })();
-  }, []);
-
-  const toggleChallenge = async (id: string) => {
+  const toggleChallenge = (id: string) => {
     const challenge = challenges.find((c) => c.id === id);
     if (!challenge) return;
-    const newCompleted = !challenge.completed;
-    // Optimistic update
-    setChallenges((prev) => prev.map((c) => c.id === id ? { ...c, completed: newCompleted } : c));
-    try {
-      const res = await challengesApi.toggle(id, { completed: newCompleted });
-      setTotalPoints(res.totalPoints);
-      setTreesPlanted(res.treesPlanted);
-      setTreeProgress(res.treeProgress);
-    } catch (err: any) {
-      // Revert optimistic update
-      setChallenges((prev) => prev.map((c) => c.id === id ? { ...c, completed: !newCompleted } : c));
-      toast.error(err.message ?? "Erreur lors de la mise à jour du défi.");
-    }
+    
+    const isNowCompleted = !challenge.completed;
+    const pointDelta = isNowCompleted ? challenge.points : -challenge.points;
+
+    // 1. Snapshot previous state
+    const previousPoints = totalPoints;
+    const previousTrees = treesPlanted;
+    const previousProgress = treeProgress;
+
+    // 2. Optimistically update UI state instantly
+    const newTotalPoints = Math.max(0, totalPoints + pointDelta);
+    setTotalPoints(newTotalPoints);
+    setTreesPlanted(Math.floor(newTotalPoints / 1000));
+    setTreeProgress(Math.floor((newTotalPoints % 1000) / 10));
+
+    // 3. Perform backend mutation
+    toggleMutation.mutate(
+      { id, completed: isNowCompleted },
+      {
+        onSuccess: (res) => {
+          // Sync with exact server values
+          setTotalPoints(res.totalPoints);
+          setTreesPlanted(res.treesPlanted);
+          setTreeProgress(res.treeProgress);
+        },
+        onError: (err: any) => {
+          // Rollback on failure
+          setTotalPoints(previousPoints);
+          setTreesPlanted(previousTrees);
+          setTreeProgress(previousProgress);
+          toast.error(err.message ?? "Erreur lors de la mise à jour du défi.");
+        },
+      }
+    );
   };
 
   const handleCreateChallenge = async (data: { title: string; category: string; points: number }) => {

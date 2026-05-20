@@ -123,6 +123,7 @@ export interface UserObject {
   firstName: string | null;
   lastName: string | null;
   email: string;
+  userName?: string | null;
 }
 
 export interface QuizResult {

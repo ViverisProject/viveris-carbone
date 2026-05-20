@@ -24,6 +24,7 @@ class UserObject(BaseModel):
     firstName: Optional[str]
     lastName: Optional[str]
     email: str
+    userName: Optional[str] = None
 
 
 class QuizResult(BaseModel):

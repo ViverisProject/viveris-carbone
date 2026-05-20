@@ -76,6 +76,9 @@ export function SignupPage() {
             },
           });
           toast.success("Empreinte enregistrée !");
+          
+          sessionStorage.removeItem("quizResult");
+          sessionStorage.removeItem("userPredictions");
         } catch (err: any) {
           // ignore and continue
         }

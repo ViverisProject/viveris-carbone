@@ -39,7 +39,8 @@ def get_user_dashboard(user_id: str, repo: UserRepositoryInterface) -> UserProfi
         id=raw_data.get("id"),
         firstName=raw_data.get("first_name"),
         lastName=raw_data.get("last_name"),
-        email=raw_data.get("email", "")
+        email=raw_data.get("email", ""),
+        userName=raw_data.get("user_name", raw_data.get("username"))
     )
     
     # Extract Stats

@@ -3,28 +3,27 @@ import { Search, Trophy, UserPlus, TreePine, Bell, ChevronRight, UserCheck, User
 import { motion } from "motion/react";
 import { toast } from "sonner";
 import { Navigation } from "./Navigation";
-import { communityApi, friendsApi, type LeaderboardEntry, type FriendResponse } from "../api";
+import { friendsApi, type LeaderboardEntry, type FriendResponse } from "../api";
+import { useCommunityLeaderboard, useFriends } from "../hooks";
 
 export function CommunityPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-  const [friends, setFriends] = useState<FriendResponse[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: leaderboard = [], isLoading: isLoadingLeaderboard, isError: isErrorLeaderboard } = useCommunityLeaderboard();
+  const { data: friends = [], isLoading: isLoadingFriends, isError: isErrorFriends, refetch: refetchFriends } = useFriends();
+  
+  const isLoading = isLoadingLeaderboard || isLoadingFriends;
 
   useEffect(() => {
-    Promise.all([communityApi.getLeaderboard(), friendsApi.getFriends()])
-      .then(([lb, fr]) => { setLeaderboard(lb); setFriends(fr); })
-      .catch((err: any) => toast.error(err.message ?? "Impossible de charger la communauté."))
-      .finally(() => setIsLoading(false));
-  }, []);
+    if (isErrorLeaderboard || isErrorFriends) {
+      toast.error("Impossible de charger la communauté.");
+    }
+  }, [isErrorLeaderboard, isErrorFriends]);
 
   const handleSendRequest = async (friendId: string) => {
     try {
       const res = await friendsApi.sendRequest(friendId);
       toast.success(`Demande envoyée (${res.status})`);
-      // Refresh friends list
-      const updated = await friendsApi.getFriends();
-      setFriends(updated);
+      refetchFriends();
     } catch (err: any) {
       toast.error(err.message ?? "Erreur lors de l'envoi de la demande.");
     }
@@ -34,8 +33,7 @@ export function CommunityPage() {
     try {
       await friendsApi.acceptRequest(friendId);
       toast.success("Demande acceptée !");
-      const updated = await friendsApi.getFriends();
-      setFriends(updated);
+      refetchFriends();
     } catch (err: any) {
       toast.error(err.message ?? "Erreur lors de l'acceptation.");
     }
@@ -45,8 +43,7 @@ export function CommunityPage() {
     try {
       await friendsApi.declineRequest(friendId);
       toast.info("Demande déclinée.");
-      const updated = await friendsApi.getFriends();
-      setFriends(updated);
+      refetchFriends();
     } catch (err: any) {
       toast.error(err.message ?? "Erreur lors du refus.");
     }
@@ -56,7 +53,7 @@ export function CommunityPage() {
     try {
       await friendsApi.removeFriend(friendId);
       toast.info("Ami supprimé.");
-      setFriends((prev) => prev.filter((f) => f.id !== friendId));
+      refetchFriends();
     } catch (err: any) {
       toast.error(err.message ?? "Erreur lors de la suppression.");
     }

@@ -3,7 +3,9 @@ import { toast } from "sonner";
 import { Car, UtensilsCrossed, Zap, Leaf, ChevronRight, X } from "lucide-react";
 import { motion } from "motion/react";
 import { Navigation } from "./Navigation";
-import { userApi, emissionsApi, quizApi, getStoredUser, type UserProfileDashboardResponse, type QuizQuestion } from "../api";
+import { emissionsApi, getStoredUser, type UserProfileDashboardResponse, type QuizQuestion } from "../api";
+import { useAuth } from "../auth";
+import { useQuizQuestions } from "../hooks";
 
 const categoryMap: Record<string, string> = {
   "Mobilité": "Transport",
@@ -20,45 +22,33 @@ const categoryIcons: Record<string, any> = {
 };
 
 export function DashboardPage() {
-  const [profile, setProfile] = useState<UserProfileDashboardResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { userProfile: profile, isLoadingProfile: isLoading } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<any>({ name: "", icon: Leaf, numericValue: 0 });
   const [domainAnswers, setDomainAnswers] = useState<Record<string, any>>({});
-  const [apiQuestions, setApiQuestions] = useState<QuizQuestion[]>([]);
+  const { data: apiQuestions = [], isError: isQuizError } = useQuizQuestions();
   const [categoryTotals, setCategoryTotals] = useState({
     "Mobilité": 0, "Alimentation": 0, "Énergie": 0, "Mode de vie": 0,
   });
   const [recentModifications, setRecentModifications] = useState<any[]>([]);
 
   useEffect(() => {
-    // Load profile from API
-    userApi.getMe()
-      .then((data) => {
-        setProfile(data);
-        if (data.categoryEmissions) {
-          const ce = data.categoryEmissions;
-          setCategoryTotals({
-            "Mobilité": ce["Transport"] ?? ce["Mobilité"] ?? 0,
-            "Alimentation": ce["Alimentation"] ?? 0,
-            "Énergie": ce["Énergie"] ?? 0,
-            "Mode de vie": ce["Consommation"] ?? ce["Mode de vie"] ?? 0,
-          });
-        }
-      })
-      .catch(() => toast.error("Impossible de charger le tableau de bord."))
-      .finally(() => setIsLoading(false));
-
-    // Load quiz questions for the modify-consumption modal
-    const cached = sessionStorage.getItem("quizQuestions");
-    if (cached) {
-      setApiQuestions(JSON.parse(cached));
-    } else {
-      quizApi.getQuestions()
-        .then((qs) => { setApiQuestions(qs); sessionStorage.setItem("quizQuestions", JSON.stringify(qs)); })
-        .catch(() => {/* silently fail — modal just won't show questions */});
+    if (profile?.categoryEmissions) {
+      const ce = profile.categoryEmissions;
+      setCategoryTotals({
+        "Mobilité": ce["Transport"] ?? ce["Mobilité"] ?? 0,
+        "Alimentation": ce["Alimentation"] ?? 0,
+        "Énergie": ce["Énergie"] ?? 0,
+        "Mode de vie": ce["Consommation"] ?? ce["Mode de vie"] ?? 0,
+      });
     }
-  }, []);
+  }, [profile]);
+
+  useEffect(() => {
+    if (isQuizError) {
+      toast.error("Le formulaire d'édition n'est pas disponible.");
+    }
+  }, [isQuizError]);
 
   const displayTotal = Object.values(categoryTotals).reduce((a, b) => a + b, 0).toFixed(2);
 
@@ -124,8 +114,8 @@ export function DashboardPage() {
     </div>
   );
 
-  const user = profile?.user ?? getStoredUser();
-  const displayName = user?.firstName ?? (user as any)?.user_name ?? "Utilisateur";
+  const user = profile?.user;
+  const displayName = user?.userName ?? user?.firstName ?? "Utilisateur";
 
   if (isLoading) {
     return (
