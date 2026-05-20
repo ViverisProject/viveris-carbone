@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { toast } from "sonner";
 import { authApi, userApi, setToken, setStoredUser, emissionsApi } from "../api";
 import { useAuth } from "../auth";
+import viverisLogo from "../Pack_charte_graphique/Logos/Logos_Viveris/Avec signature/Viveris - Logo - Baseline - RVB - Noir.png";
 
 export function SignupPage() {
   const [formData, setFormData] = useState({
@@ -99,7 +100,7 @@ export function SignupPage() {
         <div className="bg-white/90 backdrop-blur rounded-2xl shadow-xl p-8">
           {/* Logo */}
           <div className="flex justify-center mb-8">
-            <img src="/src/Pack_charte_graphique/Logos/Logos_Viveris/Avec%20signature/Viveris%20-%20Logo%20-%20Baseline%20-%20RVB%20-%20Noir.png" alt="Viveris Carbone" className="h-12 object-contain" />
+            <img src={viverisLogo} alt="Viveris Carbone" className="h-12 object-contain" />
           </div>
 
           <h2 className="text-2xl text-center mb-6" style={{ color: 'var(--viv-navy)' }}>
