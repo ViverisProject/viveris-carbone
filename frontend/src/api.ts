@@ -385,6 +385,12 @@ export const challengesApi = {
       body: JSON.stringify(data),
     });
   },
+
+  unlockBatch(): Promise<{ success: boolean; newOffset: number; challenges: ChallengeResponse[] }> {
+    return apiFetch<{ success: boolean; newOffset: number; challenges: ChallengeResponse[] }>("/api/challenges/unlock-batch", {
+      method: "POST",
+    });
+  },
 };
 
 // ─── Community endpoints ────────────────────────────────────────────────────
