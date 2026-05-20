@@ -30,6 +30,7 @@ def list_tables():
     print("Tables in DB:")
     for t in tables:
         print(f" - {t}")
+    return tables
 
 
 # -----------------------------
@@ -96,8 +97,24 @@ def test_connection():
         print(e)
 
 
+# -----------------------------
+# Helper: Fetch table content
+# -----------------------------
+def fetch_table_content(table_name, limit=10):
+    """Fetch all or first N rows from a table."""
+    with engine.connect() as conn:
+        query = text(f"SELECT * FROM {table_name} LIMIT :limit")
+        result = conn.execute(query, {"limit": limit})
+        rows = result.fetchall()
+        columns = result.keys()
+        data = [dict(zip(columns, row)) for row in rows]
+    return data
+
+
 if __name__ == "__main__":
     test_connection()
-    # list_tables()
+    tables = list_tables()
+    for table in tables:
+        print(fetch_table_content(table))
     # list_columns("users")
     # list_enums()
