@@ -42,6 +42,36 @@ export function DashboardPage() {
         "Mode de vie": ce["Consommation"] ?? ce["Mode de vie"] ?? 0,
       });
     }
+
+    if (profile?.history && profile.history.length > 1) {
+      const mods: any[] = [];
+      const history = profile.history;
+      
+      const cats = [
+        { key: "transport_co2", name: "Mobilité", icon: Car },
+        { key: "food_co2", name: "Alimentation", icon: UtensilsCrossed },
+        { key: "energy_co2", name: "Énergie", icon: Zap },
+        { key: "consumption_co2", name: "Mode de vie", icon: Leaf }
+      ];
+
+      for (let i = 0; i < history.length - 1; i++) {
+        const curr = history[i];
+        const prev = history[i + 1];
+        
+        cats.forEach(cat => {
+          const currVal = curr[cat.key] || 0;
+          const prevVal = prev[cat.key] || 0;
+          const diff = currVal - prevVal;
+          
+          if (Math.abs(diff) > 0.01) { // If difference is significant
+            const dateStr = new Date(curr.created_at).toLocaleDateString('fr-FR');
+            const valStr = diff > 0 ? `+${diff.toFixed(2)}t` : `${diff.toFixed(2)}t`;
+            mods.push({ name: cat.name, date: dateStr, value: valStr, icon: cat.icon });
+          }
+        });
+      }
+      setRecentModifications(mods.slice(0, 4));
+    }
   }, [profile]);
 
   useEffect(() => {

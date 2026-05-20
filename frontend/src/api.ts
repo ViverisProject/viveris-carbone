@@ -146,6 +146,7 @@ export interface UserProfileDashboardResponse {
   achievements: Achievement[];
   streak: number;
   bestStreak: number;
+  history?: any[];
 }
 
 export interface GenericActionResponse {

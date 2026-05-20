@@ -85,7 +85,8 @@ def get_user_dashboard(user_id: str, repo: UserRepositoryInterface) -> UserProfi
         treesPlanted=trees_planted,
         achievements=achievements,
         streak=streak,
-        bestStreak=best_streak
+        bestStreak=best_streak,
+        history=ob_results if isinstance(ob_results, list) else []
     )
 
 def change_password_controller(user_id: str, payload: PasswordChangeRequest, repo: UserRepositoryInterface) -> GenericActionResponse:
