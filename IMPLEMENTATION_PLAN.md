@@ -94,72 +94,6 @@ export function PrivateRoute({ Component }: { Component: React.ComponentType<any
 
 ---
 
-### 1.2 Consolidate Quiz Questions Caching
-
-**File:** `src/api.ts` (add helper function)  
-**Problem:** Dashboard and QuizPage both fetch independently  
-**Solution:** Single cache key, shared sessionStorage
-
-```typescript
-// ADD to api.ts
-const CACHE_KEYS = {
-  quiz_questions: "viv_quiz_questions",
-  user_profile: "viv_user_profile",
-} as const;
-
-export const cacheApi = {
-  // Global cache helpers
-  getFromCache<T>(key: string): T | null {
-    const cached = sessionStorage.getItem(key);
-    return cached ? JSON.parse(cached) : null;
-  },
-
-  setToCache<T>(key: string, value: T): void {
-    sessionStorage.setItem(key, JSON.stringify(value));
-  },
-
-  clearCache(key: string): void {
-    sessionStorage.removeItem(key);
-  },
-};
-
-// Update quizApi
-export const quizApi = {
-  getQuestions(): Promise<QuizQuestion[]> {
-    // Check cache first
-    const cached = cacheApi.getFromCache<QuizQuestion[]>(CACHE_KEYS.quiz_questions);
-    if (cached) {
-      return Promise.resolve(cached); // ← Instant return
-    }
-
-    // Fetch if not cached
-    return apiFetch<QuizQuestion[]>("/api/quiz/questions")
-      .then((data) => {
-        cacheApi.setToCache(CACHE_KEYS.quiz_questions, data);
-        return data;
-      });
-  },
-};
-```
-
-**Use in components:**
-
-```typescript
-// DashboardPage - No need for separate check
-useEffect(() => {
-  quizApi.getQuestions()  // Checks cache, returns instantly if cached
-    .then((qs) => setApiQuestions(qs))
-    .catch(() => {/* handle error */});
-}, []);
-```
-
-**Impact:**
-- ✅ Second quiz fetch returns in 0ms
-- ✅ Saves ~200-300ms on Dashboard→Quiz→Dashboard transitions
-- ✅ No additional dependencies
-
----
-
 ### 1.3 Move User Profile to App-Level Context
 
 **File:** `src/auth.tsx`  
@@ -317,10 +251,9 @@ useEffect(() => {
 | Fix | Time | Impact | Dependency |
 |-----|------|--------|-----------|
 | Remove dup validation | 30min | -200ms/nav | None |
-| Quiz cache consolidation | 45min | -250ms/transition | None |
 | App-level user profile | 60min | -600ms/session | None |
 | Partial error recovery | 30min | Better UX | None |
-| **Phase 1 Total** | **2.5 hours** | **-1.05s/session** | **None** |
+| **Phase 1 Total** | **2 hours** | **-800ms/session** | **None** |
 
 ---
 
@@ -731,10 +664,9 @@ Error → Revert and show toast ✓
 ```
 Phase 1 (Quick Wins - No Dependencies)
 ├─ Remove duplicate validation          30min
-├─ Quiz questions cache                 45min
 ├─ App-level user profile               60min
 ├─ Error recovery                       30min
-└─ Total: 2.5 hours → Saves 1.05s per session
+└─ Total: 2 hours → Saves 800ms per session
 
 Phase 2 (React Query - Professional Caching)
 ├─ Install & setup                      45min
@@ -750,7 +682,7 @@ Phase 3 (Progressive Rendering - Ultimate UX)
 └─ Total: 2.25 hours → Perceived speed 2-3x faster
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-TOTAL TIME: 7.75 hours spread over 1-2 days
+TOTAL TIME: 7 hours spread over 1-2 days
 ```
 
 ---

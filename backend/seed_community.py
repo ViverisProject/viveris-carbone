@@ -96,7 +96,30 @@ def main():
         else:
             print(f"Failed to upsert stats for {stat['user_id']}: {resp.text}")
 
-    print("\nMock data seeded successfully! You can now test the Leaderboard endpoint.")
+    print("\n3. Adding friends to users...")
+    all_user_ids = [ALICE_ID] + mock_ids
+    
+    # For each user, add at least 5 friends from the other users
+    for i, user_id in enumerate(all_user_ids):
+        # Get list of other users to be friends with (up to 5)
+        potential_friends = all_user_ids[:i] + all_user_ids[i+1:]
+        friends_to_add = potential_friends[:5]  # Take up to 5 friends
+        
+        for friend_id in friends_to_add:
+            friendship_data = {
+                "user_id": user_id,
+                "friend_id": friend_id,
+                "status": "accepted"
+            }
+            resp = requests.post(f"{SUPABASE_URL}/rest/v1/friends", headers=HEADERS, json=friendship_data)
+            if resp.status_code in (200, 201):
+                print(f"Added friend relationship: {user_id} <-> {friend_id}")
+            elif resp.status_code == 409:
+                print(f"Friendship already exists between {user_id} and {friend_id}")
+            else:
+                print(f"Failed to add friendship: {resp.text}")
+
+    print("\nMock data seeded successfully! You can now test the Leaderboard and Friends endpoints.")
 
 if __name__ == "__main__":
     main()

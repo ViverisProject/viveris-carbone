@@ -184,7 +184,7 @@ async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> 
 
 ---
 
-## Problem 4: Sequential Blocking Patterns (Waterfalls)
+## Problem 4: All-or-Nothing Blocking Patterns
 
 ### Community Page Example
 
@@ -197,30 +197,27 @@ useEffect(() => {
 }, []);
 ```
 
-**What looks parallel is actually sequential in many real-world scenarios:**
+**While network requests are parallel, the UI rendering is blocked completely:**
 
 ```
 Time: 0ms     Browser starts Community page
               ✓ Load HTML/CSS/JS
               ✓ React renders → calls useEffect
 
-Time: 16ms    First request started
-              GET /api/community/leaderboard (200-500ms)
-
-Time: 30ms    Browser IDLE - Could start 2nd request but doesn't
+Time: 16ms    Both requests start concurrently!
+              GET /api/community/leaderboard (e.g., 50ms)
+              GET /api/users/me/friends (e.g., 800ms)
               
-Time: 220ms   Leaderboard response arrives
-              ✓ Promise.all still waiting for friends...
+Time: 66ms    Leaderboard response arrives
+              ✓ But UI cannot render yet because Promise.all waits for friends...
+              ✓ User still sees a spinner!
               
-Time: 230ms   Second request starts (because leaderboard only completed)
-              GET /api/users/me/friends (200-500ms)
-
-Time: 630ms   Friends response arrives
+Time: 816ms   Friends response arrives
               ✓ Promise.all fulfills
-              ✓ UI renders (but user saw spinner for 630ms!)
+              ✓ UI finally renders (User saw spinner for 800ms!)
 ```
 
-**Better approach:** Start both simultaneously without waiting.
+**Better approach:** Load independent data streams using separate state/hooks so the fast data (Leaderboard) renders immediately, while slow data (Friends) shows a local skeleton.
 
 ### Dashboard Multiple Calls Example
 

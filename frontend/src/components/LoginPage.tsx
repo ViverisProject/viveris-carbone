@@ -51,6 +51,10 @@ export function LoginPage() {
             },
           });
           toast.success("Empreinte enregistrée !");
+          
+          // Clear it so it doesn't trigger again on future logins
+          sessionStorage.removeItem("quizResult");
+          sessionStorage.removeItem("userPredictions");
         } catch (err: any) {
           // non-fatal — continue to dashboard
         }

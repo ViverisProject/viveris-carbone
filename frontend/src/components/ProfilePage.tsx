@@ -4,25 +4,26 @@ import { Mail, Lock, Trash2, LogOut, TreePine, Award, Flame, ChevronRight, Setti
 import { motion } from "motion/react";
 import { toast } from "sonner";
 import { Navigation } from "./Navigation";
-import { userApi, authApi, type UserProfileDashboardResponse, type AdvancedUserStatsResponse } from "../api";
+import { userApi, authApi } from "../api";
 import { useAuth } from "../auth";
+import { useUserStats } from "../hooks";
 
 export function ProfilePage() {
-  const [profile, setProfile] = useState<UserProfileDashboardResponse | null>(null);
-  const [stats, setStats] = useState<AdvancedUserStatsResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const auth = useAuth();
+  const { userProfile: profile, isLoadingProfile: isLoadingProf } = auth;
+  const { data: stats, isLoading: isLoadingStats, isError: isErrorStats } = useUserStats();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [passwordForm, setPasswordForm] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const navigate = useNavigate();
-  const auth = useAuth();
+
+  const isLoading = isLoadingProf || isLoadingStats;
 
   useEffect(() => {
-    Promise.all([userApi.getMe(), userApi.getStats()])
-      .then(([prof, st]) => { setProfile(prof); setStats(st); })
-      .catch(() => toast.error("Impossible de charger le profil."))
-      .finally(() => setIsLoading(false));
-  }, []);
+    if (isErrorStats) {
+      toast.error("Impossible de charger les statistiques.");
+    }
+  }, [isErrorStats]);
 
   const handleLogout = async () => {
     try { await authApi.logout(); } catch { /* ignore — stateless JWT */ }
@@ -73,7 +74,7 @@ export function ProfilePage() {
   }
 
   const user = profile?.user;
-  const displayName = user?.firstName ?? (user as any)?.user_name ?? "Utilisateur";
+  const displayName = user?.userName ?? user?.firstName ?? "Utilisateur";
 
   return (
     <div className="min-h-screen pb-32 md:pb-8 md:pl-64 lg:pl-72" style={{ backgroundColor: 'var(--viv-beige)' }}>
