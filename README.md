@@ -2,7 +2,7 @@
 
 A modern full-stack web application starter template featuring:
 - **Backend**: Python FastAPI (Fast, modern, async)
-- **Frontend**: Svelte with Vite (Lightweight, reactive)
+- **Frontend**: React with Vite and TailwindCSS (Modern, component-based)
 - **Containerization**: Docker & Docker Compose
 - **Deployment**: Ready for DockerHub and VPS deployment
 
@@ -27,10 +27,10 @@ viveris-carbone-backend/
 │   ├── requirements.txt    # Python dependencies
 │   ├── Dockerfile          # Backend Docker configuration
 │   └── .env.example        # Backend environment template
-├── frontend/               # Svelte frontend
+├── frontend/               # React frontend
 │   ├── src/                # Source files
-│   │   ├── App.svelte      # Main Svelte component
-│   │   └── main.js         # Application entry point
+│   │   ├── App.tsx         # Main React component
+│   │   └── main.tsx        # Application entry point
 │   ├── index.html          # HTML template
 │   ├── vite.config.js      # Vite configuration
 │   ├── package.json        # Node dependencies
@@ -121,7 +121,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 # Run development server
-python main.py
+uvicorn src.main:app --reload
 ```
 
 The backend will be available at http://localhost:8000
@@ -138,7 +138,7 @@ pip install package-name
 pip freeze > requirements.txt
 ```
 
-### Frontend Development (Svelte)
+### Frontend Development (React)
 
 #### Local Setup
 
