@@ -82,6 +82,15 @@ class SupaBaseGamificationRepository(GamificationRepositoryInterface):
         }
         requests.post(self._endpoint("user_stats"), headers=headers, json=payload)
 
+    def advance_challenge_batch(self, user_id: str, new_offset: int) -> None:
+        headers = self.headers.copy()
+        headers["Prefer"] = "resolution=merge-duplicates"
+        payload = {
+            "user_id": user_id,
+            "challenge_batch_offset": new_offset
+        }
+        requests.post(self._endpoint("user_stats"), headers=headers, json=payload)
+
     def create_challenge(self, data: Dict[str, Any]) -> Dict[str, Any]:
         headers = self.headers.copy()
         headers["Prefer"] = "return=representation"

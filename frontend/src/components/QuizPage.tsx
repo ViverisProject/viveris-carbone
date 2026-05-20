@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
 import { quizApi, type QuizQuestion } from "../api";
+import viverisLogo from "../Pack_charte_graphique/Logos/Logos_Viveris/Avec signature/Viveris - Logo - Baseline - RVB - Noir.png";
 
 // Export a stable reference so DashboardPage can still call quizApi independently
 export type { QuizQuestion };
@@ -92,7 +93,7 @@ export function QuizPage() {
       {/* Header */}
       <header className="container mx-auto px-4 py-6">
         <div className="flex items-center gap-2">
-          <img src="/src/Pack_charte_graphique/Logos/Logos_Viveris/Avec%20signature/Viveris%20-%20Logo%20-%20Baseline%20-%20RVB%20-%20Noir.png" alt="Viveris Carbone" className="h-20 md:h-24 object-contain" />
+          <img src={viverisLogo} alt="Viveris Carbone" className="h-20 md:h-24 object-contain" />
         </div>
       </header>
 

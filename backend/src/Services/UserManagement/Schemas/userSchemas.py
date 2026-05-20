@@ -1,4 +1,4 @@
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, Any
 from pydantic import BaseModel
 
 
@@ -24,6 +24,7 @@ class UserObject(BaseModel):
     firstName: Optional[str]
     lastName: Optional[str]
     email: str
+    userName: Optional[str] = None
 
 
 class QuizResult(BaseModel):
@@ -46,6 +47,7 @@ class UserProfileDashboardResponse(BaseModel):
     achievements: List[Achievement]
     streak: int
     bestStreak: int
+    history: Optional[List[Dict[str, Any]]] = []
 
     model_config = {
         "json_schema_extra": {

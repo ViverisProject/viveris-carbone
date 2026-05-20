@@ -16,7 +16,8 @@ from Gamification.Schemas.gamificationSchemas import (
 from Gamification.Controllers.gamificationControllers import (
     get_recommendations_controller,
     toggle_challenge_controller,
-    create_challenge_controller
+    create_challenge_controller,
+    unlock_next_batch_controller
 )
 
 router = APIRouter(prefix="/api/challenges", tags=["gamification"])
@@ -37,19 +38,16 @@ async def get_recommendations(
 
 
 @router.post(
-    "/{challenge_id}/toggle",
-    response_model=ToggleChallengeResponse,
+    "/unlock-batch",
     status_code=status.HTTP_200_OK,
-    summary="Toggle a challenge completion",
-    description="Marks a challenge as completed or uncompleted. Awards or removes points and updates tree planting progress."
+    summary="Unlock next challenge batch",
+    description="Advances the user's challenge batch offset after completing all current challenges."
 )
-async def toggle_challenge(
-    challenge_id: str,
-    payload: ToggleChallengeRequest,
+async def unlock_next_batch(
     user_id: str = Depends(get_current_user),
     repo: GamificationRepositoryInterface = Depends(get_gamification_repo)
 ):
-    return toggle_challenge_controller(user_id, challenge_id, payload, repo)
+    return unlock_next_batch_controller(user_id, repo)
 
 
 @router.post(
@@ -65,3 +63,20 @@ async def create_challenge(
     repo: GamificationRepositoryInterface = Depends(get_gamification_repo)
 ):
     return create_challenge_controller(payload, repo)
+
+
+@router.post(
+    "/{challenge_id}/toggle",
+    response_model=ToggleChallengeResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Toggle a challenge completion",
+    description="Marks a challenge as completed or uncompleted. Awards or removes points and updates tree planting progress."
+)
+async def toggle_challenge(
+    challenge_id: str,
+    payload: ToggleChallengeRequest,
+    user_id: str = Depends(get_current_user),
+    repo: GamificationRepositoryInterface = Depends(get_gamification_repo)
+):
+    return toggle_challenge_controller(user_id, challenge_id, payload, repo)
+
