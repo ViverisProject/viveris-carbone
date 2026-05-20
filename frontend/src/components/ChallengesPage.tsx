@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Flame, CheckCircle2, Circle, TreePine, Bell, Sprout, Sun, Cloud, Plus } from "lucide-react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
@@ -10,6 +11,7 @@ import { useChallenges, useChallengeToggle } from "../hooks";
 
 export function ChallengesPage() {
   const { userProfile: profile } = useAuth();
+  const queryClient = useQueryClient();
   const { data: challenges = [], isLoading, isError, refetch: loadChallenges } = useChallenges();
   const toggleMutation = useChallengeToggle();
   const [totalPoints, setTotalPoints] = useState(0);
@@ -76,9 +78,24 @@ export function ChallengesPage() {
     try {
       await challengesApi.create(data);
       toast.success("Défi créé avec succès !");
-      loadChallenges(); // Refresh the list
+      loadChallenges();
     } catch (err: any) {
       toast.error(err.message ?? "Erreur lors de la création du défi.");
+    }
+  };
+
+  const handleUnlockBatch = async () => {
+
+    try {
+      const res = await challengesApi.unlockBatch();
+      // Inject the new challenges directly into the cache — no second fetch!
+      if (res.challenges) {
+        queryClient.setQueryData(['challenges', 'recommendations'], res.challenges);
+      } else {
+        loadChallenges();
+      }
+    } catch (err: any) {
+      toast.error(err.message ?? "Impossible de débloquer la prochaine série.");
     }
   };
 
@@ -130,7 +147,7 @@ export function ChallengesPage() {
                   <h2 className="text-xl md:text-2xl font-bold mb-2 relative z-10" style={{ color: 'var(--viv-navy)' }}>Incroyable ! 🎉</h2>
                   <p className="mb-6 md:text-lg max-w-md relative z-10" style={{ color: 'var(--viv-text-secondary)' }}>Vous avez accompli tous vos défis. La planète vous remercie !</p>
                   <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                    onClick={loadChallenges}
+                    onClick={handleUnlockBatch}
                     className="relative z-10 px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all"
                     style={{ backgroundColor: 'var(--viv-navy)', color: 'white' }}>
                     Débloquer de nouveaux défis

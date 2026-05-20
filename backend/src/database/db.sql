@@ -124,7 +124,8 @@ CREATE TABLE user_stats (
     total_points INT DEFAULT 0,
     streak INT DEFAULT 0,
     best_streak INT DEFAULT 0,
-    trees_planted INT DEFAULT 0
+    trees_planted INT DEFAULT 0,
+    challenge_batch_offset INT DEFAULT 0
 );
 
 -- =========================================

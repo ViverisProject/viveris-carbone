@@ -14,11 +14,15 @@ class GamificationRepositoryInterface(Protocol):
         ...
         
     def get_user_stats(self, user_id: str) -> Optional[Dict[str, Any]]:
-        """Fetch the current stats (total_points, trees_planted) for the user."""
+        """Fetch the current stats (total_points, trees_planted, challenge_batch_offset) for the user."""
         ...
         
     def update_user_stats(self, user_id: str, new_points: int, new_trees: int) -> None:
         """Update total_points and trees_planted for the user."""
+        ...
+
+    def advance_challenge_batch(self, user_id: str, new_offset: int) -> None:
+        """Persist the new challenge batch offset for the user."""
         ...
         
     def create_challenge(self, data: Dict[str, Any]) -> Dict[str, Any]:
