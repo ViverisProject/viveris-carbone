@@ -118,9 +118,6 @@ export function ChallengesPage() {
             <button onClick={() => setIsCreateModalOpen(true)} className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-md flex items-center justify-center" title="Créer un défi">
               <Plus className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--eco-navy)' }} />
             </button>
-            <button className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-md flex items-center justify-center">
-              <Bell className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--eco-navy)' }} />
-            </button>
           </div>
         </motion.div>
 

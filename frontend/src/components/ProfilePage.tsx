@@ -81,9 +81,6 @@ export function ProfilePage() {
       <div className="container mx-auto px-4 md:px-8 lg:px-12 max-w-7xl">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between pt-6 pb-4">
           <h1 className="text-2xl md:text-3xl font-bold" style={{ color: 'var(--viv-navy)' }}>Profil</h1>
-          <button className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-md flex items-center justify-center">
-            <Settings className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--viv-navy)' }} />
-          </button>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

@@ -75,9 +75,6 @@ export function CommunityPage() {
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between pt-6 pb-4">
           <h1 className="text-2xl md:text-3xl font-bold" style={{ color: 'var(--viv-navy)' }}>Rejoindre la communauté</h1>
-          <button className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-md flex items-center justify-center">
-            <Bell className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--viv-navy)' }} />
-          </button>
         </motion.div>
 
         <p className="text-sm md:text-base mb-6" style={{ color: 'var(--viv-text-secondary)' }}>
@@ -139,9 +136,6 @@ export function CommunityPage() {
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg md:text-xl font-semibold" style={{ color: 'var(--viv-navy)' }}>Vos amis</h2>
-                  <button className="flex items-center gap-1 text-sm font-medium" style={{ color: 'var(--viv-secondary)' }}>
-                    Trouver d'autres amis <ChevronRight className="w-4 h-4" />
-                  </button>
                 </div>
 
                 {filteredFriends.length === 0 ? (
@@ -219,9 +213,6 @@ export function CommunityPage() {
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="font-semibold" style={{ color: 'var(--viv-secondary)' }}>{user.points} pts</span>
-                        <button onClick={() => handleSendRequest(String(user.rank))} title="Ajouter en ami" className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
-                          <UserPlus className="w-4 h-4" style={{ color: '#94A3B8' }} />
-                        </button>
                       </div>
                     </div>
                   ))}
