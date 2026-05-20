@@ -66,15 +66,21 @@ async function apiFetch<T>(
     try {
       const body = await response.json();
       if (body?.detail) {
-        errorMessage =
-          typeof body.detail === "string"
-            ? body.detail
-            : JSON.stringify(body.detail);
+        if (typeof body.detail === "string") {
+          errorMessage = body.detail;
+        } else if (Array.isArray(body.detail)) {
+          // FastAPI validation errors
+          errorMessage = body.detail.map((e: any) => e.msg).join(", ");
+        } else if (typeof body.detail === "object" && body.detail.message) {
+          errorMessage = body.detail.message;
+        } else {
+          errorMessage = "Une erreur est survenue (détails techniques masqués).";
+        }
       } else if (body?.message) {
         errorMessage =
           typeof body.message === "string"
             ? body.message
-            : JSON.stringify(body.message);
+            : "Une erreur inattendue est survenue.";
       }
     } catch {
       // ignore JSON parse errors
