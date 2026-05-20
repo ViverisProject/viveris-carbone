@@ -20,6 +20,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:8000
     container_name: viveris-frontend
     ports:
       - "5173:80"

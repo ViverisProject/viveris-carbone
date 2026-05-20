@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { Home, Target, Users, User } from "lucide-react";
+import viverisLogoBlanc from "../Pack_charte_graphique/Logos/Logos_Viveris/Sans signature/Viveris - Logo - Prod - RVB - Blanc.png";
 
 interface NavigationProps {
   currentPage: string;
@@ -57,7 +58,7 @@ export function Navigation({ currentPage }: NavigationProps) {
         >
           {/* Logo/Brand */}
           <div className="mb-8">
-            <img src="/src/Pack_charte_graphique/Logos/Logos_Viveris/Sans%20signature/Viveris%20-%20Logo%20-%20Prod%20-%20RVB%20-%20Blanc.png" alt="Viveris" className="h-10 mb-2 object-contain" />
+            <img src={viverisLogoBlanc} alt="Viveris" className="h-10 mb-2 object-contain" />
             <p className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
               Suivez votre empreinte carbone
             </p>

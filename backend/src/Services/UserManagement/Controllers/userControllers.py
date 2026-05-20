@@ -39,7 +39,8 @@ def get_user_dashboard(user_id: str, repo: UserRepositoryInterface) -> UserProfi
         id=raw_data.get("id"),
         firstName=raw_data.get("first_name"),
         lastName=raw_data.get("last_name"),
-        email=raw_data.get("email", "")
+        email=raw_data.get("email", ""),
+        userName=raw_data.get("user_name", raw_data.get("username"))
     )
     
     # Extract Stats
@@ -84,7 +85,8 @@ def get_user_dashboard(user_id: str, repo: UserRepositoryInterface) -> UserProfi
         treesPlanted=trees_planted,
         achievements=achievements,
         streak=streak,
-        bestStreak=best_streak
+        bestStreak=best_streak,
+        history=ob_results if isinstance(ob_results, list) else []
     )
 
 def change_password_controller(user_id: str, payload: PasswordChangeRequest, repo: UserRepositoryInterface) -> GenericActionResponse:
