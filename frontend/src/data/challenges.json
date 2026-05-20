@@ -1,721 +1,721 @@
 [
   {
     "id": 1,
-    "title": "0g de viande rouge",
+    "title": "0g de viande rouge pendant 15 jours",
     "points": 40,
     "category": "Alimentation"
   },
   {
     "id": 2,
-    "title": "Faire un repas 100% végétarien",
+    "title": "Faire un repas 100% végétarien une fois",
     "points": 20,
     "category": "Alimentation"
   },
   {
     "id": 3,
-    "title": "Acheter des fruits/légumes de saison",
+    "title": "Acheter des fruits/légumes de saison pendant 1 semaine",
     "points": 20,
     "category": "Alimentation"
   },
   {
     "id": 4,
-    "title": "Manger local (produits < 100km)",
+    "title": "Manger local (produits < 100km) pendant 1 semaine",
     "points": 40,
     "category": "Alimentation"
   },
   {
     "id": 5,
-    "title": "Cuisiner avec les restes",
+    "title": "Cuisiner avec les restes pendant 1 semaine",
     "points": 10,
     "category": "Alimentation"
   },
   {
     "id": 6,
-    "title": "Ne pas gaspiller de nourriture",
+    "title": "Ne pas gaspiller de nourriture pendant 1 semaine",
     "points": 20,
     "category": "Alimentation"
   },
   {
     "id": 7,
-    "title": "Faire son propre pain",
+    "title": "Faire son propre pain une fois",
     "points": 50,
     "category": "Alimentation"
   },
   {
     "id": 8,
-    "title": "Faire un gâteau maison",
+    "title": "Faire un gâteau maison une fois",
     "points": 20,
     "category": "Alimentation"
   },
   {
     "id": 9,
-    "title": "Acheter en vrac",
+    "title": "Acheter en vrac pendant 1 semaine",
     "points": 30,
     "category": "Alimentation"
   },
   {
     "id": 10,
-    "title": "Boire de l'eau du robinet",
+    "title": "Boire de l'eau du robinet chaque jour pendant 1 semaine",
     "points": 10,
     "category": "Alimentation"
   },
   {
     "id": 11,
-    "title": "Éviter les produits transformés",
+    "title": "Éviter les produits transformés pendant 1 semaine",
     "points": 40,
     "category": "Alimentation"
   },
   {
     "id": 12,
-    "title": "Cuisiner une recette végétalienne",
+    "title": "Cuisiner une recette végétalienne une fois",
     "points": 40,
     "category": "Alimentation"
   },
   {
     "id": 13,
-    "title": "Préparer sa lunchbox",
+    "title": "Préparer sa lunchbox chaque jour pendant 1 semaine",
     "points": 30,
     "category": "Alimentation"
   },
   {
     "id": 14,
-    "title": "Composter ses déchets organiques",
+    "title": "Composter ses déchets organiques pendant 1 semaine",
     "points": 50,
     "category": "Alimentation"
   },
   {
     "id": 15,
-    "title": "Consommer des protéines végétales",
+    "title": "Consommer des protéines végétales pendant 1 semaine",
     "points": 20,
     "category": "Alimentation"
   },
   {
     "id": 16,
-    "title": "Découvrir une nouvelle légumineuse",
+    "title": "Découvrir une nouvelle légumineuse une fois",
     "points": 20,
     "category": "Alimentation"
   },
   {
     "id": 17,
-    "title": "Acheter au marché local",
+    "title": "Acheter au marché local pendant 1 semaine",
     "points": 40,
     "category": "Alimentation"
   },
   {
     "id": 18,
-    "title": "Ne pas acheter de bouteille en plastique",
+    "title": "Ne pas acheter de bouteille en plastique pendant 1 semaine",
     "points": 20,
     "category": "Alimentation"
   },
   {
     "id": 19,
-    "title": "Consommer un fruit en dessert",
+    "title": "Consommer un fruit en dessert chaque jour pendant 1 semaine",
     "points": 10,
     "category": "Alimentation"
   },
   {
     "id": 20,
-    "title": "Faire son propre lait végétal",
+    "title": "Faire son propre lait végétal une fois",
     "points": 50,
     "category": "Alimentation"
   },
   {
     "id": 21,
-    "title": "Manger des noix/graines au goûter",
+    "title": "Manger des noix/graines au goûter chaque jour pendant 1 semaine",
     "points": 10,
     "category": "Alimentation"
   },
   {
     "id": 22,
-    "title": "Refuser un emballage alimentaire",
+    "title": "Refuser un emballage alimentaire une fois",
     "points": 20,
     "category": "Alimentation"
   },
   {
     "id": 23,
-    "title": "Prendre un café sans gobelet jetable",
+    "title": "Prendre un café sans gobelet jetable une fois",
     "points": 10,
     "category": "Alimentation"
   },
   {
     "id": 24,
-    "title": "Acheter un produit imparfait/moche",
+    "title": "Acheter un produit imparfait/moche une fois",
     "points": 10,
     "category": "Alimentation"
   },
   {
     "id": 25,
-    "title": "Faire une soupe anti-gaspi",
+    "title": "Faire une soupe anti-gaspi une fois",
     "points": 30,
     "category": "Alimentation"
   },
   {
     "id": 26,
-    "title": "Tester le tofu ou le seitan",
+    "title": "Tester le tofu ou le seitan une fois",
     "points": 20,
     "category": "Alimentation"
   },
   {
     "id": 27,
-    "title": "Préparer le menu de la semaine à l'avance",
+    "title": "Préparer le menu de la semaine à l'avance une fois",
     "points": 30,
     "category": "Alimentation"
   },
   {
     "id": 28,
-    "title": "Congeler des aliments avant qu'ils périssent",
+    "title": "Congeler des aliments avant qu'ils périssent pendant 1 semaine",
     "points": 20,
     "category": "Alimentation"
   },
   {
     "id": 29,
-    "title": "Acheter un produit certifié bio",
+    "title": "Acheter un produit certifié bio une fois",
     "points": 20,
     "category": "Alimentation"
   },
   {
     "id": 30,
-    "title": "Réduire sa consommation de fromage",
+    "title": "Réduire sa consommation de fromage pendant 1 semaine",
     "points": 30,
     "category": "Alimentation"
   },
   {
     "id": 31,
-    "title": "Utiliser les transports en commun",
+    "title": "Utiliser les transports en commun pendant 1 semaine",
     "points": 20,
     "category": "Transport"
   },
   {
     "id": 32,
-    "title": "Aller au travail/école à vélo",
+    "title": "Aller au travail/école à vélo pendant 1 semaine",
     "points": 40,
     "category": "Transport"
   },
   {
     "id": 33,
-    "title": "Marcher au lieu de prendre la voiture",
+    "title": "Marcher au lieu de prendre la voiture pendant 1 semaine",
     "points": 30,
     "category": "Transport"
   },
   {
     "id": 34,
-    "title": "Faire du covoiturage",
+    "title": "Faire du covoiturage une fois",
     "points": 40,
     "category": "Transport"
   },
   {
     "id": 35,
-    "title": "Télétravailler si possible",
+    "title": "Télétravailler si possible pendant 1 semaine",
     "points": 50,
     "category": "Transport"
   },
   {
     "id": 36,
-    "title": "Privilégier le train à la voiture",
+    "title": "Privilégier le train à la voiture pour un trajet une fois",
     "points": 50,
     "category": "Transport"
   },
   {
     "id": 37,
-    "title": "Utiliser le train pour un trajet long",
+    "title": "Utiliser le train pour un trajet long une fois",
     "points": 40,
     "category": "Transport"
   },
   {
     "id": 38,
-    "title": "Prendre les escaliers au lieu de l'ascenseur",
+    "title": "Prendre les escaliers au lieu de l'ascenseur chaque jour pendant 1 semaine",
     "points": 10,
     "category": "Transport"
   },
   {
     "id": 39,
-    "title": "Optimiser ses déplacements en une seule sortie",
+    "title": "Optimiser ses déplacements en une seule sortie pendant 1 semaine",
     "points": 20,
     "category": "Transport"
   },
   {
     "id": 40,
-    "title": "Essayer un nouveau mode de transport doux",
+    "title": "Essayer un nouveau mode de transport doux une fois",
     "points": 40,
     "category": "Transport"
   },
   {
     "id": 41,
-    "title": "Regonfler les pneus de son vélo",
+    "title": "Regonfler les pneus de son vélo une fois",
     "points": 20,
     "category": "Transport"
   },
   {
     "id": 42,
-    "title": "Conduire en éco-conduite",
+    "title": "Conduire en éco-conduite pendant 1 semaine",
     "points": 30,
     "category": "Transport"
   },
   {
     "id": 43,
-    "title": "Couper le moteur à l'arrêt",
+    "title": "Couper le moteur à l'arrêt pendant 1 semaine",
     "points": 10,
     "category": "Transport"
   },
   {
     "id": 44,
-    "title": "Vérifier la pression des pneus (voiture)",
+    "title": "Vérifier la pression des pneus (voiture) une fois",
     "points": 20,
     "category": "Transport"
   },
   {
     "id": 45,
-    "title": "Ne pas utiliser la climatisation en voiture",
+    "title": "Ne pas utiliser la climatisation en voiture pendant 1 semaine",
     "points": 20,
     "category": "Transport"
   },
   {
     "id": 46,
-    "title": "Entretenir son vélo",
+    "title": "Entretenir son vélo une fois",
     "points": 20,
     "category": "Transport"
   },
   {
     "id": 47,
-    "title": "Partager son trajet sur une application",
+    "title": "Partager son trajet sur une application une fois",
     "points": 50,
     "category": "Transport"
   },
   {
     "id": 48,
-    "title": "Marcher au moins 5000 pas",
+    "title": "Marcher au moins 5000 pas chaque jour pendant 1 semaine",
     "points": 30,
     "category": "Transport"
   },
   {
     "id": 49,
-    "title": "Prendre le métro/tram",
+    "title": "Prendre le métro/tram pendant 1 semaine",
     "points": 20,
     "category": "Transport"
   },
   {
     "id": 50,
-    "title": "Aller faire ses courses à pied",
+    "title": "Aller faire ses courses à pied pendant 1 semaine",
     "points": 30,
     "category": "Transport"
   },
   {
     "id": 51,
-    "title": "Laisser la voiture au garage",
+    "title": "Laisser la voiture au garage pendant 1 semaine",
     "points": 40,
     "category": "Transport"
   },
   {
     "id": 52,
-    "title": "Voyager léger",
+    "title": "Voyager léger une fois",
     "points": 20,
     "category": "Transport"
   },
   {
     "id": 53,
-    "title": "Organiser un trajet à plusieurs",
+    "title": "Organiser un trajet à plusieurs une fois",
     "points": 50,
     "category": "Transport"
   },
   {
     "id": 54,
-    "title": "Privilégier les visios",
+    "title": "Privilégier les visios pendant 1 semaine",
     "points": 10,
     "category": "Transport"
   },
   {
     "id": 55,
-    "title": "Éviter les détours inutiles",
+    "title": "Éviter les détours inutiles pendant 1 semaine",
     "points": 10,
     "category": "Transport"
   },
   {
     "id": 56,
-    "title": "Conduire à 110 km/h max sur autoroute",
+    "title": "Conduire à 110 km/h max sur autoroute pendant 1 semaine",
     "points": 30,
     "category": "Transport"
   },
   {
     "id": 57,
-    "title": "Planifier des vacances sans avion",
+    "title": "Planifier des vacances sans avion une fois",
     "points": 50,
     "category": "Transport"
   },
   {
     "id": 58,
-    "title": "Utiliser une trottinette pour un court trajet",
+    "title": "Utiliser une trottinette pour un court trajet une fois",
     "points": 20,
     "category": "Transport"
   },
   {
     "id": 59,
-    "title": "Rejoindre un groupe de covoiturage domicile-travail",
+    "title": "Rejoindre un groupe de covoiturage domicile-travail une fois",
     "points": 40,
     "category": "Transport"
   },
   {
     "id": 60,
-    "title": "Couper la climatisation avant d'arriver à destination",
+    "title": "Couper la climatisation avant d'arriver à destination pendant 1 semaine",
     "points": 10,
     "category": "Transport"
   },
   {
     "id": 61,
-    "title": "Éteindre les appareils en veille",
+    "title": "Éteindre les appareils en veille chaque jour pendant 1 semaine",
     "points": 20,
     "category": "Énergie"
   },
   {
     "id": 62,
-    "title": "Réduire la température de 1°C",
+    "title": "Réduire la température de 1°C pendant 1 semaine",
     "points": 40,
     "category": "Énergie"
   },
   {
     "id": 63,
-    "title": "Éteindre la box internet la nuit",
+    "title": "Éteindre la box internet la nuit chaque jour pendant 1 semaine",
     "points": 10,
     "category": "Énergie"
   },
   {
     "id": 64,
-    "title": "Prendre une douche de moins de 5 minutes",
+    "title": "Prendre une douche de moins de 5 minutes chaque jour pendant 1 semaine",
     "points": 30,
     "category": "Énergie"
   },
   {
     "id": 65,
-    "title": "Laver son linge à 30°C",
+    "title": "Laver son linge à 30°C pendant 1 semaine",
     "points": 20,
     "category": "Énergie"
   },
   {
     "id": 66,
-    "title": "Faire sécher le linge à l'air libre",
+    "title": "Faire sécher le linge à l'air libre pendant 1 semaine",
     "points": 20,
     "category": "Énergie"
   },
   {
     "id": 67,
-    "title": "Dégivrer le congélateur/frigo",
+    "title": "Dégivrer le congélateur/frigo une fois",
     "points": 50,
     "category": "Énergie"
   },
   {
     "id": 68,
-    "title": "Mettre un couvercle pour bouillir de l'eau",
+    "title": "Mettre un couvercle pour bouillir de l'eau pendant 1 semaine",
     "points": 10,
     "category": "Énergie"
   },
   {
     "id": 69,
-    "title": "Privilégier la lumière naturelle",
+    "title": "Privilégier la lumière naturelle pendant 1 semaine",
     "points": 10,
     "category": "Énergie"
   },
   {
     "id": 70,
-    "title": "Remplacer une ampoule par une LED",
+    "title": "Remplacer une ampoule par une LED une fois",
     "points": 30,
     "category": "Énergie"
   },
   {
     "id": 71,
-    "title": "Ne pas allumer la climatisation",
+    "title": "Ne pas allumer la climatisation pendant 1 semaine",
     "points": 30,
     "category": "Énergie"
   },
   {
     "id": 72,
-    "title": "Éteindre la multiprise le soir",
+    "title": "Éteindre la multiprise le soir chaque jour pendant 1 semaine",
     "points": 10,
     "category": "Énergie"
   },
   {
     "id": 73,
-    "title": "Charger son téléphone en mode avion",
+    "title": "Charger son téléphone en mode avion chaque jour pendant 1 semaine",
     "points": 10,
     "category": "Énergie"
   },
   {
     "id": 74,
-    "title": "Ne garder que les mails importants",
+    "title": "Ne garder que les mails importants pendant 1 semaine",
     "points": 20,
     "category": "Énergie"
   },
   {
     "id": 75,
-    "title": "Baisser la luminosité de ses écrans",
+    "title": "Baisser la luminosité de ses écrans pendant 1 semaine",
     "points": 10,
     "category": "Énergie"
   },
   {
     "id": 76,
-    "title": "Fermer les volets la nuit pour isoler",
+    "title": "Fermer les volets la nuit pour isoler chaque jour pendant 1 semaine",
     "points": 20,
     "category": "Énergie"
   },
   {
     "id": 77,
-    "title": "Éteindre la lumière en quittant une pièce",
+    "title": "Éteindre la lumière en quittant une pièce chaque jour pendant 1 semaine",
     "points": 10,
     "category": "Énergie"
   },
   {
     "id": 78,
-    "title": "Utiliser le mode éco du lave-vaisselle",
+    "title": "Utiliser le mode éco du lave-vaisselle pendant 1 semaine",
     "points": 20,
     "category": "Énergie"
   },
   {
     "id": 79,
-    "title": "Attendre que le lave-vaisselle soit plein",
+    "title": "Attendre que le lave-vaisselle soit plein pendant 1 semaine",
     "points": 20,
     "category": "Énergie"
   },
   {
     "id": 80,
-    "title": "Optimiser le rangement du frigo",
+    "title": "Optimiser le rangement du frigo pendant 1 semaine",
     "points": 40,
     "category": "Énergie"
   },
   {
     "id": 81,
-    "title": "Penser à purger les radiateurs",
+    "title": "Penser à purger les radiateurs une fois",
     "points": 50,
     "category": "Énergie"
   },
   {
     "id": 82,
-    "title": "Regarder des vidéos en basse résolution",
+    "title": "Regarder des vidéos en basse résolution pendant 1 semaine",
     "points": 20,
     "category": "Énergie"
   },
   {
     "id": 83,
-    "title": "Se désabonner de 5 newsletters",
+    "title": "Se désabonner de 5 newsletters une fois",
     "points": 30,
     "category": "Énergie"
   },
   {
     "id": 84,
-    "title": "Fermer les onglets inactifs",
+    "title": "Fermer les onglets inactifs chaque jour pendant 1 semaine",
     "points": 10,
     "category": "Énergie"
   },
   {
     "id": 85,
-    "title": "Nettoyer les filtres de ses appareils",
+    "title": "Nettoyer les filtres de ses appareils une fois",
     "points": 40,
     "category": "Énergie"
   },
   {
     "id": 86,
-    "title": "Faire une lessive à pleine charge uniquement",
+    "title": "Faire une lessive à pleine charge uniquement pendant 1 semaine",
     "points": 20,
     "category": "Énergie"
   },
   {
     "id": 87,
-    "title": "Débrancher les chargeurs non utilisés",
+    "title": "Débrancher les chargeurs non utilisés chaque jour pendant 1 semaine",
     "points": 10,
     "category": "Énergie"
   },
   {
     "id": 88,
-    "title": "Limiter l'usage du sèche-cheveux",
+    "title": "Limiter l'usage du sèche-cheveux pendant 1 semaine",
     "points": 20,
     "category": "Énergie"
   },
   {
     "id": 89,
-    "title": "Installer un économiseur d'eau sur le robinet",
+    "title": "Installer un économiseur d'eau sur le robinet une fois",
     "points": 40,
     "category": "Énergie"
   },
   {
     "id": 90,
-    "title": "Faire un bilan de sa consommation énergétique",
+    "title": "Faire un bilan de sa consommation énergétique une fois",
     "points": 40,
     "category": "Énergie"
   },
   {
     "id": 91,
-    "title": "Zéro plastique à usage unique",
+    "title": "Zéro plastique à usage unique pendant 15 jours",
     "points": 50,
     "category": "Consommation"
   },
   {
     "id": 92,
-    "title": "Utiliser une gourde",
+    "title": "Utiliser une gourde chaque jour pendant 1 semaine",
     "points": 10,
     "category": "Consommation"
   },
   {
     "id": 93,
-    "title": "Acheter un vêtement de seconde main",
+    "title": "Acheter un vêtement de seconde main une fois",
     "points": 40,
     "category": "Consommation"
   },
   {
     "id": 94,
-    "title": "Refuser un ticket de caisse",
+    "title": "Refuser un ticket de caisse une fois",
     "points": 10,
     "category": "Consommation"
   },
   {
     "id": 95,
-    "title": "Donner un objet non utilisé",
+    "title": "Donner un objet non utilisé une fois",
     "points": 30,
     "category": "Consommation"
   },
   {
     "id": 96,
-    "title": "Réparer un objet au lieu de jeter",
+    "title": "Réparer un objet au lieu de jeter une fois",
     "points": 50,
     "category": "Consommation"
   },
   {
     "id": 97,
-    "title": "Faire son propre produit d'entretien",
+    "title": "Faire son propre produit d'entretien une fois",
     "points": 50,
     "category": "Consommation"
   },
   {
     "id": 98,
-    "title": "Utiliser un sac en tissu pour les courses",
+    "title": "Utiliser un sac en tissu pour les courses chaque jour pendant 1 semaine",
     "points": 10,
     "category": "Consommation"
   },
   {
     "id": 99,
-    "title": "Refuser les goodies inutiles",
+    "title": "Refuser les goodies inutiles une fois",
     "points": 20,
     "category": "Consommation"
   },
   {
     "id": 100,
-    "title": "Acheter un livre d'occasion",
+    "title": "Acheter un livre d'occasion une fois",
     "points": 30,
     "category": "Consommation"
   },
   {
     "id": 101,
-    "title": "Utiliser un savon solide",
+    "title": "Utiliser un savon solide chaque jour pendant 1 semaine",
     "points": 20,
     "category": "Consommation"
   },
   {
     "id": 102,
-    "title": "Utiliser un shampoing solide",
+    "title": "Utiliser un shampoing solide chaque jour pendant 1 semaine",
     "points": 20,
     "category": "Consommation"
   },
   {
     "id": 103,
-    "title": "Utiliser des carrés démaquillants lavables",
+    "title": "Utiliser des carrés démaquillants lavables chaque jour pendant 1 semaine",
     "points": 20,
     "category": "Consommation"
   },
   {
     "id": 104,
-    "title": "Emballer un cadeau avec du tissu",
+    "title": "Emballer un cadeau avec du tissu une fois",
     "points": 40,
     "category": "Consommation"
   },
   {
     "id": 105,
-    "title": "Éviter la fast-fashion",
+    "title": "Éviter la fast-fashion pendant 15 jours",
     "points": 50,
     "category": "Consommation"
   },
   {
     "id": 106,
-    "title": "Emprunter à la bibliothèque",
+    "title": "Emprunter à la bibliothèque une fois",
     "points": 30,
     "category": "Consommation"
   },
   {
     "id": 107,
-    "title": "Louer un outil plutôt que l'acheter",
+    "title": "Louer un outil plutôt que l'acheter une fois",
     "points": 40,
     "category": "Consommation"
   },
   {
     "id": 108,
-    "title": "Mettre un stop-pub sur sa boîte",
+    "title": "Mettre un stop-pub sur sa boîte une fois",
     "points": 20,
     "category": "Consommation"
   },
   {
     "id": 109,
-    "title": "Recycler un déchet électronique",
+    "title": "Recycler un déchet électronique une fois",
     "points": 30,
     "category": "Consommation"
   },
   {
     "id": 110,
-    "title": "Trier tous ses emballages",
+    "title": "Trier tous ses emballages chaque jour pendant 1 semaine",
     "points": 20,
     "category": "Consommation"
   },
   {
     "id": 111,
-    "title": "Réutiliser un bocal en verre",
+    "title": "Réutiliser un bocal en verre une fois",
     "points": 10,
     "category": "Consommation"
   },
   {
     "id": 112,
-    "title": "Construire/Réaliser un objet soi-même",
+    "title": "Construire/Réaliser un objet soi-même une fois",
     "points": 50,
     "category": "Consommation"
   },
   {
     "id": 113,
-    "title": "Participer à une brocante",
+    "title": "Participer à une brocante une fois",
     "points": 40,
     "category": "Consommation"
   },
   {
     "id": 114,
-    "title": "Nettoyer sa boîte mail (supprimer 50 mails)",
+    "title": "Nettoyer sa boîte mail (supprimer 50 mails) une fois",
     "points": 30,
     "category": "Consommation"
   },
   {
     "id": 115,
-    "title": "Acheter un appareil électronique reconditionné",
+    "title": "Acheter un appareil électronique reconditionné une fois",
     "points": 40,
     "category": "Consommation"
   },
   {
     "id": 116,
-    "title": "Échanger un objet avec un voisin ou un ami",
+    "title": "Échanger un objet avec un voisin ou un ami une fois",
     "points": 30,
     "category": "Consommation"
   },
   {
     "id": 117,
-    "title": "Comparer l'impact carbone avant un achat",
+    "title": "Comparer l'impact carbone avant un achat une fois",
     "points": 20,
     "category": "Consommation"
   },
   {
     "id": 118,
-    "title": "Choisir la livraison lente ou groupée",
+    "title": "Choisir la livraison lente ou groupée une fois",
     "points": 20,
     "category": "Consommation"
   },
   {
     "id": 119,
-    "title": "Utiliser un filtre à eau plutôt que des bouteilles",
+    "title": "Utiliser un filtre à eau plutôt que des bouteilles chaque jour pendant 1 semaine",
     "points": 30,
     "category": "Consommation"
   },
   {
     "id": 120,
-    "title": "Trier et donner ses vêtements au lieu de jeter",
+    "title": "Trier et donner ses vêtements au lieu de jeter une fois",
     "points": 30,
     "category": "Consommation"
   }

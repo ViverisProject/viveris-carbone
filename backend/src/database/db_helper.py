@@ -111,10 +111,58 @@ def fetch_table_content(table_name, limit=10):
     return data
 
 
+# -----------------------------
+# Helper: Migrate challenges to DB
+# -----------------------------
+def migrate_challenges(challenges):
+    """
+    Insert a list of challenges into the challenges table.
+    Each challenge should be a dict with keys: id, title, points, category.
+    description and frequency will be set to None.
+    """
+    insert_query = text("""
+        INSERT INTO challenges (title, description, domain, frequency, points)
+        VALUES (:title, :description, :domain, :frequency, :points)
+    """)
+    with engine.begin() as conn:
+        for challenge in challenges:
+            conn.execute(
+                insert_query,
+                {
+                    "title": challenge["title"],
+                    "description": None,
+                    "domain": challenge["category"],
+                    "frequency": None,
+                    "points": challenge["points"]
+                }
+            )
+    print(f"Inserted {len(challenges)} challenges into the database.")
+
+
+# -----------------------------
+# Helper: Get current DB name
+# -----------------------------
+def get_current_db_name():
+    """Return the name of the current database connection."""
+    with engine.connect() as conn:
+        result = conn.execute(text("SELECT current_database();"))
+        db_name = result.scalar()
+    return db_name
+
+
 if __name__ == "__main__":
+    import json
     test_connection()
-    tables = list_tables()
-    for table in tables:
-        print(fetch_table_content(table))
+    print(get_current_db_name())
+    # tables = list_tables()
+    # for table in tables:
+    #     print(fetch_table_content(table))
     # list_columns("users")
     # list_enums()
+
+    # --- Load challenges from JSON and migrate them to DB ---
+    # with open("./frontend/src/data/challenges.json", encoding="utf-8") as f:
+    #     challenges = json.load(f)
+    #     print(f"Loaded {len(challenges)} challenges from JSON. Migrating to DB...")
+    #     migrate_challenges(challenges)
+    #     print("Migration complete.")
