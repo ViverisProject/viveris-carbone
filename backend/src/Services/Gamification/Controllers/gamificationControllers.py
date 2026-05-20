@@ -1,4 +1,5 @@
-from typing import List
+from typing import List, Dict
+from concurrent.futures import ThreadPoolExecutor
 from fastapi import HTTPException, status
 from datetime import datetime
 
@@ -11,13 +12,76 @@ from Gamification.Schemas.gamificationSchemas import (
 )
 from Gamification.Repositories.Interfaces.gamificationInterface import GamificationRepositoryInterface
 
+# Map challenge domains (as stored in DB) to emission keys
+_DOMAIN_TO_EMISSION = {
+    "transport": "Transport",
+    "mobilité": "Transport",
+    "alimentation": "Alimentation",
+    "food": "Alimentation",
+    "énergie": "Énergie",
+    "energie": "Énergie",
+    "energy": "Énergie",
+    "consommation": "Consommation",
+    "consumption": "Consommation",
+    "mode de vie": "Consommation",
+}
+
 def get_recommendations_controller(user_id: str, repo: GamificationRepositoryInterface) -> List[ChallengeResponse]:
-    all_challenges = repo.get_all_challenges()
-    completed_ids = set(repo.get_user_completed_challenges(user_id))
-    
+    # Run the 3 independent DB queries in parallel to reduce latency (~7 s vs ~21 s)
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        f_all = executor.submit(repo.get_all_challenges)
+        f_completed = executor.submit(repo.get_user_completed_challenges, user_id)
+        f_emissions = executor.submit(repo.get_user_emissions, user_id)
+        all_challenges = f_all.result()
+        completed_ids = set(f_completed.result())
+        emissions = f_emissions.result()
+
+    # Separate uncompleted and completed
+    uncompleted = [c for c in all_challenges if str(c["id"]) not in completed_ids]
+    completed_challenges = [c for c in all_challenges if str(c["id"]) in completed_ids]
+
+    # Rank emission categories by value (highest first = most flexibility)
+    ranked_domains = sorted(emissions.keys(), key=lambda k: emissions[k], reverse=True)
+
+    # Group uncompleted challenges by emission domain
+    by_domain: Dict[str, list] = {d: [] for d in ranked_domains}
+    ungrouped: list = []
+    for c in uncompleted:
+        raw_domain = c.get("domain", "").lower()
+        emission_key = _DOMAIN_TO_EMISSION.get(raw_domain)
+        if emission_key and emission_key in by_domain:
+            by_domain[emission_key].append(c)
+        else:
+            ungrouped.append(c)
+
+    # Build a list of 6: prioritise highest-emission domain
+    # Distribution: top domain gets 3 slots, second gets 2, others 1 each (capped at 6 total)
+    slots = [3, 2, 1]
+    chosen: list = []
+    for i, domain in enumerate(ranked_domains):
+        quota = slots[i] if i < len(slots) else 1
+        pool = by_domain.get(domain, [])
+        chosen.extend(pool[:quota])
+        if len(chosen) >= 6:
+            break
+
+    # Fill remaining slots with ungrouped or any uncompleted not yet chosen
+    chosen_ids = {str(c["id"]) for c in chosen}
+    extras = [c for c in ungrouped if str(c["id"]) not in chosen_ids]
+    extras += [c for c in uncompleted if str(c["id"]) not in chosen_ids and c not in extras]
+    chosen.extend(extras[:max(0, 6 - len(chosen))])
+
+    # If everything is completed, auto-reset those 6 challenges so user can redo them
+    if len(chosen) == 0 and completed_challenges:
+        wave = completed_challenges[:6]
+        wave_ids = [str(c["id"]) for c in wave]
+        repo.reset_user_challenges(user_id, wave_ids)
+        # After reset they are no longer completed — return them as unchecked
+        completed_ids -= set(wave_ids)
+        chosen = wave
+
     result = []
-    # For now, return all challenges (or top 10). The frontend can filter.
-    for c in all_challenges[:10]:
+    for c in chosen[:6]:
         c_id = str(c["id"])
         result.append(ChallengeResponse(
             id=c_id,

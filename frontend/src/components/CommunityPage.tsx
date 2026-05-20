@@ -87,15 +87,8 @@ export function CommunityPage() {
           Connectez-vous avec d'autres personnes engagées dans la réduction de leur empreinte carbone.
         </p>
 
-        {isLoading ? (
-          <div className="flex justify-center py-20">
-            <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-              className="w-10 h-10 border-4 rounded-full"
-              style={{ borderColor: 'var(--viv-secondary)', borderTopColor: 'transparent' }} />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mt-8">
-            {/* Left Column */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mt-8">
+          {/* Left Column */}
             <div className="space-y-10 lg:col-span-7">
               {/* Search */}
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
@@ -147,7 +140,17 @@ export function CommunityPage() {
                   </button>
                 </div>
 
-                {filteredFriends.length === 0 ? (
+                {isLoading && filteredFriends.length === 0 ? (
+                  <div className="flex gap-4 md:gap-6 overflow-x-auto pb-4 pt-2">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                      <div key={`skel-${i}`} className="flex-shrink-0 flex flex-col items-center gap-2 opacity-60 animate-pulse">
+                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gray-200" />
+                        <div className="h-4 bg-gray-200 rounded w-16" />
+                        <div className="h-3 bg-gray-200 rounded w-12" />
+                      </div>
+                    ))}
+                  </div>
+                ) : filteredFriends.length === 0 ? (
                   <p className="text-sm" style={{ color: '#64748B' }}>
                     {searchQuery ? "Aucun ami trouvé pour cette recherche." : "Vous n'avez pas encore d'amis. Ajoutez-en depuis le classement !"}
                   </p>
@@ -213,26 +216,36 @@ export function CommunityPage() {
                 )}
 
                 <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
-                  {restOfLeaderboard.map((user) => (
-                    <div key={user.rank} className="flex items-center gap-4 p-4 rounded-[20px]" style={{ backgroundColor: '#f8fafc' }}>
-                      <div className="w-8 text-center font-semibold" style={{ color: '#64748B' }}>{user.rank}</div>
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm" style={{ backgroundColor: 'var(--viv-red)' }}>{user.avatar}</div>
-                      <div className="flex-1">
-                        <div className="font-medium" style={{ color: 'var(--viv-navy)' }}>{user.name}</div>
+                  {isLoading && restOfLeaderboard.length === 0 ? (
+                    Array.from({ length: 5 }).map((_, i) => (
+                      <div key={`skel-lb-${i}`} className="flex items-center gap-4 p-4 rounded-[20px] bg-gray-50 opacity-60 animate-pulse">
+                        <div className="w-8 h-4 bg-gray-200 rounded"></div>
+                        <div className="w-10 h-10 rounded-full bg-gray-200"></div>
+                        <div className="flex-1 h-4 bg-gray-200 rounded w-1/2"></div>
+                        <div className="h-4 bg-gray-200 rounded w-16"></div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold" style={{ color: 'var(--viv-secondary)' }}>{user.points} pts</span>
-                        <button onClick={() => handleSendRequest(String(user.rank))} title="Ajouter en ami" className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
-                          <UserPlus className="w-4 h-4" style={{ color: '#94A3B8' }} />
-                        </button>
+                    ))
+                  ) : (
+                    restOfLeaderboard.map((user) => (
+                      <div key={user.rank} className="flex items-center gap-4 p-4 rounded-[20px]" style={{ backgroundColor: '#f8fafc' }}>
+                        <div className="w-8 text-center font-semibold" style={{ color: '#64748B' }}>{user.rank}</div>
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm" style={{ backgroundColor: 'var(--viv-red)' }}>{user.avatar}</div>
+                        <div className="flex-1">
+                          <div className="font-medium" style={{ color: 'var(--viv-navy)' }}>{user.name}</div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold" style={{ color: 'var(--viv-secondary)' }}>{user.points} pts</span>
+                          <button onClick={() => handleSendRequest(String(user.rank))} title="Ajouter en ami" className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+                            <UserPlus className="w-4 h-4" style={{ color: '#94A3B8' }} />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </motion.div>
             </div>
           </div>
-        )}
       </div>
 
       <Navigation currentPage="community" />

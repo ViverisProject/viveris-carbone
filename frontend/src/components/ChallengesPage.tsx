@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { Flame, CheckCircle2, Circle, TreePine, Bell, Sprout, Sun, Cloud, Plus } from "lucide-react";
+import { Flame, CheckCircle2, Circle, TreePine, Bell, Sprout, Sun, Cloud } from "lucide-react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
 import { Navigation } from "./Navigation";
-import { CreateChallengeModal } from "./CreateChallengeModal";
 import { challengesApi, type ChallengeResponse, userApi, getToken } from "../api";
 
 export function ChallengesPage() {
@@ -13,7 +12,6 @@ export function ChallengesPage() {
   const [treesPlanted, setTreesPlanted] = useState(0);
   const [treeProgress, setTreeProgress] = useState(0);
   const [streak, setStreak] = useState(0);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const loadChallenges = () => {
     setIsLoading(true);
@@ -47,27 +45,30 @@ export function ChallengesPage() {
     const challenge = challenges.find((c) => c.id === id);
     if (!challenge) return;
     const newCompleted = !challenge.completed;
+    const pointsDelta = newCompleted ? challenge.points : -challenge.points;
+
     // Optimistic update
     setChallenges((prev) => prev.map((c) => c.id === id ? { ...c, completed: newCompleted } : c));
+    setTotalPoints((prev) => {
+      const newPoints = Math.max(0, prev + pointsDelta);
+      setTreesPlanted(Math.floor(newPoints / 1000));
+      setTreeProgress(Math.floor((newPoints % 1000) / 10));
+      return newPoints;
+    });
+
     try {
-      const res = await challengesApi.toggle(id, { completed: newCompleted });
-      setTotalPoints(res.totalPoints);
-      setTreesPlanted(res.treesPlanted);
-      setTreeProgress(res.treeProgress);
+      await challengesApi.toggle(id, { completed: newCompleted });
+      // Optimistic state is already correct — no state update needed on success
     } catch (err: any) {
       // Revert optimistic update
       setChallenges((prev) => prev.map((c) => c.id === id ? { ...c, completed: !newCompleted } : c));
+      setTotalPoints((prev) => {
+        const revertedPoints = Math.max(0, prev - pointsDelta);
+        setTreesPlanted(Math.floor(revertedPoints / 1000));
+        setTreeProgress(Math.floor((revertedPoints % 1000) / 10));
+        return revertedPoints;
+      });
       toast.error(err.message ?? "Erreur lors de la mise à jour du défi.");
-    }
-  };
-
-  const handleCreateChallenge = async (data: { title: string; category: string; points: number }) => {
-    try {
-      await challengesApi.create(data);
-      toast.success("Défi créé avec succès !");
-      loadChallenges(); // Refresh the list
-    } catch (err: any) {
-      toast.error(err.message ?? "Erreur lors de la création du défi.");
     }
   };
 
@@ -87,9 +88,6 @@ export function ChallengesPage() {
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between pt-6 pb-4">
           <h1 className="text-2xl md:text-3xl font-bold" style={{ color: 'var(--eco-navy)' }}>Défis</h1>
           <div className="flex items-center gap-2">
-            <button onClick={() => setIsCreateModalOpen(true)} className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-md flex items-center justify-center" title="Créer un défi">
-              <Plus className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--eco-navy)' }} />
-            </button>
             <button className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-md flex items-center justify-center">
               <Bell className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--eco-navy)' }} />
             </button>
@@ -100,16 +98,9 @@ export function ChallengesPage() {
           Relevez vos défis pour développer votre arbre et gagner des points.
         </p>
 
-        {isLoading ? (
-          <div className="flex justify-center py-20">
-            <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-              className="w-10 h-10 border-4 rounded-full"
-              style={{ borderColor: 'var(--eco-green)', borderTopColor: 'transparent' }} />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6">
-              {/* All-done banner */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            {/* All-done banner */}
               {completedToday === totalChallenges && totalChallenges > 0 && (
                 <motion.div initial={{ opacity: 0, scale: 0.9, y: -20 }} animate={{ opacity: 1, scale: 1, y: 0 }}
                   className="rounded-3xl p-6 shadow-lg flex flex-col items-center text-center relative overflow-hidden bg-white">
@@ -117,13 +108,35 @@ export function ChallengesPage() {
                     <TreePine size={32} style={{ color: 'var(--viv-navy)' }} />
                   </div>
                   <h2 className="text-xl md:text-2xl font-bold mb-2 relative z-10" style={{ color: 'var(--viv-navy)' }}>Incroyable ! 🎉</h2>
-                  <p className="mb-6 md:text-lg max-w-md relative z-10" style={{ color: 'var(--viv-text-secondary)' }}>Vous avez accompli tous vos défis. La planète vous remercie !</p>
-                  <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                  <p className="mb-6 md:text-lg max-w-md relative z-10" style={{ color: 'var(--viv-text-secondary)' }}>Vous avez accompli tous vos défis du moment. La planète vous remercie !</p>
+                  <motion.button whileHover={isLoading ? {} : { scale: 1.02 }} whileTap={isLoading ? {} : { scale: 0.98 }}
                     onClick={loadChallenges}
-                    className="relative z-10 px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all"
+                    disabled={isLoading}
+                    className="relative z-10 px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                     style={{ backgroundColor: 'var(--viv-navy)', color: 'white' }}>
-                    Débloquer de nouveaux défis
+                    {isLoading ? (
+                      <>
+                        <svg className="animate-spin h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z" />
+                        </svg>
+                        Chargement…
+                      </>
+                    ) : (
+                      "Débloquer de nouveaux défis"
+                    )}
                   </motion.button>
+                </motion.div>
+              )}
+
+              {!isLoading && totalChallenges === 0 && (
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                  className="rounded-3xl p-8 flex flex-col items-center text-center bg-white shadow-sm border border-gray-100">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <CheckCircle2 className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--eco-navy)' }}>Aucun défi disponible</h3>
+                  <p className="text-gray-500 mb-6">Il n'y a plus de défis programmés dans la base de données ! Revenez plus tard pour de nouveaux défis.</p>
                 </motion.div>
               )}
 
@@ -132,12 +145,12 @@ export function ChallengesPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-2 mb-2"><Flame className="w-8 h-8 md:w-10 md:h-10 text-orange-500" /></div>
-                    <div className="text-3xl md:text-4xl mb-1" style={{ color: 'var(--eco-navy)' }}>{streak}</div>
+                    <div className={`text-3xl md:text-4xl mb-1 ${isLoading ? 'blur-sm bg-gray-200 text-transparent animate-pulse rounded px-4 inline-block' : ''}`} style={{ color: 'var(--eco-navy)' }}>{isLoading ? "0" : streak}</div>
                     <div className="text-sm md:text-base" style={{ color: '#64748B' }}>Série de jours</div>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-2 mb-2"><TreePine className="w-8 h-8 md:w-10 md:h-10" style={{ color: 'var(--eco-green)' }} /></div>
-                    <div className="text-3xl md:text-4xl mb-1" style={{ color: 'var(--eco-navy)' }}>{totalPoints}</div>
+                    <div className={`text-3xl md:text-4xl mb-1 ${isLoading ? 'blur-sm bg-gray-200 text-transparent animate-pulse rounded px-4 inline-block' : ''}`} style={{ color: 'var(--eco-navy)' }}>{isLoading ? "0" : totalPoints}</div>
                     <div className="text-sm md:text-base" style={{ color: '#64748B' }}>Points totaux</div>
                   </div>
                 </div>
@@ -147,7 +160,7 @@ export function ChallengesPage() {
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-white rounded-3xl shadow-lg p-5">
                 <div className="flex justify-between items-center mb-3">
                   <span className="font-semibold md:text-lg" style={{ color: 'var(--eco-navy)' }}>Vos progrès</span>
-                  <span className="font-semibold md:text-lg" style={{ color: 'var(--eco-green)' }}>{completedToday}/{totalChallenges}</span>
+                  <span className="font-semibold md:text-lg" style={{ color: 'var(--eco-green)' }}>{completedToday}/{Math.max(1, totalChallenges)}</span>
                 </div>
                 <div className="h-3 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(125, 217, 179, 0.2)' }}>
                   <div className="h-full rounded-full transition-all duration-500" style={{ width: `${totalChallenges > 0 ? (completedToday / totalChallenges) * 100 : 0}%`, backgroundColor: 'var(--eco-green)' }} />
@@ -158,6 +171,18 @@ export function ChallengesPage() {
               <motion.div id="challenges-section" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
                 <h2 className="text-lg md:text-xl font-semibold mb-4" style={{ color: 'var(--eco-navy)' }}>Défis à relever</h2>
                 <div className="space-y-3">
+                  {isLoading && challenges.length === 0 && Array.from({ length: 3 }).map((_, i) => (
+                    <div key={`skel-${i}`} className="bg-white rounded-2xl shadow-md p-4 flex items-start gap-3 opacity-60 animate-pulse">
+                      <div className="w-6 h-6 rounded-full bg-gray-200 mt-1"></div>
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                        <div className="flex items-center gap-3 mt-2">
+                          <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
+                          <div className="h-4 w-12 bg-gray-200 rounded"></div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                   {challenges.map((challenge, index) => (
                     <motion.div key={challenge.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 + index * 0.05 }}
                       onClick={() => toggleChallenge(challenge.id)}
@@ -224,10 +249,8 @@ export function ChallengesPage() {
               </motion.div>
             </div>
           </div>
-        )}
       </div>
 
-      <CreateChallengeModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} onSubmit={handleCreateChallenge} />
       <Navigation currentPage="challenges" />
     </div>
   );

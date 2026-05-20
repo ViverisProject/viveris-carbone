@@ -135,12 +135,8 @@ export function ResultPage() {
                   const actualRank = sortedCategories.indexOf(entry.name) + 1;
                   const nPred = predictedHighest.length > 0 ? predictedHighest.length : 3;
                   let icon = null;
-                  if (predictions) {
-                    if (predictedHighest.includes(entry.name)) {
-                      icon = actualRank <= nPred ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <XCircle className="w-5 h-5 text-[var(--viv-red)]" />;
-                    } else {
-                      icon = actualRank <= nPred ? <XCircle className="w-5 h-5 text-[var(--viv-red)]" /> : <CheckCircle2 className="w-5 h-5 text-green-500" />;
-                    }
+                  if (predictions && predictedHighest.includes(entry.name)) {
+                    icon = <span className="text-xs font-semibold px-2 py-1 rounded-full bg-blue-100 text-blue-800">Domaine pressenti</span>;
                   }
                   return (
                     <div key={`list-${index}`} className="flex items-center justify-between p-4 rounded-xl bg-white shadow-sm border border-gray-100">
@@ -168,7 +164,6 @@ export function ResultPage() {
               <>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link to="/signup" className="px-8 py-3 bg-[var(--viv-red)] text-white rounded-full font-semibold hover:bg-[var(--viv-red-dark)] transition-colors text-center">Créer mon compte</Link>
-                  <Link to="/login" className="px-8 py-3 bg-white text-[var(--viv-red)] border-2 border-[var(--viv-red)] rounded-full font-semibold hover:bg-white/50 transition-colors text-center">Me connecter</Link>
                 </div>
                 <p className="text-center text-[var(--viv-navy)] text-sm mt-4">Enregistrez vos données pour suivre vos progrès et accéder aux défis personnalisés</p>
               </>

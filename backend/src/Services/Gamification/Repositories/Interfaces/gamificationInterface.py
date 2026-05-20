@@ -24,3 +24,11 @@ class GamificationRepositoryInterface(Protocol):
     def create_challenge(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Create a new global challenge."""
         ...
+
+    def get_user_emissions(self, user_id: str) -> Dict[str, float]:
+        """Fetch user's latest category emissions. Keys: Transport, Alimentation, Énergie, Consommation."""
+        ...
+
+    def reset_user_challenges(self, user_id: str, challenge_ids: List[str]) -> None:
+        """Delete user_challenges rows so the given challenges appear uncompleted again."""
+        ...

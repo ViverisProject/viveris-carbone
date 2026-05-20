@@ -127,16 +127,6 @@ export function DashboardPage() {
   const user = profile?.user ?? getStoredUser();
   const displayName = user?.firstName ?? (user as any)?.user_name ?? "Utilisateur";
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--viv-beige)' }}>
-        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-          className="w-10 h-10 border-4 rounded-full"
-          style={{ borderColor: 'var(--viv-secondary)', borderTopColor: 'transparent' }} />
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen pb-32 md:pb-8 md:pl-64 lg:pl-72" style={{ backgroundColor: 'var(--viv-beige)' }}>
       <div className="container mx-auto px-4 md:px-8 lg:px-12 max-w-2xl ml-0">
@@ -144,14 +134,18 @@ export function DashboardPage() {
           <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold" style={{ backgroundColor: 'var(--viv-red)' }}>
             {displayName.charAt(0).toUpperCase()}
           </div>
-          <span className="font-bold text-lg" style={{ color: 'var(--viv-navy)' }}>{displayName}</span>
+          <span className={`font-bold text-lg ${isLoading ? 'blur-sm bg-gray-200 text-transparent animate-pulse rounded px-2' : ''}`} style={{ color: 'var(--viv-navy)' }}>
+            {isLoading ? "Chargement..." : displayName}
+          </span>
         </motion.div>
 
         <div className="space-y-6">
           {/* Mon empreinte */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl p-6 shadow-sm flex flex-col items-center justify-center py-10">
             <div className="w-full text-left mb-4"><h2 className="text-lg font-bold" style={{ color: 'var(--viv-navy)' }}>Mon empreinte</h2></div>
-            <div className="text-5xl font-bold mb-2" style={{ color: 'var(--viv-navy)' }}>{displayTotal}</div>
+            <div className={`text-5xl font-bold mb-2 ${isLoading ? 'blur-md bg-gray-200 text-transparent animate-pulse rounded-2xl w-32 h-12 inline-block' : ''}`} style={{ color: 'var(--viv-navy)' }}>
+              {isLoading ? "0.00" : displayTotal}
+            </div>
             <div className="text-sm font-medium" style={{ color: '#8892A0' }}>tonnes de CO2 / an</div>
           </motion.div>
 
@@ -162,7 +156,9 @@ export function DashboardPage() {
               {consumptions.map((item, i) => (
                 <div key={i} className="flex items-center justify-between p-3 rounded-2xl border border-gray-100">
                   <div className="flex items-center gap-3"><IconBox icon={item.icon} /><span className="text-sm font-medium hidden sm:inline" style={{ color: 'var(--viv-navy)' }}>{item.name}</span></div>
-                  <span className="text-sm font-medium" style={{ color: 'var(--viv-navy)' }}>{item.value}</span>
+                  <span className={`text-sm font-medium ${isLoading ? 'blur-sm bg-gray-200 text-transparent animate-pulse rounded px-2' : ''}`} style={{ color: 'var(--viv-navy)' }}>
+                    {isLoading ? "0.00t" : item.value}
+                  </span>
                 </div>
               ))}
             </div>

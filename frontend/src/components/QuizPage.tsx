@@ -62,29 +62,8 @@ export function QuizPage() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--viv-beige)' }}>
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-          className="w-10 h-10 border-4 rounded-full border-t-transparent"
-          style={{ borderColor: 'var(--viv-secondary)', borderTopColor: 'transparent' }}
-        />
-      </div>
-    );
-  }
-
-  if (questions.length === 0) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--viv-beige)' }}>
-        <p className="text-lg" style={{ color: 'var(--viv-navy)' }}>Aucune question disponible.</p>
-      </div>
-    );
-  }
-
-  const progress = ((currentQuestion + 1) / questions.length) * 100;
-  const currentQ = questions[currentQuestion];
+  const progress = questions.length > 0 ? ((currentQuestion + 1) / questions.length) * 100 : 0;
+  const currentQ = questions.length > 0 ? questions[currentQuestion] : { category: "Chargement...", question: "Chargement des questions...", id: "loading", options: [] };
   const selectedAnswer = answers[currentQ.id];
 
   return (
@@ -96,62 +75,69 @@ export function QuizPage() {
         </div>
       </header>
 
-      {/* Progress Bar */}
-      <div className="container mx-auto px-4 mb-8">
-        <div className="max-w-2xl mx-auto">
-          <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--viv-red-light)', opacity: 0.3 }}>
-            <motion.div
-              className="h-full"
-              style={{ backgroundColor: 'var(--viv-secondary)' }}
-              initial={{ width: 0 }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.3 }}
-            />
-          </div>
-          <p className="text-sm mt-2 text-center" style={{ color: '#64748B' }}>
-            Question {currentQuestion + 1} sur {questions.length}
-          </p>
-        </div>
-      </div>
-
-      {/* Question */}
-      <main className="container mx-auto px-4 pb-20">
-        <motion.div
-          key={currentQuestion}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.3 }}
-          className="max-w-2xl mx-auto"
-        >
-          <div className="bg-white/90 backdrop-blur rounded-2xl shadow-xl p-8">
-            <div className="inline-block px-3 py-1 rounded-full text-sm font-medium mb-4" style={{ backgroundColor: 'var(--viv-red-light)', color: 'var(--viv-navy)', opacity: 0.8 }}>
-              {currentQ.category}
+<div>
+        {/* Progress Bar */}
+        <div className="container mx-auto px-4 mb-8">
+          <div className="max-w-2xl mx-auto">
+            <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--viv-red-light)', opacity: 0.3 }}>
+              <motion.div
+                className="h-full"
+                style={{ backgroundColor: 'var(--viv-secondary)' }}
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.3 }}
+              />
             </div>
+            <p className="text-sm mt-2 text-center" style={{ color: '#64748B' }}>
+              Question {questions.length > 0 ? currentQuestion + 1 : 0} sur {questions.length > 0 ? questions.length : "..."}
+            </p>
+          </div>
+        </div>
 
-            <h2 className="text-2xl mb-8" style={{ color: 'var(--viv-navy)' }}>
-              {currentQ.question}
-            </h2>
+        {/* Question */}
+        <main className="container mx-auto px-4 pb-20">
+          <motion.div
+            key={currentQuestion}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+            className="max-w-2xl mx-auto"
+          >
+            <div className="bg-white/90 backdrop-blur rounded-2xl shadow-xl p-8">
+              <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium mb-4 ${isLoading ? 'blur-sm bg-gray-200 text-transparent animate-pulse' : ''}`} style={{ backgroundColor: 'var(--viv-red-light)', color: 'var(--viv-navy)', opacity: 0.8 }}>
+                {currentQ.category}
+              </div>
 
-            <div className="space-y-3">
-              {currentQ.options.map((option, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleAnswer(option)}
-                  className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
-                    selectedAnswer?.label === option.label
-                      ? "shadow-lg"
-                      : "bg-white hover:shadow-md"
-                  }`}
-                  style={{
-                    borderColor: selectedAnswer?.label === option.label ? 'var(--viv-red)' : '#E2E8F0',
-                    backgroundColor: selectedAnswer?.label === option.label ? 'var(--viv-red-light)' : 'white',
-                    opacity: selectedAnswer?.label === option.label ? 0.3 : 1,
-                  }}
-                >
-                  <span style={{ color: 'var(--viv-navy)' }}>{option.label}</span>
-                </button>
-              ))}
+              <h2 className={`text-2xl mb-8 ${isLoading ? 'blur-sm bg-gray-200 text-transparent animate-pulse rounded inline-block w-full h-16' : ''}`} style={{ color: 'var(--viv-navy)' }}>
+                {currentQ.question}
+              </h2>
+
+              <div className="space-y-3">
+                {isLoading ? (
+                  Array.from({ length: 4 }).map((_, i) => (
+                    <div key={`skel-opt-${i}`} className="w-full p-4 rounded-xl border-2 border-gray-100 bg-gray-50 opacity-60 animate-pulse h-14" />
+                  ))
+                ) : (
+                  currentQ.options.map((option, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleAnswer(option)}
+                      className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
+                        selectedAnswer?.label === option.label
+                          ? "shadow-lg"
+                          : "bg-white hover:shadow-md"
+                      }`}
+                      style={{
+                        borderColor: selectedAnswer?.label === option.label ? 'var(--viv-red)' : '#E2E8F0',
+                        backgroundColor: selectedAnswer?.label === option.label ? 'var(--viv-red-light)' : 'white',
+                        opacity: selectedAnswer?.label === option.label ? 0.3 : 1,
+                      }}
+                    >
+                      <span style={{ color: 'var(--viv-navy)' }}>{option.label}</span>
+                    </button>
+                  ))
+                )}
             </div>
           </div>
 
@@ -179,6 +165,7 @@ export function QuizPage() {
           </div>
         </motion.div>
       </main>
+      </div>
     </div>
   );
 }

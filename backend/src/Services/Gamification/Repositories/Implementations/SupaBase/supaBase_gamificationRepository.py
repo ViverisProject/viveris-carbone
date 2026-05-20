@@ -91,3 +91,35 @@ class SupaBaseGamificationRepository(GamificationRepositoryInterface):
             if res_data and len(res_data) > 0:
                 return res_data[0]
         raise ValueError(f"Failed to create challenge: {resp.text}")
+
+    def get_user_emissions(self, user_id: str) -> Dict[str, float]:
+        params = {
+            "user_id": f"eq.{user_id}",
+            "order": "created_at.desc",
+            "limit": "1",
+            "select": "transport_co2,food_co2,energy_co2,consumption_co2"
+        }
+        resp = requests.get(self._endpoint("onboarding_results"), headers=self.headers, params=params)
+        if resp.status_code == 200:
+            data = resp.json()
+            if data and len(data) > 0:
+                row = data[0]
+                return {
+                    "Transport": float(row.get("transport_co2", 0) or 0),
+                    "Alimentation": float(row.get("food_co2", 0) or 0),
+                    "Énergie": float(row.get("energy_co2", 0) or 0),
+                    "Consommation": float(row.get("consumption_co2", 0) or 0),
+                }
+        return {"Transport": 0, "Alimentation": 0, "Énergie": 0, "Consommation": 0}
+
+    def reset_user_challenges(self, user_id: str, challenge_ids: List[str]) -> None:
+        """Delete user_challenges rows so the given challenges appear uncompleted again."""
+        if not challenge_ids:
+            return
+        # Single DELETE using Supabase in.() filter instead of N sequential calls
+        ids_list = ",".join(challenge_ids)
+        params = {
+            "user_id": f"eq.{user_id}",
+            "challenge_id": f"in.({ids_list})"
+        }
+        requests.delete(self._endpoint("user_challenges"), headers=self.headers, params=params)
