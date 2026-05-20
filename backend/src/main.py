@@ -4,12 +4,18 @@ from pydantic import BaseModel
 import sys
 import os
 from dotenv import load_dotenv
-from database.database import test_supabase_connection, get_supabase
+
+# Ensure the src directory is in sys.path to allow imports from database and other src modules
+src_path = os.path.abspath(os.path.dirname(__file__))
+if src_path not in sys.path:
+    sys.path.insert(0, src_path)
 
 # Add Services directory to sys.path to allow imports from Authentication and UserManagement
-services_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "Services"))
+services_path = os.path.join(src_path, "Services")
 if services_path not in sys.path:
     sys.path.insert(0, services_path)
+
+from database.database import test_supabase_connection, get_supabase
 
 # Load .env for backwards compatibility
 load_dotenv()

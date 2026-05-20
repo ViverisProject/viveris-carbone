@@ -4,6 +4,7 @@ import { TrendingDown, CheckCircle2, XCircle } from "lucide-react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
 import { emissionsApi, getToken, type EmissionsSaveResponse } from "../api";
+import viverisLogo from "../Pack_charte_graphique/Logos/Logos_Viveris/Avec signature/Viveris - Logo - Baseline - RVB - Noir.png";
 
 export function ResultPage() {
   const [result, setResult] = useState<any>(null);
@@ -100,7 +101,7 @@ export function ResultPage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--viv-beige)' }}>
       <header className="container mx-auto px-4 py-6">
-        <img src="/src/Pack_charte_graphique/Logos/Logos_Viveris/Avec%20signature/Viveris%20-%20Logo%20-%20Baseline%20-%20RVB%20-%20Noir.png" alt="Viveris Carbone" className="h-20 md:h-24 object-contain" />
+        <img src={viverisLogo} alt="Viveris Carbone" className="h-20 md:h-24 object-contain" />
       </header>
       <main className="container mx-auto px-4 pb-20">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl mx-auto">
