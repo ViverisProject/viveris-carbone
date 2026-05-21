@@ -24,13 +24,7 @@ export function LoginPage() {
       });
       setToken(loginRes.access_token);
 
-      // 2. Fetch user profile and cache it
-      const profile = await userApi.getMe();
-      setStoredUser(profile.user);
-      auth.setUser(profile.user);
-      auth.setUserProfile(profile);
-
-      // If there's a quiz result in sessionStorage (user completed quiz before logging in), save it now
+      // 2. Save quiz result BEFORE fetching profile so the profile already contains the emissions
       const stored = sessionStorage.getItem("quizResult");
       if (stored) {
         try {
@@ -52,7 +46,7 @@ export function LoginPage() {
             },
           });
           toast.success("Empreinte enregistrée !");
-          
+
           // Clear it so it doesn't trigger again on future logins
           sessionStorage.removeItem("quizResult");
           sessionStorage.removeItem("userPredictions");
@@ -60,6 +54,12 @@ export function LoginPage() {
           // non-fatal — continue to dashboard
         }
       }
+
+      // 3. Fetch profile AFTER saving emissions so dashboard shows correct values immediately
+      const profile = await userApi.getMe();
+      setStoredUser(profile.user);
+      auth.setUser(profile.user);
+      auth.setUserProfile(profile);
 
       navigate("/dashboard");
     } catch (err: any) {

@@ -49,13 +49,7 @@ export function SignupPage() {
       });
       setToken(loginRes.access_token);
 
-      // 3. Fetch and cache user profile
-      const profile = await userApi.getMe();
-      setStoredUser(profile.user);
-      auth.setUser(profile.user);
-      auth.setUserProfile(profile);
-
-      // If there's a quiz result in sessionStorage (user completed quiz before signing up), save it now
+      // 3. Save quiz result BEFORE fetching profile so the profile already contains the emissions
       const stored = sessionStorage.getItem("quizResult");
       if (stored) {
         try {
@@ -77,13 +71,19 @@ export function SignupPage() {
             },
           });
           toast.success("Empreinte enregistrée !");
-          
+
           sessionStorage.removeItem("quizResult");
           sessionStorage.removeItem("userPredictions");
         } catch (err: any) {
           // ignore and continue
         }
       }
+
+      // 4. Fetch profile AFTER saving emissions so dashboard shows correct values immediately
+      const profile = await userApi.getMe();
+      setStoredUser(profile.user);
+      auth.setUser(profile.user);
+      auth.setUserProfile(profile);
 
       toast.success("Compte créé avec succès !");
       navigate("/dashboard");
