@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { TrendingDown, CheckCircle2, XCircle } from "lucide-react";
+import { TrendingDown } from "lucide-react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
 import { emissionsApi, getToken, type EmissionsSaveResponse } from "../api";
@@ -77,10 +77,10 @@ export function ResultPage() {
   if (predictions?.flexibility?.length > 0) localStorage.setItem("userFlexibility", JSON.stringify(predictions.flexibility));
 
   const chartData = [
-    { name: "Transport", value: Number((categoryTotals.Transport ?? 0).toFixed(2)), color: "#ff5046" },
-    { name: "Alimentation", value: Number((categoryTotals.Alimentation ?? 0).toFixed(2)), color: "#2a31d4" },
+    { name: "Transport", value: Number((categoryTotals.Transport ?? 0).toFixed(2)), color: "#0c0e3e" },
+    { name: "Alimentation", value: Number((categoryTotals.Alimentation ?? 0).toFixed(2)), color: "#2A31D4" },
     { name: "Énergie", value: Number((categoryTotals.Énergie ?? 0).toFixed(2)), color: "#7e83e5" },
-    { name: "Consommation", value: Number((categoryTotals.Consommation ?? 0).toFixed(2)), color: "#ff958f" },
+    { name: "Consommation", value: Number((categoryTotals.Consommation ?? 0).toFixed(2)), color: "#475569" },
   ];
 
   const totalCO2 = savedResult?.quizResult?.totalInTons ?? result.totalInTons;
@@ -133,22 +133,16 @@ export function ResultPage() {
               <h3 className="text-xl font-semibold text-[var(--viv-navy)] mb-4 text-center">Répartition par domaine</h3>
               <div className="space-y-3">
                 {dataWithPercentages.map((entry, index) => {
-                  const actualRank = sortedCategories.indexOf(entry.name) + 1;
-                  const nPred = predictedHighest.length > 0 ? predictedHighest.length : 3;
-                  let icon = null;
-                  if (predictions) {
-                    if (predictedHighest.includes(entry.name)) {
-                      icon = actualRank <= nPred ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <XCircle className="w-5 h-5 text-[var(--viv-red)]" />;
-                    } else {
-                      icon = actualRank <= nPred ? <XCircle className="w-5 h-5 text-[var(--viv-red)]" /> : <CheckCircle2 className="w-5 h-5 text-green-500" />;
-                    }
+                  let badge = null;
+                  if (predictions && predictedHighest.includes(entry.name)) {
+                    badge = <span className="text-xs font-semibold px-2 py-1 rounded-full bg-blue-100 text-blue-700 ml-2">Domaine pressenti</span>;
                   }
                   return (
                     <div key={`list-${index}`} className="flex items-center justify-between p-4 rounded-xl bg-white shadow-sm border border-gray-100">
                       <div className="flex items-center gap-3">
                         <div className="w-4 h-4 rounded-full" style={{ backgroundColor: entry.color }} />
                         <span className="font-medium text-[var(--viv-navy)]">{entry.name}</span>
-                        {icon && <div className="ml-2">{icon}</div>}
+                        {badge}
                       </div>
                       <div className="flex items-center gap-4 text-sm">
                         <span className="font-bold" style={{ color: entry.color }}>{entry.percentage}%</span>
@@ -169,7 +163,6 @@ export function ResultPage() {
               <>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link to="/signup" className="px-8 py-3 bg-[var(--viv-red)] text-white rounded-full font-semibold hover:bg-[var(--viv-red-dark)] transition-colors text-center">Créer mon compte</Link>
-                  <Link to="/login" className="px-8 py-3 bg-white text-[var(--viv-red)] border-2 border-[var(--viv-red)] rounded-full font-semibold hover:bg-white/50 transition-colors text-center">Me connecter</Link>
                 </div>
                 <p className="text-center text-[var(--viv-navy)] text-sm mt-4">Enregistrez vos données pour suivre vos progrès et accéder aux défis personnalisés</p>
               </>
