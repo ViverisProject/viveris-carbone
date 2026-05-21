@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Car, UtensilsCrossed, Zap, Leaf, ChevronRight, X } from "lucide-react";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { Navigation } from "./Navigation";
 import { emissionsApi, getStoredUser, type UserProfileDashboardResponse, type QuizQuestion } from "../api";
 import { useAuth } from "../auth";
@@ -151,43 +151,48 @@ export function DashboardPage() {
     <div className="min-h-screen pb-32 md:pb-8 md:pl-64 lg:pl-72" style={{ backgroundColor: 'var(--viv-beige)' }}>
       <div className="container mx-auto px-4 md:px-8 lg:px-12 max-w-2xl ml-0">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 pt-6 pb-6">
+          <AnimatePresence mode="wait">
           {isLoading ? (
-            <div className="flex items-center gap-3 animate-pulse">
+            <motion.div key="header-skeleton" className="flex items-center gap-3 animate-pulse" exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
               <div className="w-10 h-10 rounded-full bg-gray-200" />
               <div className="h-5 w-32 bg-gray-200 rounded-lg" />
-            </div>
+            </motion.div>
           ) : (
-            <>
+            <motion.div key="header-content" className="flex items-center gap-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.35 }}>
               <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold" style={{ backgroundColor: 'var(--viv-red)' }}>
                 {displayName.charAt(0).toUpperCase()}
               </div>
               <span className="font-bold text-lg" style={{ color: 'var(--viv-navy)' }}>{displayName}</span>
-            </>
+            </motion.div>
           )}
+          </AnimatePresence>
         </motion.div>
 
         <div className="space-y-6">
           {/* Mon empreinte */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl p-6 shadow-sm flex flex-col items-center justify-center py-10">
             <div className="w-full text-left mb-4"><h2 className="text-lg font-bold" style={{ color: 'var(--viv-navy)' }}>Mon empreinte</h2></div>
+            <AnimatePresence mode="wait">
             {isLoading ? (
-              <div className="flex flex-col items-center gap-3 animate-pulse">
+              <motion.div key="empreinte-skeleton" className="flex flex-col items-center gap-3 animate-pulse" exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
                 <div className="h-12 w-28 bg-gray-200 rounded-xl" />
                 <div className="h-4 w-36 bg-gray-200 rounded" />
-              </div>
+              </motion.div>
             ) : (
-              <>
+              <motion.div key="empreinte-content" className="flex flex-col items-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.35 }}>
                 <div className="text-5xl font-bold mb-2" style={{ color: 'var(--viv-navy)' }}>{displayTotal}</div>
                 <div className="text-sm font-medium" style={{ color: '#8892A0' }}>tonnes de CO2 / an</div>
-              </>
+              </motion.div>
             )}
+            </AnimatePresence>
           </motion.div>
 
           {/* Mes consommations actuelles */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white rounded-3xl p-6 shadow-sm">
             <h2 className="text-lg font-bold mb-4" style={{ color: 'var(--viv-navy)' }}>Mes consommations actuelles</h2>
+            <AnimatePresence mode="wait">
             {isLoading ? (
-              <div className="grid grid-cols-2 gap-4 animate-pulse">
+              <motion.div key="cons-skeleton" className="grid grid-cols-2 gap-4 animate-pulse" exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
                 {[0, 1, 2, 3].map((i) => (
                   <div key={i} className="flex items-center justify-between p-3 rounded-2xl border border-gray-100">
                     <div className="flex items-center gap-3">
@@ -197,24 +202,26 @@ export function DashboardPage() {
                     <div className="h-4 w-10 bg-gray-200 rounded" />
                   </div>
                 ))}
-              </div>
+              </motion.div>
             ) : (
-              <div className="grid grid-cols-2 gap-4">
+              <motion.div key="cons-content" className="grid grid-cols-2 gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.35 }}>
                 {consumptions.map((item, i) => (
                   <div key={i} className="flex items-center justify-between p-3 rounded-2xl border border-gray-100">
                     <div className="flex items-center gap-3"><IconBox icon={item.icon} /><span className="text-sm font-medium hidden sm:inline" style={{ color: 'var(--viv-navy)' }}>{item.name}</span></div>
                     <span className="text-sm font-medium" style={{ color: 'var(--viv-navy)' }}>{item.value}</span>
                   </div>
                 ))}
-              </div>
+              </motion.div>
             )}
+            </AnimatePresence>
           </motion.div>
 
           {/* Modifier mes consommations */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-white rounded-3xl p-6 shadow-sm">
             <h2 className="text-lg font-bold mb-4" style={{ color: 'var(--viv-navy)' }}>Modifier mes consommations</h2>
+            <AnimatePresence mode="wait">
             {isLoading ? (
-              <div className="grid grid-cols-2 gap-4 animate-pulse">
+              <motion.div key="modifier-skeleton" className="grid grid-cols-2 gap-4 animate-pulse" exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
                 {[0, 1, 2, 3].map((i) => (
                   <div key={i} className="flex items-center justify-between p-3 rounded-2xl border border-gray-100">
                     <div className="flex items-center gap-3">
@@ -224,17 +231,18 @@ export function DashboardPage() {
                     <div className="w-4 h-4 bg-gray-200 rounded" />
                   </div>
                 ))}
-              </div>
+              </motion.div>
             ) : (
-              <div className="grid grid-cols-2 gap-4">
+              <motion.div key="modifier-content" className="grid grid-cols-2 gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.35 }}>
                 {consumptions.map((item, i) => (
                   <button key={i} onClick={() => handleOpenModal(item)} className="flex items-center justify-between p-3 rounded-2xl border border-gray-100 hover:bg-gray-50 transition-colors text-left focus:outline-none focus:ring-2 focus:ring-[var(--viv-secondary)]">
                     <div className="flex items-center gap-3"><IconBox icon={item.icon} /><span className="text-sm font-medium hidden sm:inline" style={{ color: 'var(--viv-navy)' }}>{item.name}</span></div>
                     <ChevronRight className="w-4 h-4 text-gray-400" />
                   </button>
                 ))}
-              </div>
+              </motion.div>
             )}
+            </AnimatePresence>
           </motion.div>
 
           {/* Mes dernières modifications */}

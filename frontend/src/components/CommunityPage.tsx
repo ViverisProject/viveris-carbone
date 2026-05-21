@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Search, Trophy, UserPlus, TreePine, Bell, ChevronRight, UserCheck, UserX, Clock } from "lucide-react";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
 import { Navigation } from "./Navigation";
 import { friendsApi, type LeaderboardEntry, type FriendResponse } from "../api";
@@ -130,8 +130,9 @@ export function CommunityPage() {
                   <h2 className="text-lg md:text-xl font-semibold" style={{ color: 'var(--viv-navy)' }}>Vos amis</h2>
                 </div>
 
+                <AnimatePresence mode="wait">
                 {isLoadingFriends ? (
-                  <div className="flex gap-4 md:gap-6 pb-4 pt-2 animate-pulse">
+                  <motion.div key="friends-skeleton" className="flex gap-4 md:gap-6 pb-4 pt-2 animate-pulse" exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
                     {[0, 1, 2].map((i) => (
                       <div key={i} className="flex-shrink-0 flex flex-col items-center gap-2">
                         <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gray-200" />
@@ -139,13 +140,16 @@ export function CommunityPage() {
                         <div className="h-3 w-10 bg-gray-200 rounded" />
                       </div>
                     ))}
-                  </div>
+                  </motion.div>
                 ) : filteredFriends.length === 0 ? (
-                  <p className="text-sm" style={{ color: '#64748B' }}>
-                    {searchQuery ? "Aucun ami trouvé pour cette recherche." : "Vous n'avez pas encore d'amis. Ajoutez-en depuis le classement !"}
-                  </p>
+                  <motion.div key="friends-empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.35 }}>
+                    <p className="text-sm" style={{ color: '#64748B' }}>
+                      {searchQuery ? "Aucun ami trouvé pour cette recherche." : "Vous n'avez pas encore d'amis. Ajoutez-en depuis le classement !"}
+                    </p>
+                  </motion.div>
                 ) : (
-                  <div className="flex gap-4 md:gap-6 overflow-x-auto pb-4 pt-2">
+                  <motion.div key="friends-content" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.35 }}>
+                    <div className="flex gap-4 md:gap-6 overflow-x-auto pb-4 pt-2">
                     {filteredFriends.map((friend) => (
                       <div key={friend.id} className="flex-shrink-0 flex flex-col items-center gap-2">
                         <div className="relative group">
@@ -161,7 +165,9 @@ export function CommunityPage() {
                       </div>
                     ))}
                   </div>
+                  </motion.div>
                 )}
+                </AnimatePresence>
               </motion.div>
             </div>
 
@@ -173,8 +179,9 @@ export function CommunityPage() {
                   <h2 className="text-lg md:text-xl font-semibold" style={{ color: 'var(--viv-navy)' }}>Classement</h2>
                 </div>
 
+                <AnimatePresence mode="wait">
                 {isLoadingLeaderboard ? (
-                  <div className="animate-pulse">
+                  <motion.div key="leaderboard-skeleton" className="animate-pulse" exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
                     {/* Podium skeleton */}
                     <div className="flex items-end justify-center gap-6 mb-10">
                       <div className="flex flex-col items-center gap-2">
@@ -204,9 +211,9 @@ export function CommunityPage() {
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </motion.div>
                 ) : (
-                  <>
+                  <motion.div key="leaderboard-content" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.35 }}>
                 {showPodium && (
                   <div className="flex items-end justify-center gap-6 mb-10">
                     {/* 2nd */}
@@ -253,8 +260,9 @@ export function CommunityPage() {
                     </div>
                   ))}
                 </div>
-                  </>
+                  </motion.div>
                 )}
+                </AnimatePresence>
               </motion.div>
             </div>
           </div>
