@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { toast } from "sonner";
 import { emissionsApi, getToken, type EmissionsSaveResponse } from "../api";
 import viverisLogo from "../Pack_charte_graphique/Logos/Logos_Viveris/Avec signature/Viveris - Logo - Baseline - RVB - Noir.png";
+import { CarbonProgressBar } from "./ui/CarbonProgressBar";
 
 export function ResultPage() {
   const [result, setResult] = useState<any>(null);
@@ -109,26 +110,12 @@ export function ResultPage() {
             <h1 className="text-3xl font-bold text-[var(--viv-navy)] mb-6 text-center">Votre empreinte carbone actuelle</h1>
             {isSaving && <p className="text-center text-sm mb-4" style={{ color: '#64748B' }}>Enregistrement…</p>}
             <div className="text-center mb-8">
-              <div className="inline-block p-8 bg-white rounded-3xl">
+              <div className="inline-block p-8 bg-white rounded-3xl w-full max-w-lg">
                 <div className="text-6xl font-bold text-[var(--viv-navy)]">{totalCO2}</div>
                 <div className="text-xl text-[var(--viv-navy)] mt-2">tonnes de CO2 / an</div>
+                <CarbonProgressBar current={Number(totalCO2)} target={targetCO2} />
               </div>
             </div>
-            {difference > 0 ? (
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8">
-                <div className="flex items-start gap-3">
-                  <TrendingDown className="w-6 h-6 text-amber-600 flex-shrink-0 mt-1" />
-                  <div>
-                    <p className="text-amber-900 font-medium">Vous êtes à {difference.toFixed(1)} tonnes au-dessus de l'objectif 2050</p>
-                    <p className="text-amber-700 text-sm mt-1">L'objectif fixé par le Haut Conseil pour le Climat est de {targetCO2} tonnes de CO2 par an d'ici 2050.</p>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-white/50 border border-[var(--viv-red-light)] rounded-xl p-4 mb-8">
-                <p className="text-[var(--viv-navy)] text-center">Félicitations ! Vous êtes en dessous de l'objectif 2050 de {targetCO2} tonnes de CO2 par an.</p>
-              </div>
-            )}
             <div className="mb-8 max-w-lg mx-auto">
               <h3 className="text-xl font-semibold text-[var(--viv-navy)] mb-4 text-center">Répartition par domaine</h3>
               <div className="space-y-3">

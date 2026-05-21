@@ -6,6 +6,7 @@ import { Navigation } from "./Navigation";
 import { emissionsApi, getStoredUser, type UserProfileDashboardResponse, type QuizQuestion } from "../api";
 import { useAuth } from "../auth";
 import { useQuizQuestions } from "../hooks";
+import { CarbonProgressBar } from "./ui/CarbonProgressBar";
 
 const categoryMap: Record<string, string> = {
   "Mobilité": "Transport",
@@ -170,18 +171,20 @@ export function DashboardPage() {
 
         <div className="space-y-6">
           {/* Mon empreinte */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl p-6 shadow-sm flex flex-col items-center justify-center py-10">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl p-6 shadow-sm flex flex-col items-center justify-center py-10 w-full">
             <div className="w-full text-left mb-4"><h2 className="text-lg font-bold" style={{ color: 'var(--viv-navy)' }}>Mon empreinte</h2></div>
             <AnimatePresence mode="wait">
             {isLoading ? (
-              <motion.div key="empreinte-skeleton" className="flex flex-col items-center gap-3 animate-pulse" exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
+              <motion.div key="empreinte-skeleton" className="flex flex-col items-center gap-3 animate-pulse w-full max-w-lg" exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
                 <div className="h-12 w-28 bg-gray-200 rounded-xl" />
                 <div className="h-4 w-36 bg-gray-200 rounded" />
+                <div className="h-6 w-full bg-gray-200 rounded-xl mt-4" />
               </motion.div>
             ) : (
-              <motion.div key="empreinte-content" className="flex flex-col items-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.35 }}>
+              <motion.div key="empreinte-content" className="flex flex-col items-center w-full max-w-lg" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.35 }}>
                 <div className="text-5xl font-bold mb-2" style={{ color: 'var(--viv-navy)' }}>{displayTotal}</div>
                 <div className="text-sm font-medium" style={{ color: '#8892A0' }}>tonnes de CO2 / an</div>
+                <CarbonProgressBar current={Number(displayTotal)} target={2.3} />
               </motion.div>
             )}
             </AnimatePresence>
