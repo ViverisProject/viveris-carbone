@@ -102,15 +102,6 @@ export function PrivateRoute({ Component }: { Component: React.ComponentType<any
   }, [isAuthenticated, navigate]);
 
   if (!isAuthenticated) return null;
-  
-  if (isLoadingProfile && !userProfile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--viv-beige)' }}>
-        <div className="w-10 h-10 border-4 rounded-full animate-spin"
-          style={{ borderColor: 'var(--viv-secondary)', borderTopColor: 'transparent' }} />
-      </div>
-    );
-  }
 
   return <Component />;
 }
