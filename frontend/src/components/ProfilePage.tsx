@@ -1,28 +1,29 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { Mail, Lock, Trash2, LogOut, TreePine, Award, Flame, ChevronRight, Settings, X } from "lucide-react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
 import { Navigation } from "./Navigation";
-import { userApi, authApi, type UserProfileDashboardResponse, type AdvancedUserStatsResponse } from "../api";
+import { userApi, authApi } from "../api";
 import { useAuth } from "../auth";
 
 export function ProfilePage() {
-  const [profile, setProfile] = useState<UserProfileDashboardResponse | null>(null);
-  const [stats, setStats] = useState<AdvancedUserStatsResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [passwordForm, setPasswordForm] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const navigate = useNavigate();
   const auth = useAuth();
 
-  useEffect(() => {
-    Promise.all([userApi.getMe(), userApi.getStats()])
-      .then(([prof, st]) => { setProfile(prof); setStats(st); })
-      .catch(() => toast.error("Impossible de charger le profil."))
-      .finally(() => setIsLoading(false));
-  }, []);
+  const { data: profile } = useQuery({
+    queryKey: ["profile"],
+    queryFn: userApi.getMe,
+  });
+
+  const { data: stats } = useQuery({
+    queryKey: ["stats"],
+    queryFn: userApi.getStats,
+  });
 
   const handleLogout = async () => {
     try { await authApi.logout(); } catch { /* ignore — stateless JWT */ }
@@ -86,28 +87,26 @@ export function ProfilePage() {
                   {displayName.charAt(0).toUpperCase()}
                 </div>
                 <div className="flex-1">
-                  <h2 className={`text-xl md:text-2xl mb-1 ${isLoading ? 'blur-sm bg-gray-200 text-transparent animate-pulse rounded px-2 inline-block' : ''}`} style={{ color: 'var(--viv-navy)' }}>
-                    {isLoading ? "Chargement..." : displayName}
+                  <h2 className="text-xl md:text-2xl mb-1" style={{ color: 'var(--viv-navy)' }}>
+                    {displayName}
                   </h2>
                   <p className="flex items-center gap-2 text-sm md:text-base" style={{ color: '#64748B' }}>
                     <Mail className="w-4 h-4" />
-                    <span className={isLoading ? 'blur-sm bg-gray-200 text-transparent animate-pulse rounded px-2 inline-block' : ''}>
-                      {isLoading ? "email@exemple.com" : (user?.email ?? "—")}
-                    </span>
+                    <span>{user?.email ?? "—"}</span>
                   </p>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center">
-                  <div className={`text-2xl md:text-3xl mb-1 ${isLoading ? 'blur-sm bg-gray-200 text-transparent animate-pulse rounded px-4 inline-block' : ''}`} style={{ color: 'var(--viv-navy)' }}>{isLoading ? "0" : (profile?.treesPlanted ?? 0)}</div>
+                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>{profile?.treesPlanted ?? 0}</div>
                   <div className="text-xs md:text-sm" style={{ color: '#64748B' }}>Arbres</div>
                 </div>
                 <div className="text-center">
-                  <div className={`text-2xl md:text-3xl mb-1 ${isLoading ? 'blur-sm bg-gray-200 text-transparent animate-pulse rounded px-4 inline-block' : ''}`} style={{ color: 'var(--viv-navy)' }}>{isLoading ? "0" : (profile?.points ?? 0)}</div>
+                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>{profile?.points ?? 0}</div>
                   <div className="text-xs md:text-sm" style={{ color: '#64748B' }}>Points</div>
                 </div>
                 <div className="text-center">
-                  <div className={`text-2xl md:text-3xl mb-1 ${isLoading ? 'blur-sm bg-gray-200 text-transparent animate-pulse rounded px-4 inline-block' : ''}`} style={{ color: 'var(--viv-navy)' }}>{isLoading ? "0" : (profile?.streak ?? 0)}</div>
+                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>{profile?.streak ?? 0}</div>
                   <div className="text-xs md:text-sm" style={{ color: '#64748B' }}>Série de jours</div>
                 </div>
               </div>
@@ -121,21 +120,21 @@ export function ProfilePage() {
                   <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: 'rgba(42, 49, 212, 0.1)' }}>
                     <Award className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--viv-secondary)' }} />
                   </div>
-                  <div className={`text-2xl md:text-3xl mb-1 ${isLoading ? 'blur-sm bg-gray-200 text-transparent animate-pulse rounded px-4 inline-block' : ''}`} style={{ color: 'var(--viv-navy)' }}>{isLoading ? "0" : (stats?.challengesCompleted ?? 0)}</div>
+                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>{stats?.challengesCompleted ?? 0}</div>
                   <div className="text-sm" style={{ color: '#64748B' }}>Défis terminés</div>
                 </div>
                 <div className="bg-white rounded-2xl shadow-md p-4">
                   <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: 'rgba(251, 146, 60, 0.2)' }}>
                     <Flame className="w-5 h-5 md:w-6 md:h-6 text-orange-500" />
                   </div>
-                  <div className={`text-2xl md:text-3xl mb-1 ${isLoading ? 'blur-sm bg-gray-200 text-transparent animate-pulse rounded px-4 inline-block' : ''}`} style={{ color: 'var(--viv-navy)' }}>{isLoading ? "0" : (stats?.bestStreak ?? profile?.bestStreak ?? 0)}</div>
+                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>{stats?.bestStreak ?? profile?.bestStreak ?? 0}</div>
                   <div className="text-sm" style={{ color: '#64748B' }}>Meilleure série</div>
                 </div>
                 <div className="bg-white rounded-2xl shadow-md p-4 col-span-2">
                   <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: 'rgba(42, 49, 212, 0.1)' }}>
                     <TreePine className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--viv-secondary)' }} />
                   </div>
-                  <div className={`text-2xl md:text-3xl mb-1 ${isLoading ? 'blur-sm bg-gray-200 text-transparent animate-pulse rounded px-4 inline-block' : ''}`} style={{ color: 'var(--viv-navy)' }}>{isLoading ? "0.0t" : (stats?.co2ReducedThisYear?.toFixed(1) ?? "0.0") + "t"}</div>
+                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>{(stats?.co2ReducedThisYear?.toFixed(1) ?? "0.0") + "t"}</div>
                   <div className="text-sm" style={{ color: '#64748B' }}>CO2 réduit cette année</div>
                 </div>
               </div>

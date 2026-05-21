@@ -1,45 +1,30 @@
 import { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Flame, CheckCircle2, Circle, TreePine, Bell, Sprout, Sun, Cloud } from "lucide-react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
 import { Navigation } from "./Navigation";
-import { challengesApi, type ChallengeResponse, userApi, getToken } from "../api";
+import { challengesApi, type ChallengeResponse, userApi, type UserProfileDashboardResponse } from "../api";
 
 export function ChallengesPage() {
-  const [challenges, setChallenges] = useState<(ChallengeResponse & { completed: boolean })[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [totalPoints, setTotalPoints] = useState(0);
-  const [treesPlanted, setTreesPlanted] = useState(0);
-  const [treeProgress, setTreeProgress] = useState(0);
-  const [streak, setStreak] = useState(0);
+  const queryClient = useQueryClient();
 
-  const loadChallenges = () => {
-    setIsLoading(true);
-    challengesApi
-      .getRecommendations()
-      .then((data) => setChallenges(data))
-      .catch((err: any) => toast.error(err.message ?? "Impossible de charger les défis."))
-      .finally(() => setIsLoading(false));
-  };
+  const { data: challenges = [], isFetching: isFetchingChallenges, refetch: refetchChallenges } = useQuery({
+    queryKey: ["challenges"],
+    queryFn: challengesApi.getRecommendations,
+  });
 
-  useEffect(() => {
-    loadChallenges();
+  const { data: profile } = useQuery({
+    queryKey: ["profile"],
+    queryFn: userApi.getMe,
+  });
 
-    // If user is authenticated, fetch authoritative stats for display
-    (async () => {
-      try {
-        if (getToken()) {
-          const profile = await userApi.getMe();
-          setTotalPoints(profile.points ?? 0);
-          setTreesPlanted(profile.treesPlanted ?? 0);
-          setTreeProgress(Math.floor(((profile.points ?? 0) % 1000) / 10));
-          setStreak(profile.streak ?? 0);
-        }
-      } catch (err) {
-        // ignore failures; keep optimistic/zero state
-      }
-    })();
-  }, []);
+  const totalPoints = profile?.points ?? 0;
+  const treesPlanted = profile?.treesPlanted ?? 0;
+  const treeProgress = Math.floor(((profile?.points ?? 0) % 1000) / 10);
+  const streak = profile?.streak ?? 0;
+
+  const loadChallenges = () => { refetchChallenges(); };
 
   const toggleChallenge = async (id: string) => {
     const challenge = challenges.find((c) => c.id === id);
@@ -47,26 +32,40 @@ export function ChallengesPage() {
     const newCompleted = !challenge.completed;
     const pointsDelta = newCompleted ? challenge.points : -challenge.points;
 
-    // Optimistic update
-    setChallenges((prev) => prev.map((c) => c.id === id ? { ...c, completed: newCompleted } : c));
-    setTotalPoints((prev) => {
-      const newPoints = Math.max(0, prev + pointsDelta);
-      setTreesPlanted(Math.floor(newPoints / 1000));
-      setTreeProgress(Math.floor((newPoints % 1000) / 10));
-      return newPoints;
+    // Cancel any in-flight background refetches — prevents a stale API response
+    // from overwriting the optimistic update mid-flight (race condition).
+    await queryClient.cancelQueries({ queryKey: ["profile"] });
+    await queryClient.cancelQueries({ queryKey: ["challenges"] });
+
+    // Optimistic update in React Query cache
+    queryClient.setQueryData<ChallengeResponse[]>(["challenges"], (old) =>
+      old?.map((c) => c.id === id ? { ...c, completed: newCompleted } : c) ?? []
+    );
+    queryClient.setQueryData<UserProfileDashboardResponse>(["profile"], (old) => {
+      if (!old) return old;
+      const newPoints = Math.max(0, (old.points ?? 0) + pointsDelta);
+      return { ...old, points: newPoints, treesPlanted: Math.floor(newPoints / 1000) };
     });
 
     try {
-      await challengesApi.toggle(id, { completed: newCompleted });
-      // Optimistic state is already correct — no state update needed on success
+      const res = await challengesApi.toggle(id, { completed: newCompleted });
+      // Only write to the cache when the server disagrees with our optimistic values.
+      // Returning the same `old` reference avoids a redundant re-render (and a second
+      // tree animation) when the server confirms what we already predicted.
+      queryClient.setQueryData<UserProfileDashboardResponse>(["profile"], (old) => {
+        if (!old) return old;
+        if (old.points === res.totalPoints && old.treesPlanted === res.treesPlanted) return old;
+        return { ...old, points: res.totalPoints, treesPlanted: res.treesPlanted };
+      });
     } catch (err: any) {
       // Revert optimistic update
-      setChallenges((prev) => prev.map((c) => c.id === id ? { ...c, completed: !newCompleted } : c));
-      setTotalPoints((prev) => {
-        const revertedPoints = Math.max(0, prev - pointsDelta);
-        setTreesPlanted(Math.floor(revertedPoints / 1000));
-        setTreeProgress(Math.floor((revertedPoints % 1000) / 10));
-        return revertedPoints;
+      queryClient.setQueryData<ChallengeResponse[]>(["challenges"], (old) =>
+        old?.map((c) => c.id === id ? { ...c, completed: !newCompleted } : c) ?? []
+      );
+      queryClient.setQueryData<UserProfileDashboardResponse>(["profile"], (old) => {
+        if (!old) return old;
+        const revertedPoints = Math.max(0, (old.points ?? 0) - pointsDelta);
+        return { ...old, points: revertedPoints, treesPlanted: Math.floor(revertedPoints / 1000) };
       });
       toast.error(err.message ?? "Erreur lors de la mise à jour du défi.");
     }
@@ -109,12 +108,12 @@ export function ChallengesPage() {
                   </div>
                   <h2 className="text-xl md:text-2xl font-bold mb-2 relative z-10" style={{ color: 'var(--viv-navy)' }}>Incroyable ! 🎉</h2>
                   <p className="mb-6 md:text-lg max-w-md relative z-10" style={{ color: 'var(--viv-text-secondary)' }}>Vous avez accompli tous vos défis du moment. La planète vous remercie !</p>
-                  <motion.button whileHover={isLoading ? {} : { scale: 1.02 }} whileTap={isLoading ? {} : { scale: 0.98 }}
+                  <motion.button whileHover={isFetchingChallenges ? {} : { scale: 1.02 }} whileTap={isFetchingChallenges ? {} : { scale: 0.98 }}
                     onClick={loadChallenges}
-                    disabled={isLoading}
+                    disabled={isFetchingChallenges}
                     className="relative z-10 px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                     style={{ backgroundColor: 'var(--viv-navy)', color: 'white' }}>
-                    {isLoading ? (
+                    {isFetchingChallenges ? (
                       <>
                         <svg className="animate-spin h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -129,7 +128,7 @@ export function ChallengesPage() {
                 </motion.div>
               )}
 
-              {!isLoading && totalChallenges === 0 && (
+              {!isFetchingChallenges && totalChallenges === 0 && (
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                   className="rounded-3xl p-8 flex flex-col items-center text-center bg-white shadow-sm border border-gray-100">
                   <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
@@ -145,12 +144,12 @@ export function ChallengesPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-2 mb-2"><Flame className="w-8 h-8 md:w-10 md:h-10 text-orange-500" /></div>
-                    <div className={`text-3xl md:text-4xl mb-1 ${isLoading ? 'blur-sm bg-gray-200 text-transparent animate-pulse rounded px-4 inline-block' : ''}`} style={{ color: 'var(--eco-navy)' }}>{isLoading ? "0" : streak}</div>
+                    <div className="text-3xl md:text-4xl mb-1" style={{ color: 'var(--eco-navy)' }}>{streak}</div>
                     <div className="text-sm md:text-base" style={{ color: '#64748B' }}>Série de jours</div>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-2 mb-2"><TreePine className="w-8 h-8 md:w-10 md:h-10" style={{ color: 'var(--eco-green)' }} /></div>
-                    <div className={`text-3xl md:text-4xl mb-1 ${isLoading ? 'blur-sm bg-gray-200 text-transparent animate-pulse rounded px-4 inline-block' : ''}`} style={{ color: 'var(--eco-navy)' }}>{isLoading ? "0" : totalPoints}</div>
+                    <div className="text-3xl md:text-4xl mb-1" style={{ color: 'var(--eco-navy)' }}>{totalPoints}</div>
                     <div className="text-sm md:text-base" style={{ color: '#64748B' }}>Points totaux</div>
                   </div>
                 </div>
@@ -171,7 +170,7 @@ export function ChallengesPage() {
               <motion.div id="challenges-section" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
                 <h2 className="text-lg md:text-xl font-semibold mb-4" style={{ color: 'var(--eco-navy)' }}>Défis à relever</h2>
                 <div className="space-y-3">
-                  {isLoading && challenges.length === 0 && Array.from({ length: 3 }).map((_, i) => (
+                  {challenges.length === 0 && Array.from({ length: 3 }).map((_, i) => (
                     <div key={`skel-${i}`} className="bg-white rounded-2xl shadow-md p-4 flex items-start gap-3 opacity-60 animate-pulse">
                       <div className="w-6 h-6 rounded-full bg-gray-200 mt-1"></div>
                       <div className="flex-1 space-y-2">

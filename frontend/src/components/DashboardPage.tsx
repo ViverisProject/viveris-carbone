@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Car, UtensilsCrossed, Zap, Leaf, ChevronRight, X } from "lucide-react";
 import { motion } from "motion/react";
 import { Navigation } from "./Navigation";
-import { userApi, emissionsApi, quizApi, getStoredUser, type UserProfileDashboardResponse, type QuizQuestion } from "../api";
+import { userApi, emissionsApi, quizApi, getStoredUser, type UserProfileDashboardResponse } from "../api";
 
 const categoryMap: Record<string, string> = {
   "Mobilité": "Transport",
@@ -20,45 +21,30 @@ const categoryIcons: Record<string, any> = {
 };
 
 export function DashboardPage() {
-  const [profile, setProfile] = useState<UserProfileDashboardResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<any>({ name: "", icon: Leaf, numericValue: 0 });
   const [domainAnswers, setDomainAnswers] = useState<Record<string, any>>({});
-  const [apiQuestions, setApiQuestions] = useState<QuizQuestion[]>([]);
-  const [categoryTotals, setCategoryTotals] = useState({
-    "Mobilité": 0, "Alimentation": 0, "Énergie": 0, "Mode de vie": 0,
-  });
   const [recentModifications, setRecentModifications] = useState<any[]>([]);
 
-  useEffect(() => {
-    // Load profile from API
-    userApi.getMe()
-      .then((data) => {
-        setProfile(data);
-        if (data.categoryEmissions) {
-          const ce = data.categoryEmissions;
-          setCategoryTotals({
-            "Mobilité": ce["Transport"] ?? ce["Mobilité"] ?? 0,
-            "Alimentation": ce["Alimentation"] ?? 0,
-            "Énergie": ce["Énergie"] ?? 0,
-            "Mode de vie": ce["Consommation"] ?? ce["Mode de vie"] ?? 0,
-          });
-        }
-      })
-      .catch(() => toast.error("Impossible de charger le tableau de bord."))
-      .finally(() => setIsLoading(false));
+  const { data: profile } = useQuery({
+    queryKey: ["profile"],
+    queryFn: userApi.getMe,
+  });
 
-    // Load quiz questions for the modify-consumption modal
-    const cached = sessionStorage.getItem("quizQuestions");
-    if (cached) {
-      setApiQuestions(JSON.parse(cached));
-    } else {
-      quizApi.getQuestions()
-        .then((qs) => { setApiQuestions(qs); sessionStorage.setItem("quizQuestions", JSON.stringify(qs)); })
-        .catch(() => {/* silently fail — modal just won't show questions */});
-    }
-  }, []);
+  const { data: apiQuestions = [] } = useQuery({
+    queryKey: ["quizQuestions"],
+    queryFn: quizApi.getQuestions,
+    staleTime: 60 * 60 * 1000, // quiz questions rarely change
+  });
+
+  const ce = profile?.categoryEmissions;
+  const categoryTotals = {
+    "Mobilité": ce ? (ce["Transport"] ?? ce["Mobilité"] ?? 0) : 0,
+    "Alimentation": ce ? (ce["Alimentation"] ?? 0) : 0,
+    "Énergie": ce ? (ce["Énergie"] ?? 0) : 0,
+    "Mode de vie": ce ? (ce["Consommation"] ?? ce["Mode de vie"] ?? 0) : 0,
+  };
 
   const displayTotal = Object.values(categoryTotals).reduce((a, b) => a + b, 0).toFixed(2);
 
@@ -100,9 +86,11 @@ export function DashboardPage() {
     });
     try {
       const res = await emissionsApi.updateCategory({ category: domainCat, answers });
-      // Map API category name back to UI category name
-      const uiCatName = Object.keys(categoryMap).find((k) => categoryMap[k] === res.category) ?? selectedCategory.name;
-      setCategoryTotals((prev) => ({ ...prev, [uiCatName]: res.newCategoryTotal }));
+      // Update cached profile with fresh category emissions
+      queryClient.setQueryData(["profile"], (old: UserProfileDashboardResponse) => ({
+        ...old,
+        categoryEmissions: res.categoryEmissions,
+      }));
       const today = new Date();
       const dateStr = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
       const diffNum = res.newCategoryTotal - selectedCategory.numericValue;
@@ -134,8 +122,8 @@ export function DashboardPage() {
           <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold" style={{ backgroundColor: 'var(--viv-red)' }}>
             {displayName.charAt(0).toUpperCase()}
           </div>
-          <span className={`font-bold text-lg ${isLoading ? 'blur-sm bg-gray-200 text-transparent animate-pulse rounded px-2' : ''}`} style={{ color: 'var(--viv-navy)' }}>
-            {isLoading ? "Chargement..." : displayName}
+          <span className="font-bold text-lg" style={{ color: 'var(--viv-navy)' }}>
+            {displayName}
           </span>
         </motion.div>
 
@@ -143,8 +131,8 @@ export function DashboardPage() {
           {/* Mon empreinte */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl p-6 shadow-sm flex flex-col items-center justify-center py-10">
             <div className="w-full text-left mb-4"><h2 className="text-lg font-bold" style={{ color: 'var(--viv-navy)' }}>Mon empreinte</h2></div>
-            <div className={`text-5xl font-bold mb-2 ${isLoading ? 'blur-md bg-gray-200 text-transparent animate-pulse rounded-2xl w-32 h-12 inline-block' : ''}`} style={{ color: 'var(--viv-navy)' }}>
-              {isLoading ? "0.00" : displayTotal}
+            <div className="text-5xl font-bold mb-2" style={{ color: 'var(--viv-navy)' }}>
+              {displayTotal}
             </div>
             <div className="text-sm font-medium" style={{ color: '#8892A0' }}>tonnes de CO2 / an</div>
           </motion.div>
@@ -156,8 +144,8 @@ export function DashboardPage() {
               {consumptions.map((item, i) => (
                 <div key={i} className="flex items-center justify-between p-3 rounded-2xl border border-gray-100">
                   <div className="flex items-center gap-3"><IconBox icon={item.icon} /><span className="text-sm font-medium hidden sm:inline" style={{ color: 'var(--viv-navy)' }}>{item.name}</span></div>
-                  <span className={`text-sm font-medium ${isLoading ? 'blur-sm bg-gray-200 text-transparent animate-pulse rounded px-2' : ''}`} style={{ color: 'var(--viv-navy)' }}>
-                    {isLoading ? "0.00t" : item.value}
+                  <span className="text-sm font-medium" style={{ color: 'var(--viv-navy)' }}>
+                    {item.value}
                   </span>
                 </div>
               ))}

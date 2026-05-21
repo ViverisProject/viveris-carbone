@@ -8,6 +8,7 @@ import {
   UserObject,
 } from "./api";
 import { useNavigate } from "react-router";
+import { useQueryClient } from "@tanstack/react-query";
 
 type AuthContextType = {
   user: UserObject | null;
@@ -39,7 +40,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const logout = () => {
     clearToken();
     setUserState(null);
-    // Hard redirect to ensure app resets to login
+    // Clear the persisted query cache so the next user starts fresh
+    localStorage.removeItem("viv_query_cache");
     window.location.href = "/login";
   };
 
@@ -59,7 +61,9 @@ export function useAuth(): AuthContextType {
 export function PrivateRoute({ Component }: { Component: React.ComponentType<any> }) {
   const token = getToken();
   const navigate = useNavigate();
-  const [validating, setValidating] = useState(true);
+  const queryClient = useQueryClient();
+  const hasCachedProfile = Boolean(queryClient.getQueryData(["profile"]));
+  const [validating, setValidating] = useState(!hasCachedProfile);
 
   useEffect(() => {
     let mounted = true;
@@ -67,6 +71,9 @@ export function PrivateRoute({ Component }: { Component: React.ComponentType<any
       navigate("/login", { replace: true });
       return;
     }
+
+    // If already cached, validate silently in background
+    if (hasCachedProfile) return;
 
     (async () => {
       try {

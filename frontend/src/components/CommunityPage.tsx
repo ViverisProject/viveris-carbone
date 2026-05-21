@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Search, Trophy, UserPlus, TreePine, Bell, ChevronRight, UserCheck, UserX, Clock } from "lucide-react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
@@ -6,25 +7,24 @@ import { Navigation } from "./Navigation";
 import { communityApi, friendsApi, type LeaderboardEntry, type FriendResponse } from "../api";
 
 export function CommunityPage() {
+  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-  const [friends, setFriends] = useState<FriendResponse[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    Promise.all([communityApi.getLeaderboard(), friendsApi.getFriends()])
-      .then(([lb, fr]) => { setLeaderboard(lb); setFriends(fr); })
-      .catch((err: any) => toast.error(err.message ?? "Impossible de charger la communauté."))
-      .finally(() => setIsLoading(false));
-  }, []);
+  const { data: leaderboard = [] } = useQuery({
+    queryKey: ["leaderboard"],
+    queryFn: communityApi.getLeaderboard,
+  });
+
+  const { data: friends = [] } = useQuery({
+    queryKey: ["friends"],
+    queryFn: friendsApi.getFriends,
+  });
 
   const handleSendRequest = async (friendId: string) => {
     try {
       const res = await friendsApi.sendRequest(friendId);
       toast.success(`Demande envoyée (${res.status})`);
-      // Refresh friends list
-      const updated = await friendsApi.getFriends();
-      setFriends(updated);
+      queryClient.invalidateQueries({ queryKey: ["friends"] });
     } catch (err: any) {
       toast.error(err.message ?? "Erreur lors de l'envoi de la demande.");
     }
@@ -34,8 +34,7 @@ export function CommunityPage() {
     try {
       await friendsApi.acceptRequest(friendId);
       toast.success("Demande acceptée !");
-      const updated = await friendsApi.getFriends();
-      setFriends(updated);
+      queryClient.invalidateQueries({ queryKey: ["friends"] });
     } catch (err: any) {
       toast.error(err.message ?? "Erreur lors de l'acceptation.");
     }
@@ -45,8 +44,7 @@ export function CommunityPage() {
     try {
       await friendsApi.declineRequest(friendId);
       toast.info("Demande déclinée.");
-      const updated = await friendsApi.getFriends();
-      setFriends(updated);
+      queryClient.invalidateQueries({ queryKey: ["friends"] });
     } catch (err: any) {
       toast.error(err.message ?? "Erreur lors du refus.");
     }
@@ -56,7 +54,9 @@ export function CommunityPage() {
     try {
       await friendsApi.removeFriend(friendId);
       toast.info("Ami supprimé.");
-      setFriends((prev) => prev.filter((f) => f.id !== friendId));
+      queryClient.setQueryData<FriendResponse[]>(["friends"], (old) =>
+        old?.filter((f) => f.id !== friendId) ?? []
+      );
     } catch (err: any) {
       toast.error(err.message ?? "Erreur lors de la suppression.");
     }
@@ -140,17 +140,7 @@ export function CommunityPage() {
                   </button>
                 </div>
 
-                {isLoading && filteredFriends.length === 0 ? (
-                  <div className="flex gap-4 md:gap-6 overflow-x-auto pb-4 pt-2">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                      <div key={`skel-${i}`} className="flex-shrink-0 flex flex-col items-center gap-2 opacity-60 animate-pulse">
-                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gray-200" />
-                        <div className="h-4 bg-gray-200 rounded w-16" />
-                        <div className="h-3 bg-gray-200 rounded w-12" />
-                      </div>
-                    ))}
-                  </div>
-                ) : filteredFriends.length === 0 ? (
+                {filteredFriends.length === 0 ? (
                   <p className="text-sm" style={{ color: '#64748B' }}>
                     {searchQuery ? "Aucun ami trouvé pour cette recherche." : "Vous n'avez pas encore d'amis. Ajoutez-en depuis le classement !"}
                   </p>
@@ -216,17 +206,7 @@ export function CommunityPage() {
                 )}
 
                 <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
-                  {isLoading && restOfLeaderboard.length === 0 ? (
-                    Array.from({ length: 5 }).map((_, i) => (
-                      <div key={`skel-lb-${i}`} className="flex items-center gap-4 p-4 rounded-[20px] bg-gray-50 opacity-60 animate-pulse">
-                        <div className="w-8 h-4 bg-gray-200 rounded"></div>
-                        <div className="w-10 h-10 rounded-full bg-gray-200"></div>
-                        <div className="flex-1 h-4 bg-gray-200 rounded w-1/2"></div>
-                        <div className="h-4 bg-gray-200 rounded w-16"></div>
-                      </div>
-                    ))
-                  ) : (
-                    restOfLeaderboard.map((user) => (
+                  {restOfLeaderboard.map((user) => (
                       <div key={user.rank} className="flex items-center gap-4 p-4 rounded-[20px]" style={{ backgroundColor: '#f8fafc' }}>
                         <div className="w-8 text-center font-semibold" style={{ color: '#64748B' }}>{user.rank}</div>
                         <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm" style={{ backgroundColor: 'var(--viv-red)' }}>{user.avatar}</div>
@@ -240,8 +220,7 @@ export function CommunityPage() {
                           </button>
                         </div>
                       </div>
-                    ))
-                  )}
+                  ))}
                 </div>
               </motion.div>
             </div>
