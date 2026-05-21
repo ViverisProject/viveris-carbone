@@ -53,6 +53,7 @@ export function SignupPage() {
       const profile = await userApi.getMe();
       setStoredUser(profile.user);
       auth.setUser(profile.user);
+      auth.setUserProfile(profile);
 
       // If there's a quiz result in sessionStorage (user completed quiz before signing up), save it now
       const stored = sessionStorage.getItem("quizResult");

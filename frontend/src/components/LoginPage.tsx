@@ -28,6 +28,7 @@ export function LoginPage() {
       const profile = await userApi.getMe();
       setStoredUser(profile.user);
       auth.setUser(profile.user);
+      auth.setUserProfile(profile);
 
       // If there's a quiz result in sessionStorage (user completed quiz before logging in), save it now
       const stored = sessionStorage.getItem("quizResult");

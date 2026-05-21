@@ -16,6 +16,7 @@ type AuthContextType = {
   isLoadingProfile: boolean;
   isAuthenticated: boolean;
   setUser: (u: UserObject | null) => void;
+  setUserProfile: (p: UserProfileDashboardResponse | null) => void;
   logout: () => void;
 };
 
@@ -78,7 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <AuthContext.Provider value={{ user, userProfile, isLoadingProfile, isAuthenticated, setUser, logout }}>
+    <AuthContext.Provider value={{ user, userProfile, isLoadingProfile, isAuthenticated, setUser, setUserProfile, logout }}>
       {children}
     </AuthContext.Provider>
   );
