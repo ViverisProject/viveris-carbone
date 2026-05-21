@@ -15,6 +15,10 @@ export function ProfilePage() {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [passwordForm, setPasswordForm] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,13 +34,16 @@ export function ProfilePage() {
   };
 
   const handleDeleteAccount = async () => {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.")) return;
+    if (deleteConfirmText !== "SUPPRIMER") return;
+    setIsDeletingAccount(true);
     try {
       await userApi.deleteMe(false);
       auth.setUser(null);
       navigate("/");
     } catch (err: any) {
       toast.error(err.message ?? "Erreur lors de la suppression du compte.");
+    } finally {
+      setIsDeletingAccount(false);
     }
   };
 
@@ -212,7 +219,7 @@ export function ProfilePage() {
                   <ChevronRight className="w-5 h-5" style={{ color: '#94A3B8' }} />
                 </button>
 
-                <button onClick={handleLogout} className="w-full flex items-center gap-3 p-4 rounded-2xl hover:shadow-md transition-all text-left bg-blue-50">
+                <button onClick={() => setIsLogoutModalOpen(true)} className="w-full flex items-center gap-3 p-4 rounded-2xl hover:shadow-md transition-all text-left bg-blue-50">
                   <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-600 rounded-xl flex items-center justify-center">
                     <LogOut className="w-5 h-5 md:w-6 md:h-6 text-white" />
                   </div>
@@ -223,7 +230,7 @@ export function ProfilePage() {
                   <ChevronRight className="w-5 h-5" style={{ color: '#3B82F6' }} />
                 </button>
 
-                <button onClick={handleDeleteAccount} className="w-full flex items-center gap-3 p-4 rounded-2xl hover:shadow-md transition-all text-left bg-red-50">
+                <button onClick={() => { setDeleteConfirmText(""); setIsDeleteModalOpen(true); }} className="w-full flex items-center gap-3 p-4 rounded-2xl hover:shadow-md transition-all text-left bg-red-50">
                   <div className="w-10 h-10 md:w-12 md:h-12 bg-red-600 rounded-xl flex items-center justify-center">
                     <Trash2 className="w-5 h-5 md:w-6 md:h-6 text-white" />
                   </div>
@@ -268,6 +275,74 @@ export function ProfilePage() {
                 {isChangingPassword ? "Modification…" : "Modifier le mot de passe"}
               </button>
             </form>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Logout Confirmation Modal */}
+      {isLogoutModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl p-6 w-full max-w-md shadow-xl relative">
+            <button onClick={() => setIsLogoutModalOpen(false)} className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+              <X className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
+                <LogOut className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl font-bold pr-8 text-blue-900">Se déconnecter</h3>
+            </div>
+            <p className="text-sm text-gray-600 mb-6">Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à votre compte.</p>
+            <div className="flex gap-3">
+              <button onClick={() => setIsLogoutModalOpen(false)}
+                className="flex-1 py-3 rounded-xl font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                Annuler
+              </button>
+              <button onClick={handleLogout}
+                className="flex-1 py-3 rounded-xl font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                Se déconnecter
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Delete Account Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl p-6 w-full max-w-md shadow-xl relative">
+            <button onClick={() => setIsDeleteModalOpen(false)} className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+              <X className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center">
+                <Trash2 className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl font-bold pr-8 text-red-900">Supprimer le compte</h3>
+            </div>
+            <p className="text-sm text-gray-600 mb-2">Cette action est <strong>irréversible</strong>. Toutes vos données seront supprimées définitivement.</p>
+            <p className="text-sm text-gray-600 mb-4">Pour confirmer, tapez <strong className="text-red-600">SUPPRIMER</strong> ci-dessous :</p>
+            <input
+              type="text"
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              placeholder="SUPPRIMER"
+              className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 mb-4"
+              style={{ border: '1px solid rgba(239, 68, 68, 0.4)', '--tw-ring-color': '#EF4444' } as any}
+              disabled={isDeletingAccount}
+            />
+            <div className="flex gap-3">
+              <button onClick={() => setIsDeleteModalOpen(false)}
+                className="flex-1 py-3 rounded-xl font-semibold border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+                disabled={isDeletingAccount}>
+                Annuler
+              </button>
+              <button onClick={handleDeleteAccount}
+                disabled={deleteConfirmText !== "SUPPRIMER" || isDeletingAccount}
+                className="flex-1 py-3 px-4 rounded-xl font-semibold text-white bg-red-600 hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                {isDeletingAccount ? "Suppression…" : "Supprimer définitivement"}
+              </button>
+            </div>
           </motion.div>
         </div>
       )}
