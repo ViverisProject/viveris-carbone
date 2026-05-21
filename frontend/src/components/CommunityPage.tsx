@@ -11,8 +11,6 @@ export function CommunityPage() {
   const { data: leaderboard = [], isLoading: isLoadingLeaderboard, isError: isErrorLeaderboard } = useCommunityLeaderboard();
   const { data: friends = [], isLoading: isLoadingFriends, isError: isErrorFriends, refetch: refetchFriends } = useFriends();
   
-  const isLoading = isLoadingLeaderboard || isLoadingFriends;
-
   useEffect(() => {
     if (isErrorLeaderboard || isErrorFriends) {
       toast.error("Impossible de charger la communauté.");
@@ -62,8 +60,9 @@ export function CommunityPage() {
   const acceptedFriends = friends.filter((f) => f.status === "accepted");
   const pendingReceived = friends.filter((f) => f.status === "pending_received");
 
-  const topThree = leaderboard.slice(0, 3);
-  const restOfLeaderboard = leaderboard.slice(3);
+  const showPodium = leaderboard.length >= 3;
+  const topThree = showPodium ? leaderboard.slice(0, 3) : [];
+  const restOfLeaderboard = showPodium ? leaderboard.slice(3) : leaderboard;
 
   const filteredFriends = searchQuery
     ? acceptedFriends.filter((f) => f.name.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -81,14 +80,7 @@ export function CommunityPage() {
           Connectez-vous avec d'autres personnes engagées dans la réduction de leur empreinte carbone.
         </p>
 
-        {isLoading ? (
-          <div className="flex justify-center py-20">
-            <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-              className="w-10 h-10 border-4 rounded-full"
-              style={{ borderColor: 'var(--viv-secondary)', borderTopColor: 'transparent' }} />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mt-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mt-8">
             {/* Left Column */}
             <div className="space-y-10 lg:col-span-7">
               {/* Search */}
@@ -138,7 +130,17 @@ export function CommunityPage() {
                   <h2 className="text-lg md:text-xl font-semibold" style={{ color: 'var(--viv-navy)' }}>Vos amis</h2>
                 </div>
 
-                {filteredFriends.length === 0 ? (
+                {isLoadingFriends ? (
+                  <div className="flex gap-4 md:gap-6 pb-4 pt-2 animate-pulse">
+                    {[0, 1, 2].map((i) => (
+                      <div key={i} className="flex-shrink-0 flex flex-col items-center gap-2">
+                        <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gray-200" />
+                        <div className="h-3 w-14 bg-gray-200 rounded" />
+                        <div className="h-3 w-10 bg-gray-200 rounded" />
+                      </div>
+                    ))}
+                  </div>
+                ) : filteredFriends.length === 0 ? (
                   <p className="text-sm" style={{ color: '#64748B' }}>
                     {searchQuery ? "Aucun ami trouvé pour cette recherche." : "Vous n'avez pas encore d'amis. Ajoutez-en depuis le classement !"}
                   </p>
@@ -171,7 +173,41 @@ export function CommunityPage() {
                   <h2 className="text-lg md:text-xl font-semibold" style={{ color: 'var(--viv-navy)' }}>Classement</h2>
                 </div>
 
-                {topThree.length >= 3 && (
+                {isLoadingLeaderboard ? (
+                  <div className="animate-pulse">
+                    {/* Podium skeleton */}
+                    <div className="flex items-end justify-center gap-6 mb-10">
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gray-200" />
+                        <div className="h-3 w-12 bg-gray-200 rounded" />
+                        <div className="h-3 w-10 bg-gray-200 rounded" />
+                      </div>
+                      <div className="flex flex-col items-center gap-2 -mt-4">
+                        <div className="w-20 h-20 md:w-28 md:h-28 rounded-full bg-gray-200" />
+                        <div className="h-3 w-14 bg-gray-200 rounded" />
+                        <div className="h-3 w-10 bg-gray-200 rounded" />
+                      </div>
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gray-200" />
+                        <div className="h-3 w-12 bg-gray-200 rounded" />
+                        <div className="h-3 w-10 bg-gray-200 rounded" />
+                      </div>
+                    </div>
+                    {/* List skeleton */}
+                    <div className="space-y-3">
+                      {[0, 1, 2, 3].map((i) => (
+                        <div key={i} className="flex items-center gap-4 p-4 rounded-[20px]" style={{ backgroundColor: '#f8fafc' }}>
+                          <div className="w-8 h-4 bg-gray-200 rounded" />
+                          <div className="w-10 h-10 rounded-full bg-gray-200" />
+                          <div className="flex-1 h-4 bg-gray-200 rounded" />
+                          <div className="w-14 h-4 bg-gray-200 rounded" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                {showPodium && (
                   <div className="flex items-end justify-center gap-6 mb-10">
                     {/* 2nd */}
                     <div className="flex flex-col items-center">
@@ -217,10 +253,11 @@ export function CommunityPage() {
                     </div>
                   ))}
                 </div>
+                  </>
+                )}
               </motion.div>
             </div>
           </div>
-        )}
       </div>
 
       <Navigation currentPage="community" />

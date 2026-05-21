@@ -17,8 +17,6 @@ export function ProfilePage() {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const navigate = useNavigate();
 
-  const isLoading = isLoadingProf || isLoadingStats;
-
   useEffect(() => {
     if (isErrorStats) {
       toast.error("Impossible de charger les statistiques.");
@@ -63,16 +61,6 @@ export function ProfilePage() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--viv-beige)' }}>
-        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-          className="w-10 h-10 border-4 rounded-full"
-          style={{ borderColor: 'var(--viv-secondary)', borderTopColor: 'transparent' }} />
-      </div>
-    );
-  }
-
   const user = profile?.user;
   const displayName = user?.userName ?? user?.firstName ?? "Utilisateur";
 
@@ -88,73 +76,123 @@ export function ProfilePage() {
           <div className="space-y-6">
             {/* Profile Header */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white rounded-3xl shadow-lg p-6">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center text-white text-2xl md:text-3xl font-semibold"
-                  style={{ background: 'linear-gradient(to bottom right, var(--viv-red-light), var(--viv-red))' }}>
-                  {displayName.charAt(0).toUpperCase()}
+              {isLoadingProf ? (
+                <div className="animate-pulse">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gray-200" />
+                    <div className="flex-1 space-y-3">
+                      <div className="h-6 w-36 bg-gray-200 rounded-lg" />
+                      <div className="h-4 w-48 bg-gray-200 rounded-lg" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    {[0,1,2].map(i => (
+                      <div key={i} className="flex flex-col items-center gap-2">
+                        <div className="h-8 w-12 bg-gray-200 rounded-lg" />
+                        <div className="h-3 w-10 bg-gray-200 rounded" />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <h2 className="text-xl md:text-2xl mb-1" style={{ color: 'var(--viv-navy)' }}>{displayName}</h2>
-                  <p className="flex items-center gap-2 text-sm md:text-base" style={{ color: '#64748B' }}>
-                    <Mail className="w-4 h-4" />{user?.email ?? "—"}
-                  </p>
-                </div>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>{profile?.treesPlanted ?? 0}</div>
-                  <div className="text-xs md:text-sm" style={{ color: '#64748B' }}>Arbres</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>{profile?.points ?? 0}</div>
-                  <div className="text-xs md:text-sm" style={{ color: '#64748B' }}>Points</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>{profile?.streak ?? 0}</div>
-                  <div className="text-xs md:text-sm" style={{ color: '#64748B' }}>Série de jours</div>
-                </div>
-              </div>
+              ) : (
+                <>
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center text-white text-2xl md:text-3xl font-semibold"
+                      style={{ background: 'linear-gradient(to bottom right, var(--viv-red-light), var(--viv-red))' }}>
+                      {displayName.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex-1">
+                      <h2 className="text-xl md:text-2xl mb-1" style={{ color: 'var(--viv-navy)' }}>{displayName}</h2>
+                      <p className="flex items-center gap-2 text-sm md:text-base" style={{ color: '#64748B' }}>
+                        <Mail className="w-4 h-4" />{user?.email ?? "—"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="text-center">
+                      <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>{profile?.treesPlanted ?? 0}</div>
+                      <div className="text-xs md:text-sm" style={{ color: '#64748B' }}>Arbres</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>{profile?.points ?? 0}</div>
+                      <div className="text-xs md:text-sm" style={{ color: '#64748B' }}>Points</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>{profile?.streak ?? 0}</div>
+                      <div className="text-xs md:text-sm" style={{ color: '#64748B' }}>Série de jours</div>
+                    </div>
+                  </div>
+                </>
+              )}
             </motion.div>
 
             {/* Statistics */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
               <h3 className="text-lg md:text-xl font-semibold mb-4" style={{ color: 'var(--viv-navy)' }}>Statistiques</h3>
-              <div className="grid grid-cols-2 gap-3 mb-6">
-                <div className="bg-white rounded-2xl shadow-md p-4">
-                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: 'rgba(42, 49, 212, 0.1)' }}>
-                    <Award className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--viv-secondary)' }} />
+              {isLoadingStats ? (
+                <div className="grid grid-cols-2 gap-3 mb-6 animate-pulse">
+                  {[0,1].map(i => (
+                    <div key={i} className="bg-white rounded-2xl shadow-md p-4 space-y-3">
+                      <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-gray-200" />
+                      <div className="h-8 w-14 bg-gray-200 rounded-lg" />
+                      <div className="h-4 w-24 bg-gray-200 rounded" />
+                    </div>
+                  ))}
+                  <div className="bg-white rounded-2xl shadow-md p-4 col-span-2 space-y-3">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-gray-200" />
+                    <div className="h-8 w-16 bg-gray-200 rounded-lg" />
+                    <div className="h-4 w-40 bg-gray-200 rounded" />
                   </div>
-                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>{stats?.challengesCompleted ?? 0}</div>
-                  <div className="text-sm" style={{ color: '#64748B' }}>Défis terminés</div>
                 </div>
-                <div className="bg-white rounded-2xl shadow-md p-4">
-                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: 'rgba(251, 146, 60, 0.2)' }}>
-                    <Flame className="w-5 h-5 md:w-6 md:h-6 text-orange-500" />
+              ) : (
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  <div className="bg-white rounded-2xl shadow-md p-4">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: 'rgba(42, 49, 212, 0.1)' }}>
+                      <Award className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--viv-secondary)' }} />
+                    </div>
+                    <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>{stats?.challengesCompleted ?? 0}</div>
+                    <div className="text-sm" style={{ color: '#64748B' }}>Défis terminés</div>
                   </div>
-                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>{stats?.bestStreak ?? profile?.bestStreak ?? 0}</div>
-                  <div className="text-sm" style={{ color: '#64748B' }}>Meilleure série</div>
-                </div>
-                <div className="bg-white rounded-2xl shadow-md p-4 col-span-2">
-                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: 'rgba(42, 49, 212, 0.1)' }}>
-                    <TreePine className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--viv-secondary)' }} />
+                  <div className="bg-white rounded-2xl shadow-md p-4">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: 'rgba(251, 146, 60, 0.2)' }}>
+                      <Flame className="w-5 h-5 md:w-6 md:h-6 text-orange-500" />
+                    </div>
+                    <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>{stats?.bestStreak ?? profile?.bestStreak ?? 0}</div>
+                    <div className="text-sm" style={{ color: '#64748B' }}>Meilleure série</div>
                   </div>
-                  <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>{stats?.co2ReducedThisYear?.toFixed(1) ?? "0.0"}t</div>
-                  <div className="text-sm" style={{ color: '#64748B' }}>CO2 réduit cette année</div>
+                  <div className="bg-white rounded-2xl shadow-md p-4 col-span-2">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: 'rgba(42, 49, 212, 0.1)' }}>
+                      <TreePine className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--viv-secondary)' }} />
+                    </div>
+                    <div className="text-2xl md:text-3xl mb-1" style={{ color: 'var(--viv-navy)' }}>{stats?.co2ReducedThisYear?.toFixed(1) ?? "0.0"}t</div>
+                    <div className="text-sm" style={{ color: '#64748B' }}>CO2 réduit cette année</div>
+                  </div>
                 </div>
-              </div>
+              )}
             </motion.div>
 
             {/* Achievements */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
               <h3 className="text-lg md:text-xl font-semibold mb-4" style={{ color: 'var(--viv-navy)' }}>Succès</h3>
-              <div className="grid grid-cols-4 gap-3">
-                {(profile?.achievements ?? []).map((ach, index) => (
-                  <div key={index} className={`bg-white rounded-2xl shadow-md p-4 text-center ${!ach.unlocked ? "opacity-40" : ""}`}>
-                    <div className="text-3xl mb-2">🏅</div>
-                    <div className="text-xs" style={{ color: 'var(--viv-navy)' }}>{ach.name}</div>
-                  </div>
-                ))}
-              </div>
+              {isLoadingProf ? (
+                <div className="grid grid-cols-4 gap-3 animate-pulse">
+                  {[0,1,2,3].map(i => (
+                    <div key={i} className="bg-white rounded-2xl shadow-md p-4 flex flex-col items-center gap-2">
+                      <div className="w-8 h-8 bg-gray-200 rounded-lg" />
+                      <div className="h-3 w-12 bg-gray-200 rounded" />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-4 gap-3">
+                  {(profile?.achievements ?? []).map((ach, index) => (
+                    <div key={index} className={`bg-white rounded-2xl shadow-md p-4 text-center ${!ach.unlocked ? "opacity-40" : ""}`}>
+                      <div className="text-3xl mb-2">🏅</div>
+                      <div className="text-xs" style={{ color: 'var(--viv-navy)' }}>{ach.name}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </motion.div>
           </div>
 

@@ -56,6 +56,8 @@ export function useChallengeToggle() {
     onSettled: () => {
       // Always refetch after error or success to ensure we have the correct server state
       queryClient.invalidateQueries({ queryKey: ['challenges'] });
+      queryClient.invalidateQueries({ queryKey: ['community', 'leaderboard'] });
+      queryClient.invalidateQueries({ queryKey: ['user', 'stats'] });
     },
   });
 }
@@ -64,7 +66,7 @@ export function useCommunityLeaderboard() {
   return useQuery({
     queryKey: ['community', 'leaderboard'],
     queryFn: () => communityApi.getLeaderboard(),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 0, // always fetch fresh data when visiting the page
   });
 }
 
