@@ -10,7 +10,7 @@ import { useAuth } from "../auth";
 import { useChallenges, useChallengeToggle } from "../hooks";
 
 export function ChallengesPage() {
-  const { userProfile: profile } = useAuth();
+  const { userProfile: profile, setUserProfile } = useAuth();
   const queryClient = useQueryClient();
   const { data: challenges = [], isLoading, isError, refetch: loadChallenges } = useChallenges();
   const toggleMutation = useChallengeToggle();
@@ -62,6 +62,15 @@ export function ChallengesPage() {
           setTotalPoints(res.totalPoints);
           setTreesPlanted(res.treesPlanted);
           setTreeProgress(res.treeProgress);
+          
+          // Sync global auth state so stats don't revert on page change
+          if (profile) {
+            setUserProfile({
+              ...profile,
+              points: res.totalPoints,
+              treesPlanted: res.treesPlanted,
+            });
+          }
         },
         onError: (err: any) => {
           // Rollback on failure

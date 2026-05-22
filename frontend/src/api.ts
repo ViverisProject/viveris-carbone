@@ -51,6 +51,7 @@ async function apiFetch<T>(
   }
 
   const response = await fetch(`${BASE_URL}${path}`, {
+    cache: "no-cache", // Prevents the browser from caching the GET request
     ...options,
     headers,
   });
