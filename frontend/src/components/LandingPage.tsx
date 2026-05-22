@@ -110,7 +110,7 @@ export function LandingPage() {
                 <Sprout className="w-6 h-6" style={{ color: 'var(--viv-secondary)' }} />
               </div>
               <h3 className="font-semibold mb-2" style={{ color: 'var(--viv-navy)' }}>
-                Communautéengagée
+                Communauté engagée
               </h3>
               <p className="text-sm" style={{ color: '#64748B' }}>
                 Comparez vos progrès et motivez-vous avec d'autres utilisateurs
