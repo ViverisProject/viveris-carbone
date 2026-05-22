@@ -163,11 +163,13 @@ def get_current_db_name():
 if __name__ == "__main__":
     import json
     test_connection()
-    print(get_current_db_name())
+    # clear_table("onboarding_answers")
+    # print(get_current_db_name())
     # tables = list_tables()
     # for table in tables:
     #     print(fetch_table_content(table))
-    # list_columns("users")
+    # print(fetch_table_content("onboarding_questions"))
+    list_columns("onboarding_answers")
     # list_enums()
 
     # --- Load challenges from JSON and migrate them to DB ---

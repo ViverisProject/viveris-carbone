@@ -180,6 +180,8 @@ export interface QuizOption {
   label: string;
   value: number;
   co2: number;
+  // min_value === -1 flags a free numeric-input ("Autre valeur") option
+  min_value?: number | null;
 }
 
 export interface QuizQuestion {

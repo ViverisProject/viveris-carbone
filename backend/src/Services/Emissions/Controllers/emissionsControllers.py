@@ -22,7 +22,11 @@ CATEGORY_MAP = {
     "consumption": "Consommation",
     "alimentation": "Alimentation",
     "energie": "Énergie",
-    "consommation": "Consommation"
+    "consommation": "Consommation",
+    # Numérique maps to Consommation for emissions bucketing
+    "numerique": "Consommation",
+    "numérique": "Consommation",
+    "digital": "Consommation",
 }
 
 def _get_category_name(domain: str) -> str:
@@ -46,15 +50,17 @@ def get_all_questions_controller(repo: EmissionsRepositoryInterface) -> List[Qui
     for q in db_questions:
         options = []
         for ans in q.get("onboarding_answers", []):
-            # Map max_value or min_value to value
-            val = ans.get("max_value")
-            if val is None:
-                val = ans.get("min_value", 0)
-                
+            raw_min = ans.get("min_value")
+            raw_max = ans.get("max_value")
+            # For "Autre valeur" options min_value == -1; use max_value as the
+            # representative quantity for regular options.
+            val = raw_max if raw_max is not None else (raw_min or 0)
+
             options.append(QuizOption(
                 label=ans.get("label", ""),
                 value=float(val),
-                co2=float(ans.get("co2_value", 0.0))
+                co2=float(ans.get("co2_value", 0.0)),
+                min_value=float(raw_min) if raw_min is not None else None,
             ))
             
         result.append(QuizQuestion(

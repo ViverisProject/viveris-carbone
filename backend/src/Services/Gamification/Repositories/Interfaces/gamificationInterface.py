@@ -16,6 +16,10 @@ class GamificationRepositoryInterface(Protocol):
     def get_user_stats(self, user_id: str) -> Optional[Dict[str, Any]]:
         """Fetch the current stats (total_points, trees_planted, challenge_batch_offset) for the user."""
         ...
+
+    def get_user_flexibility_domains(self, user_id: str) -> List[str]:
+        """Return the flexibility domains selected by the user during onboarding (e.g. ['food', 'transport'])."""
+        ...
         
     def update_user_stats(self, user_id: str, new_points: int, new_trees: Optional[int] = None) -> None:
         """Update total_points and optionally trees_planted for the user."""

@@ -7,6 +7,8 @@ class QuizOption(BaseModel):
     label: str
     value: float
     co2: float
+    # min_value == -1 signals a free numeric-input ("Autre valeur") option
+    min_value: Optional[float] = None
 
 
 class QuizQuestion(BaseModel):

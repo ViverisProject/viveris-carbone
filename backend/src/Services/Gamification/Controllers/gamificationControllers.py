@@ -11,16 +11,69 @@ from Gamification.Schemas.gamificationSchemas import (
 )
 from Gamification.Repositories.Interfaces.gamificationInterface import GamificationRepositoryInterface
 
+# Maps frontend flexibility domain ids → challenge domain names in DB
+_FLEXIBILITY_TO_DOMAIN = {
+    "transport":   "Transport",
+    "food":        "Alimentation",
+    "energy":      "Énergie",
+    "consumption": "Consommation",
+}
+
+
+def _build_ordered_challenges(all_challenges: list, flexibility_raw: list) -> list:
+    """
+    Return challenges sorted so that ~90 % of each batch of 10 comes from the
+    user's preferred domains (from flexibility_raw).  The ordering is:
+      - 9 preferred, 1 other, 9 preferred, 1 other, …
+    When there are no preferences every challenge is treated as preferred.
+    """
+    preferred_domains = {
+        _FLEXIBILITY_TO_DOMAIN.get(d.lower(), d)
+        for d in flexibility_raw
+    }
+
+    if not preferred_domains:
+        return list(all_challenges)
+
+    preferred = [c for c in all_challenges if c.get("domain") in preferred_domains]
+    other     = [c for c in all_challenges if c.get("domain") not in preferred_domains]
+
+    if not preferred:
+        return list(all_challenges)
+
+    # Interleave: 9 from preferred then 1 from other, repeat
+    result: list = []
+    p_idx, o_idx = 0, 0
+    while p_idx < len(preferred) or o_idx < len(other):
+        added = 0
+        while added < 9 and p_idx < len(preferred):
+            result.append(preferred[p_idx])
+            p_idx += 1
+            added += 1
+        if o_idx < len(other):
+            result.append(other[o_idx])
+            o_idx += 1
+        elif added == 0:
+            break
+    # Append any trailing "other" items that didn't fit in a full block
+    while o_idx < len(other):
+        result.append(other[o_idx])
+        o_idx += 1
+    return result
+
+
 def get_recommendations_controller(user_id: str, repo: GamificationRepositoryInterface) -> List[ChallengeResponse]:
     all_challenges = repo.get_all_challenges()
     completed_ids = set(repo.get_user_completed_challenges(user_id))
 
-    # Read the persisted batch offset from DB (defaults to 0 for new users)
     stats = repo.get_user_stats(user_id) or {}
     offset = int(stats.get("challenge_batch_offset") or 0)
 
-    # Always return the same fixed batch for this offset
-    batch = all_challenges[offset: offset + 10]
+    # Order challenges so preferred domains occupy ~90 % of each batch
+    flexibility_raw = repo.get_user_flexibility_domains(user_id)
+    ordered = _build_ordered_challenges(all_challenges, flexibility_raw)
+
+    batch = ordered[offset: offset + 10]
 
     result = []
     for c in batch:
@@ -30,7 +83,7 @@ def get_recommendations_controller(user_id: str, repo: GamificationRepositoryInt
             title=c.get("title", "Sans titre"),
             points=c.get("points", 0),
             category=c.get("domain", "Général"),
-            completed=(c_id in completed_ids)  # show real completion status
+            completed=(c_id in completed_ids)
         ))
     return result
 
@@ -39,9 +92,13 @@ def unlock_next_batch_controller(user_id: str, repo: GamificationRepositoryInter
     stats = repo.get_user_stats(user_id) or {}
     current_offset = int(stats.get("challenge_batch_offset") or 0)
 
+    # Use the same domain-weighted ordering as get_recommendations_controller
+    flexibility_raw = repo.get_user_flexibility_domains(user_id)
+    ordered = _build_ordered_challenges(all_challenges, flexibility_raw)
+
     # Verify the current batch is fully completed before advancing
     completed_ids = set(repo.get_user_completed_challenges(user_id))
-    current_batch = all_challenges[current_offset: current_offset + 10]
+    current_batch = ordered[current_offset: current_offset + 10]
     all_done = all(str(c["id"]) in completed_ids for c in current_batch)
 
     if not all_done:
@@ -51,8 +108,8 @@ def unlock_next_batch_controller(user_id: str, repo: GamificationRepositoryInter
         )
 
     new_offset = current_offset + 10
-    # If no more challenges, wrap around to 0
-    if new_offset >= len(all_challenges):
+    # If no more challenges in the ordered list, wrap around to 0
+    if new_offset >= len(ordered):
         new_offset = 0
 
     repo.advance_challenge_batch(user_id, new_offset)
