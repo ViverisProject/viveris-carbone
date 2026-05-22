@@ -57,8 +57,18 @@ def unlock_next_batch_controller(user_id: str, repo: GamificationRepositoryInter
 
     repo.advance_challenge_batch(user_id, new_offset)
 
+    # Increment trees_planted by 1 (one tree per completed batch)
+    current_points = int(stats.get("total_points") or 0)
+    current_trees = int(stats.get("trees_planted") or 0)
+    repo.update_user_stats(user_id, current_points, current_trees + 1)
+
     # Build and return the new batch directly to avoid a second request
     new_batch = all_challenges[new_offset: new_offset + 10]
+
+    # Reset completion status for the new batch so recycled challenges start fresh
+    new_batch_ids = [str(c["id"]) for c in new_batch]
+    repo.reset_challenges_completion(user_id, new_batch_ids)
+
     challenges = []
     for c in new_batch:
         c_id = str(c["id"])
@@ -104,23 +114,22 @@ def toggle_challenge_controller(
     # Prevent negative points
     if new_total_points < 0:
         new_total_points = 0
-        
-    new_trees_planted = new_total_points // 1000
-    tree_progress = (new_total_points % 1000) // 10
-    
+
+    current_trees = int(stats.get("trees_planted") or 0)
+
     # Save only if there's a change
     if points_delta != 0:
         repo.toggle_user_challenge(user_id, challenge_id, payload.completed)
-        repo.update_user_stats(user_id, new_total_points, new_trees_planted)
-        
+        repo.update_user_stats(user_id, new_total_points)
+
     return ToggleChallengeResponse(
         success=True,
         challengeId=challenge_id,
         completed=payload.completed,
         pointsDelta=points_delta,
         totalPoints=new_total_points,
-        treesPlanted=new_trees_planted,
-        treeProgress=tree_progress
+        treesPlanted=current_trees,
+        treeProgress=0
     )
 
 def create_challenge_controller(payload: CreateChallengeRequest, repo: GamificationRepositoryInterface) -> CreateChallengeResponse:

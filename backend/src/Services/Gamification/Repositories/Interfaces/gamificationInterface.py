@@ -17,8 +17,12 @@ class GamificationRepositoryInterface(Protocol):
         """Fetch the current stats (total_points, trees_planted, challenge_batch_offset) for the user."""
         ...
         
-    def update_user_stats(self, user_id: str, new_points: int, new_trees: int) -> None:
-        """Update total_points and trees_planted for the user."""
+    def update_user_stats(self, user_id: str, new_points: int, new_trees: Optional[int] = None) -> None:
+        """Update total_points and optionally trees_planted for the user."""
+        ...
+
+    def reset_challenges_completion(self, user_id: str, challenge_ids: List[str]) -> None:
+        """Reset completed=False for specific challenges (used when starting a new batch)."""
         ...
 
     def advance_challenge_batch(self, user_id: str, new_offset: int) -> None:

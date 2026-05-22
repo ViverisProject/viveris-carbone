@@ -16,7 +16,6 @@ export function ChallengesPage() {
   const toggleMutation = useChallengeToggle();
   const [totalPoints, setTotalPoints] = useState(0);
   const [treesPlanted, setTreesPlanted] = useState(0);
-  const [treeProgress, setTreeProgress] = useState(0);
   const [streak, setStreak] = useState(0);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   
@@ -30,38 +29,26 @@ export function ChallengesPage() {
     if (profile) {
       setTotalPoints(profile.points ?? 0);
       setTreesPlanted(profile.treesPlanted ?? 0);
-      setTreeProgress(Math.floor(((profile.points ?? 0) % 1000) / 10));
       setStreak(profile.streak ?? 0);
     }
   }, [profile]);
 
   const toggleChallenge = (id: string) => {
-    const challenge = challenges.find((c) => c.id === id);
+    const challenge = challenges.find((c: ChallengeResponse) => c.id === id);
     if (!challenge) return;
-    
+
     const isNowCompleted = !challenge.completed;
     const pointDelta = isNowCompleted ? challenge.points : -challenge.points;
-
-    // 1. Snapshot previous state
     const previousPoints = totalPoints;
-    const previousTrees = treesPlanted;
-    const previousProgress = treeProgress;
 
-    // 2. Optimistically update UI state instantly
-    const newTotalPoints = Math.max(0, totalPoints + pointDelta);
-    setTotalPoints(newTotalPoints);
-    setTreesPlanted(Math.floor(newTotalPoints / 1000));
-    setTreeProgress(Math.floor((newTotalPoints % 1000) / 10));
+    setTotalPoints(Math.max(0, totalPoints + pointDelta));
 
-    // 3. Perform backend mutation
     toggleMutation.mutate(
       { id, completed: isNowCompleted },
       {
         onSuccess: (res) => {
-          // Sync with exact server values
           setTotalPoints(res.totalPoints);
           setTreesPlanted(res.treesPlanted);
-          setTreeProgress(res.treeProgress);
           
           // Sync global auth state so stats don't revert on page change
           if (profile) {
@@ -73,10 +60,7 @@ export function ChallengesPage() {
           }
         },
         onError: (err: any) => {
-          // Rollback on failure
           setTotalPoints(previousPoints);
-          setTreesPlanted(previousTrees);
-          setTreeProgress(previousProgress);
           toast.error(err.message ?? "Erreur lors de la mise à jour du défi.");
         },
       }
@@ -94,22 +78,22 @@ export function ChallengesPage() {
   };
 
   const handleUnlockBatch = async () => {
-
     try {
       const res = await challengesApi.unlockBatch();
-      // Inject the new challenges directly into the cache — no second fetch!
       if (res.challenges) {
         queryClient.setQueryData(['challenges', 'recommendations'], res.challenges);
       } else {
         loadChallenges();
       }
+      setTreesPlanted((prev: number) => prev + 1);
     } catch (err: any) {
       toast.error(err.message ?? "Impossible de débloquer la prochaine série.");
     }
   };
 
-  const completedToday = challenges.filter((c) => c.completed).length;
+  const completedToday = challenges.filter((c: ChallengeResponse) => c.completed).length;
   const totalChallenges = challenges.length;
+  const treeProgress = totalChallenges > 0 ? Math.floor((completedToday / totalChallenges) * 100) : 0;
 
   useEffect(() => {
     if (completedToday === totalChallenges && totalChallenges > 0) {
@@ -253,7 +237,7 @@ export function ChallengesPage() {
                 <div className="mt-5 flex items-center justify-center gap-2 bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
                   <span className="font-semibold text-lg" style={{ color: 'var(--eco-navy)' }}>1</span>
                   <TreePine className="w-6 h-6 mx-1" style={{ color: 'var(--eco-green)' }} />
-                  <span className="font-semibold text-lg" style={{ color: 'var(--eco-navy)' }}>= 1 000 points</span>
+                  <span className="font-semibold text-lg" style={{ color: 'var(--eco-navy)' }}>= 1 série complète</span>
                 </div>
               </motion.div>
             </div>

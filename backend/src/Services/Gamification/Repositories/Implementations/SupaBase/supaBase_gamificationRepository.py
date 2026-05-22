@@ -70,17 +70,23 @@ class SupaBaseGamificationRepository(GamificationRepositoryInterface):
                 return data[0]
         return None
 
-    def update_user_stats(self, user_id: str, new_points: int, new_trees: int) -> None:
-        # Upsert via Prefer: resolution=merge-duplicates because user_id is PK
+    def update_user_stats(self, user_id: str, new_points: int, new_trees: Optional[int] = None) -> None:
         headers = self.headers.copy()
         headers["Prefer"] = "resolution=merge-duplicates"
-        
-        payload = {
-            "user_id": user_id,
-            "total_points": new_points,
-            "trees_planted": new_trees
-        }
+        payload: Dict[str, Any] = {"user_id": user_id, "total_points": new_points}
+        if new_trees is not None:
+            payload["trees_planted"] = new_trees
         requests.post(self._endpoint("user_stats"), headers=headers, json=payload)
+
+    def reset_challenges_completion(self, user_id: str, challenge_ids: List[str]) -> None:
+        for challenge_id in challenge_ids:
+            params = {"user_id": f"eq.{user_id}", "challenge_id": f"eq.{challenge_id}"}
+            requests.patch(
+                self._endpoint("user_challenges"),
+                headers=self.headers,
+                params=params,
+                json={"completed": False, "completed_at": None}
+            )
 
     def advance_challenge_batch(self, user_id: str, new_offset: int) -> None:
         headers = self.headers.copy()
