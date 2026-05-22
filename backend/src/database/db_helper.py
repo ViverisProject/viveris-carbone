@@ -30,6 +30,7 @@ def list_tables():
     print("Tables in DB:")
     for t in tables:
         print(f" - {t}")
+    return tables
 
 
 # -----------------------------
@@ -96,8 +97,82 @@ def test_connection():
         print(e)
 
 
+# -----------------------------
+# Helper: Fetch table content
+# -----------------------------
+def fetch_table_content(table_name, limit=10):
+    """Fetch all or first N rows from a table."""
+    with engine.connect() as conn:
+        query = text(f"SELECT * FROM {table_name} LIMIT :limit")
+        result = conn.execute(query, {"limit": limit})
+        rows = result.fetchall()
+        columns = result.keys()
+        data = [dict(zip(columns, row)) for row in rows]
+    return data
+
+
+# -----------------------------
+# Helper: Migrate challenges to DB
+# -----------------------------
+def migrate_challenges(challenges):
+    """
+    Insert a list of challenges into the challenges table.
+    Each challenge should be a dict with keys: id, title, points, category.
+    description and frequency will be set to None.
+    """
+    insert_query = text("""
+        INSERT INTO challenges (title, description, domain, frequency, points)
+        VALUES (:title, :description, :domain, :frequency, :points)
+    """)
+    with engine.begin() as conn:
+        for challenge in challenges:
+            conn.execute(
+                insert_query,
+                {
+                    "title": challenge["title"],
+                    "description": None,
+                    "domain": challenge["category"],
+                    "frequency": None,
+                    "points": challenge["points"]
+                }
+            )
+    print(f"Inserted {len(challenges)} challenges into the database.")
+    
+
+# -----------------------------
+# Helper: Clear table content
+# -----------------------------
+def clear_table(table_name):
+    """Delete all rows from the specified table."""
+    with engine.begin() as conn:
+        conn.execute(text(f"DELETE FROM {table_name}"))
+    print(f"All rows deleted from table '{table_name}'.")
+
+
+# -----------------------------
+# Helper: Get current DB name
+# -----------------------------
+def get_current_db_name():
+    """Return the name of the current database connection."""
+    with engine.connect() as conn:
+        result = conn.execute(text("SELECT current_database();"))
+        db_name = result.scalar()
+    return db_name
+
+
 if __name__ == "__main__":
+    import json
     test_connection()
-    # list_tables()
+    print(get_current_db_name())
+    # tables = list_tables()
+    # for table in tables:
+    #     print(fetch_table_content(table))
     # list_columns("users")
     # list_enums()
+
+    # --- Load challenges from JSON and migrate them to DB ---
+    # with open("./frontend/src/data/challenges.json", encoding="utf-8") as f:
+    #     challenges = json.load(f)
+    #     print(f"Loaded {len(challenges)} challenges from JSON. Migrating to DB...")
+    #     migrate_challenges(challenges)
+    #     print("Migration complete.")
